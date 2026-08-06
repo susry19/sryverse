@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Background from './Background.jsx'
-import CardCanvas from './CardCanvas.jsx'
 import Terminal from './Terminal.jsx'
 import SkillMatchPage from './SkillMatchPage.jsx'
 import EstateMatchPage from './EstateMatchPage.jsx'
+import ProductShowcase from './ProductShowcase.jsx'
 import './App.css'
 
 /* ── hooks ── */
@@ -16,18 +16,6 @@ function useReveal(threshold = 0.1) {
     return () => obs.disconnect()
   }, [threshold])
   return [ref, v]
-}
-
-function useTilt(s = 8) {
-  const ref = useRef(null)
-  const onMove = useCallback(e => {
-    if (!ref.current) return
-    const r = ref.current.getBoundingClientRect()
-    const x = (e.clientX-r.left)/r.width-.5, y = (e.clientY-r.top)/r.height-.5
-    ref.current.style.transform = `perspective(1000px) rotateY(${x*s}deg) rotateX(${-y*s}deg) translateZ(8px)`
-  }, [s])
-  const onLeave = useCallback(() => { if (ref.current) ref.current.style.transform = 'none' }, [])
-  return { ref, onMouseMove: onMove, onMouseLeave: onLeave }
 }
 
 /* ── Intel Flow — canlı döngü animasyonu ── */
@@ -103,57 +91,6 @@ function LiveTicker() {
             <div className="ltick__bar"><div className="ltick__barfill" style={{background:item.color}}/></div>
           </div>
         ))}
-      </div>
-    </div>
-  )
-}
-
-/* ── Product Card ── */
-function ProductCard({ p, idx, onExplore }) {
-  const tilt = useTilt(7)
-
-  if (p.wholeCardLink && p.url) {
-    return (
-      <a href={p.url} className={`pcard pcard--${p.key}`} style={{animationDelay:`${idx*.7}s`}} target="_blank" rel="noopener noreferrer" {...tilt}>
-        <CardCanvas variant={p.key} />
-        <div className="pcard__sweep" />
-        <div className="pcard__c">
-          <span className={`pbadge pbadge--${p.beta?'beta':p.live?'live':p.future?'future':'soon'}`}>
-            {p.beta ? '🔒 PRIVATE BETA' : p.live ? <><i className="bdot"/>{' '}CANLI</> : p.future ? '✦ GELECEKTE' : 'YAKINDA'}
-          </span>
-          <h3 className="pcard__name">{p.name}</h3>
-          <span className="pcard__cat" lang="en">{p.category}</span>
-          <p className="pcard__desc">{p.desc}</p>
-          <div className="pcard__foot">
-            <span className="pcta">Launch App <span>→</span></span>
-          </div>
-        </div>
-      </a>
-    )
-  }
-
-  return (
-    <div className={`pcard pcard--${p.key}`} style={{animationDelay:`${idx*.7}s`}} {...tilt}>
-      <CardCanvas variant={p.key} />
-      <div className="pcard__sweep" />
-      <div className="pcard__c">
-        <span className={`pbadge pbadge--${p.beta?'beta':p.live?'live':p.future?'future':'soon'}`}>
-          {p.beta ? '🔒 PRIVATE BETA' : p.live ? <><i className="bdot"/>{' '}CANLI</> : p.future ? '✦ GELECEKTE' : 'YAKINDA'}
-        </span>
-        <h3 className="pcard__name">{p.name}</h3>
-        <span className="pcard__cat" lang="en">{p.category}</span>
-        <p className="pcard__desc">{p.desc}</p>
-        <div className="pcard__foot">
-          {p.live
-            ? <button className="pcta" onClick={() => onExplore(p.key)}>Keşfet / Tanıtım <span>→</span></button>
-            : p.future
-              ? <div className="pcard__future-hint">
-                  <div className="future-line"/>
-                  <p className="future-text">Bekleme listesine katıl →</p>
-                </div>
-              : <button className="pcta pcta--dim">Bekleme Listesi <span>→</span></button>
-          }
-        </div>
       </div>
     </div>
   )
@@ -347,12 +284,6 @@ export default function App() {
     }
   }, [page])
 
-  const products = [
-    { key:'skill',  name:'SkillMatch AI',  category:'Recruitment Intelligence', live:true,  future:false, url:'https://skillmatch.sryverse.com', desc:'İşe alım süreçlerindeki karmaşıklığı çözen AI platformu — CV analizi, darboğaz tespiti ve aday eşleştirme ile uçtan uca dönüşüm.' },
-    { key:'estate', name:'EstateMatch AI', category:'Real Estate Intelligence', live:true,  future:false, url:'https://estate.sryverse.com',      desc:'Gayrimenkul operasyonlarını sistemleştiren AI platformu — portföy yönetimi, akıllı eşleştirme ve müşteri zekası tek çatı altında.' },
-    { key:'metraj', name:'Metraj AI',      category:'AI QUANTITY SURVEYING',    live:true,  future:false, beta:true, wholeCardLink:true, url:'https://metraj.sryverse.com', desc:'Mimari projelerden otomatik metraj çıkaran, keşif ve maliyet hesaplamalarını hızlandıran yapay zekâ platformu. PDF, DWG ve teknik çizimleri analiz ederek saniyeler içinde metraj oluşturur.' },
-  ]
-
   const nav = [
     {label:'Ürünler',    target:'#products'},
     {label:'Metodoloji', target:'#methodology'},
@@ -433,18 +364,8 @@ export default function App() {
         {/* LIVE TICKER */}
         <LiveTicker />
 
-        {/* PRODUCTS */}
-        <section className="sec" id="products">
-          <div className="wrap">
-            <div className="sec__head fade-up">
-              <span className="elabel">Ürün Ekosistemi</span>
-              <h2 className="sec__h2">Tek ekosistem.<br/><em>Çok sayıda AI ürünü.</em></h2>
-            </div>
-            <div className="pgrid">
-              {products.map((p,i) => <ProductCard key={p.key} p={p} idx={i} onExplore={(key) => setPage(key)}/>)}
-            </div>
-          </div>
-        </section>
+        {/* PRODUCTS — scroll güdümlü kart rafı + akan tanıtım */}
+        <ProductShowcase onDemo={() => go('#contact')} />
 
         {/* METHODOLOGY */}
         <section className="sec sec--tint" id="methodology">
@@ -510,9 +431,9 @@ export default function App() {
           </div>
           <div className="footer__links">
             <div className="fcol"><h5>Ürünler</h5>
-              <a href="#" onClick={e=>{e.preventDefault(); setPage('skillmatch')}}>SkillMatch AI</a>
-              <a href="#" onClick={e=>{e.preventDefault(); setPage('estatematch')}}>EstateMatch AI</a>
-              <a href="https://metraj.sryverse.com" target="_blank" rel="noopener noreferrer">Metraj AI</a>
+              <a href="#products" onClick={e=>{e.preventDefault(); go('#products')}}>SkillMatch AI</a>
+              <a href="#products" onClick={e=>{e.preventDefault(); go('#products')}}>EstateMatch AI</a>
+              <a href="#products" onClick={e=>{e.preventDefault(); go('#products')}}>Metraj AI <span style={{opacity:.5,fontSize:'.78em'}}>· yakında</span></a>
             </div>
             <div className="fcol"><h5>Şirket</h5>
               <a href="#" onClick={e=>{e.preventDefault(); go('vision')}}>Vizyon & Misyon</a>
