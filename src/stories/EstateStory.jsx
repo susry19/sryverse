@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Scene, Eye, H, P, Fx, Metrics, CtaRow } from './parts.jsx'
+import { Scene, Eye, H, P, Fx, Metrics } from './parts.jsx'
 
 /* ── Sahne 1: Problem ── */
 const PROBLEMS = [
@@ -479,7 +479,7 @@ const TRUST = [
 
 const TRUST_TAGS = ['Hibrit eşleştirme', 'KVKK odaklı maskeleme', 'Çok kiracılı SaaS', 'Kontrollü AI maliyeti']
 
-function TrustScene({ onDemo }) {
+function TrustScene({ onDemo, onOpenPage, pageKey }) {
   return (
     <Scene>
       <Fx><Eye>Arkasındaki güven</Eye></Fx>
@@ -512,18 +512,26 @@ function TrustScene({ onDemo }) {
       </Fx>
 
       <Fx delay={300}>
-        <CtaRow
-          href="https://estate.sryverse.com"
-          label="Platformu Aç"
-          onDemo={onDemo}
-        />
+        <div className="pcta-row">
+          {onOpenPage && pageKey && (
+            <button className="pbtn pbtn--solid" onClick={() => onOpenPage(pageKey)}>
+              Detaylı incele <span>→</span>
+            </button>
+          )}
+          <a className="pbtn pbtn--ghost" href="https://estate.sryverse.com" target="_blank" rel="noopener noreferrer">
+            Platformu Aç <span>→</span>
+          </a>
+          <button className="pbtn pbtn--ghost" onClick={onDemo}>
+            Demo Talep Et <span>→</span>
+          </button>
+        </div>
       </Fx>
     </Scene>
   )
 }
 
 /* ── Dışa açılan hikâye ── */
-export default function EstateStory({ onDemo }) {
+export default function EstateStory({ onDemo, onOpenPage, pageKey }) {
   return (
     <>
       <Scene>
@@ -552,7 +560,7 @@ export default function EstateStory({ onDemo }) {
       <MatchScene />
       <ChatScene />
       <RoiScene />
-      <TrustScene onDemo={onDemo} />
+      <TrustScene onDemo={onDemo} onOpenPage={onOpenPage} pageKey={pageKey} />
     </>
   )
 }

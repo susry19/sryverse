@@ -13,6 +13,7 @@ const PRODUCTS = [
     category: 'Recruitment Intelligence',
     desc: 'İşe alım süreçlerindeki karmaşıklığı çözen AI platformu — CV analizi, darboğaz tespiti ve aday eşleştirme.',
     url: 'https://skillmatch.sryverse.com',
+    page: 'skillmatch',       // detay sayfası
     rgb: '52, 211, 153',      // zümrüt
     Story: SkillStory,
   },
@@ -22,6 +23,7 @@ const PRODUCTS = [
     category: 'Real Estate Intelligence',
     desc: 'Gayrimenkul operasyonlarını sistemleştiren AI platformu — portföy yönetimi, akıllı eşleştirme ve müşteri zekası.',
     url: 'https://estate.sryverse.com',
+    page: 'estatematch',      // detay sayfası
     rgb: '56, 189, 248',      // camgöbeği
     Story: EstateStory,
   },
@@ -37,7 +39,7 @@ const PRODUCTS = [
 ]
 
 /* İmleci takip eden manyetik kart */
-function RailCard({ p, state, index, progress, onJump }) {
+function RailCard({ p, state, index, progress, onJump, onOpenPage }) {
   const ref = useRef(null)
 
   const onMove = useCallback((e) => {
@@ -66,7 +68,7 @@ function RailCard({ p, state, index, progress, onJump }) {
       ref={ref}
       className={`prcard prcard--${state}${p.soon ? ' prcard--soon' : ''}`}
       style={{ '--pc': p.rgb }}
-      onClick={() => onJump(index)}
+      onClick={() => (state === 'on' && p.page) ? onOpenPage(p.page) : onJump(index)}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       aria-current={state === 'on'}
@@ -79,7 +81,11 @@ function RailCard({ p, state, index, progress, onJump }) {
         <span className="prcard__cat" lang="en">{p.category}</span>
         <p className="prcard__desc">{p.desc}</p>
         <span className="prcard__cta">
-          {p.soon ? <>Yakında <span>✦</span></> : <>Tanıtımı gör <span>→</span></>}
+          {p.soon
+            ? <>Yakında <span>✦</span></>
+            : (state === 'on' && p.page)
+              ? <>Detaylı incele <span>→</span></>
+              : <>Tanıtımı gör <span>→</span></>}
         </span>
         <div className="prcard__prog">
           <div className="prcard__progfill" style={{ width: `${fill * 100}%` }} />
@@ -89,7 +95,7 @@ function RailCard({ p, state, index, progress, onJump }) {
   )
 }
 
-export default function ProductShowcase({ onDemo }) {
+export default function ProductShowcase({ onDemo, onOpenPage }) {
   const [active, setActive] = useState(0)
   const [progress, setProgress] = useState(0)
   const [overall, setOverall] = useState(0)
@@ -198,6 +204,7 @@ export default function ProductShowcase({ onDemo }) {
                   state={i === active ? 'on' : i < active ? 'done' : 'idle'}
                   progress={progress}
                   onJump={jumpTo}
+                  onOpenPage={onOpenPage}
                 />
               ))}
 
@@ -223,7 +230,7 @@ export default function ProductShowcase({ onDemo }) {
                     ref={el => { unitRefs.current[i] = el }}
                     style={{ '--pc': p.rgb }}
                   >
-                    <Story onDemo={onDemo} />
+                    <Story onDemo={onDemo} onOpenPage={onOpenPage} pageKey={p.page} />
                   </div>
                 )
               })}

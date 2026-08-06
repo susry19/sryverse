@@ -1,274 +1,336 @@
-import { useEffect, useRef } from 'react'
-import * as THREE from 'three'
-import { gsap } from 'gsap'
+import { useState, useEffect, useCallback } from 'react'
+import SkillMatch3D from './SkillMatch3D.jsx'
+import { Rev, Count, ScreenTour, Faq, RoiCalc, TRY } from './pageParts.jsx'
+import './ProductPage.css'
 
-function SkillMatch3D() {
-  const canvasRef = useRef(null)
+/* ── Ekran turu ──
+   NOT: Gorseller public/screens/skill-<key>.png olarak beklenir.
+   Dosya yoksa animasyonlu yer tutucu gosterilir. */
+const SCREENS = [
+  { key: 'dashboard', n: '01', t: 'Genel Bakış',    d: 'Aktif pozisyonlar, günün programı ve AI asistanın öncelik önerileri tek ekranda.', icon: '◱' },
+  { key: 'workforce', n: '02', t: 'Kadro İhtiyaçları', d: 'Bütçe, aktif çalışan ve net açık kadro; FTE açığı dönem bazında yönetilir.', icon: '▤' },
+  { key: 'wizard',    n: '03', t: 'Pozisyon Açma',  d: 'İhtiyaçtan yayına 6 adımlı akış: kapsam, bütçe, süreç, ilan ve onay.', icon: '⇱' },
+  { key: 'positions', n: '04', t: 'Pozisyon Yönetimi', d: 'Açık kadrolar, işe alım müdürü, hedef tarih ve pipeline ilerlemesi.', icon: '⇉' },
+  { key: 'pool',      n: '05', t: 'Aday Havuzu',    d: 'Tüm adaylar yetkinlikleri, seviyesi ve AI uyum oranıyla listelenir.', icon: '⌂' },
+  { key: 'profile',   n: '06', t: 'Aday Profili',   d: 'Profesyonel özet, yetkinlik haritası, güçlü yönler ve AI mesaj taslakları.', icon: '✦' },
+].map(s => ({ ...s, src: `/screens/skill-${s.key}.png` }))
 
-  useEffect(() => {
-    const container = canvasRef.current
-    if (!container) return
+/* ── Moduller ── */
+const MODULES = [
+  {
+    id: '01', h: 'Kadro İhtiyaç Planlaması',
+    p: 'Onaylı bütçe, aktif çalışan ve net açık kadro tek tabloda; hangi pozisyon için ilan açılması gerektiği kendiliğinden görünür.',
+    list: ['Otel, departman ve dönem bazında FTE açığı', 'Bütçe – aktif çalışan farkından net ihtiyaç hesabı', 'Excel ile toplu kadro planı yükleme'],
+  },
+  {
+    id: '02', h: 'Altı Adımlı Pozisyon Açma',
+    p: 'İhtiyaçtan yayına kadar tüm kontroller tek akışta tamamlanır; eksik onayla ilan yayına çıkmaz.',
+    list: ['Kapsam, ücret bandı ve kadro politikası kontrolü', 'Süreç ve sorumlu ekip ataması', 'AI ile ilan açıklaması ve yetkinlik üretimi'],
+  },
+  {
+    id: '03', h: 'CV Ayrıştırma ve Yetkinlik Haritası',
+    p: 'Yüklenen CV saniyeler içinde yapılandırılmış profile dönüşür; yetkinlikler, deneyim ve seviye otomatik çıkarılır.',
+    list: ['PDF ve toplu CV yükleme', 'Yetkinlik etiketleri ve seviye tespiti', 'Profesyonel özet ve güçlü yönlerin çıkarılması'],
+  },
+  {
+    id: '04', h: 'AI Pozisyon–Aday Eşleştirme',
+    p: 'Her aday için en uygun pozisyon ve uyum oranı hesaplanır; sıralamanın gerekçesi profilde açıklanır.',
+    list: ['Aday başına "en uygun pozisyon" önerisi', 'Yüzdelik uyum oranı ve güçlü yön listesi', 'Havuzdan pozisyona tek tıkla eşleştirme'],
+  },
+  {
+    id: '05', h: 'Pipeline ve İşe Giriş',
+    p: 'Başvurudan işe girişe kadar her aday Kanban üzerinde ilerler; bekleyen adımlar öncelik listesine düşer.',
+    list: ['Aday pipeline (Kanban) ve teklif onayları', 'Gelen yönlendirmeler ve kara liste yönetimi', 'İşe giriş adımlarının takibi'],
+  },
+  {
+    id: '06', h: 'Kampanya, QR ve İletişim',
+    p: 'Kapı başvurusu, kampanya ve QR ile gelen adaylar aynı havuzda toplanır; iletişim AI destekli hazırlanır.',
+    list: ['Kampanya ve QR ile başvuru toplama', 'AI ile WhatsApp mesajı ve mail taslağı', 'Aday zaman çizelgesi ve işlem geçmişi'],
+  },
+]
 
-    const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100)
-    camera.position.z = 8
+/* ── Fiyat paketleri ── */
+const PLANS = [
+  {
+    n: 'Starter', h: 'Tek lokasyon',
+    p: 'İşe alım sürecini tek merkeze taşımak isteyen büyüyen ekipler için.',
+    ul: ['5 kullanıcı · 1 lokasyon', 'Aylık 250 CV analizi', '10 aktif pozisyon', 'Kadro planlama ve aday havuzu'],
+    cta: 'Pilot başlat',
+  },
+  {
+    n: 'Professional', h: 'Çok lokasyonlu ekipler', best: true,
+    p: 'Birden fazla tesiste düzenli işe alım yapan İK departmanları için.',
+    ul: ['20 kullanıcı · 5 lokasyon', 'Aylık 2.000 CV analizi', 'Sınırsız pozisyon', 'Kampanya, QR ve AI iletişim'],
+    cta: 'Demo talep et',
+  },
+  {
+    n: 'Enterprise', h: 'Kurumsal yapı',
+    p: 'Zincir yapıda, merkez görünümü ve özel entegrasyon ihtiyacı olan kurumlar için.',
+    ul: ['Esnek kullanıcı · sınırsız lokasyon', 'Esnek analiz limiti', 'Merkez görünümü ve konsolide raporlama', 'ATS / HRIS entegrasyonu'],
+    cta: 'Görüşelim',
+  },
+]
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
-    renderer.setSize(container.clientWidth, container.clientHeight)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    container.appendChild(renderer.domElement)
+/* ── SSS ── */
+const FAQS = [
+  { q: 'Çok lokasyonlu yapımızda çalışır mı?',
+    a: 'Evet. Kadro ihtiyaçları otel/tesis, departman ve dönem bazında ayrı ayrı yönetilir. Merkez görünümünden tüm lokasyonların açık kadrosunu tek tabloda izleyebilir, yetkiyi lokasyon bazında dağıtabilirsiniz.' },
+  { q: 'Mevcut aday havuzumuzu ve kadro planımızı nasıl aktarırız?',
+    a: 'CV dosyalarınızı toplu yükleyebilir, kadro planınızı hazır Excel şablonuyla içe aktarabilirsiniz. Pilot sürecinde aktarımı birlikte yapıyor, alan eşleştirmesini sizin yapınıza göre ayarlıyoruz.' },
+  { q: 'Aday verileri güvende mi? KVKK uyumlu mu?',
+    a: 'Her organizasyonun verisi birbirinden izole tutulur. Ad, telefon ve e-posta gibi kişisel bilgiler yapay zekâya gönderilmeden önce maskelenir. Rol bazlı yetkilendirme ile kimin hangi veriyi göreceğini yönetici belirler.' },
+  { q: 'Yapay zekâ önyargılı karar verir mi?',
+    a: 'Uyum oranı yalnızca yetkinlik, deneyim ve pozisyon gereksinimleri üzerinden hesaplanır; ad, cinsiyet ve fotoğraf değerlendirmeye girmez. Her önerinin gerekçesi profilde açıkça gösterilir, karar işe alım ekibinde kalır.' },
+  { q: 'İlan ve aday iletişimi ne kadar otomatik?',
+    a: 'Sistem ilan açıklamasını ve yetkinlik listesini kadro detaylarından üretir. Aday iletişiminde WhatsApp mesajı ve mail taslağı AI ile hazırlanır; gönderim öncesi düzenleyip onaylarsınız.' },
+  { q: 'Pilot süreç nasıl işliyor?',
+    a: 'Önce kadro planlama ve işe alım akışınızı birlikte inceliyoruz, ardından sınırlı sayıda pozisyonla pilot başlatıyoruz. Pilot süresince aktarım, eğitim ve süreç uyarlaması bizim tarafımızdan yürütülür.' },
+]
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
-    scene.add(ambientLight)
+/* ── ROI ── */
+const ROI_FIELDS = [
+  { key: 'roles',   label: 'Aylık açık pozisyon',      min: 1,   max: 60,   step: 1 },
+  { key: 'cvs',     label: 'Pozisyon başına başvuru',  min: 10,  max: 600,  step: 10 },
+  { key: 'minutes', label: 'CV başına inceleme',       min: 1,   max: 30,   step: 1, unit: ' dk' },
+  { key: 'hourly',  label: 'Uzmanın saatlik değeri',   min: 100, max: 2000, step: 50, prefix: '₺' },
+]
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2)
-    dirLight.position.set(5, 5, 5)
-    scene.add(dirLight)
-
-    const pointLight = new THREE.PointLight(0x34d399, 1.5, 30)
-    pointLight.position.set(0, 0, 3)
-    scene.add(pointLight)
-
-    // Nodes Network Group
-    const group = new THREE.Group()
-    scene.add(group)
-
-    const nodeCount = 16
-    const nodes = []
-    const nodeGeometry = new THREE.SphereGeometry(0.18, 16, 16)
-    const nodeMaterial = new THREE.MeshPhongMaterial({
-      color: 0x34d399,
-      emissive: 0x064e3b,
-      shininess: 30,
-      flatShading: true
-    })
-
-    // Create random floating node spheres
-    for (let i = 0; i < nodeCount; i++) {
-      const mesh = new THREE.Mesh(nodeGeometry, nodeMaterial)
-      mesh.position.set(
-        (Math.random() - 0.5) * 4.5,
-        (Math.random() - 0.5) * 4.5,
-        (Math.random() - 0.5) * 4.5
-      )
-      // Save custom velocity data for floating animation
-      mesh.userData = {
-        vx: (Math.random() - 0.5) * 0.004,
-        vy: (Math.random() - 0.5) * 0.004,
-        vz: (Math.random() - 0.5) * 0.004,
-        ox: mesh.position.x,
-        oy: mesh.position.y,
-        oz: mesh.position.z
-      }
-      group.add(mesh)
-      nodes.push(mesh)
-    }
-
-    // Connect nodes with lines
-    const lineMaterial = new THREE.LineBasicMaterial({
-      color: 0x10b981,
-      transparent: true,
-      opacity: 0.35
-    })
-
-    let lineGeometry = new THREE.BufferGeometry()
-    let lines = new THREE.LineSegments(lineGeometry, lineMaterial)
-    group.add(lines)
-
-    // Mouse movement rotation handler
-    let mouseX = 0, mouseY = 0
-    const handleMouseMove = (e) => {
-      const rect = container.getBoundingClientRect()
-      mouseX = ((e.clientX - rect.left) / rect.width) - 0.5
-      mouseY = ((e.clientY - rect.top) / rect.height) - 0.5
-
-      gsap.to(group.rotation, {
-        y: mouseX * 0.8,
-        x: mouseY * 0.8,
-        duration: 1.5,
-        ease: 'power2.out'
-      })
-    }
-
-    container.addEventListener('mousemove', handleMouseMove)
-
-    // Animation Loop
-    let animId
-    const clock = new THREE.Clock()
-
-    const animate = () => {
-      animId = requestAnimationFrame(animate)
-      const elapsed = clock.getElapsedTime()
-
-      // Node floating & connection updates
-      const linePositions = []
-      
-      nodes.forEach((node, i) => {
-        // Float nodes gently around their origin
-        node.position.x = node.userData.ox + Math.sin(elapsed * 1.2 + i) * 0.25
-        node.position.y = node.userData.oy + Math.cos(elapsed * 1.5 + i) * 0.25
-        node.position.z = node.userData.oz + Math.sin(elapsed * 0.9 + i) * 0.25
-      })
-
-      // Update lines based on proximity
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dist = nodes[i].position.distanceTo(nodes[j].position)
-          if (dist < 2.5) {
-            linePositions.push(nodes[i].position.x, nodes[i].position.y, nodes[i].position.z)
-            linePositions.push(nodes[j].position.x, nodes[j].position.y, nodes[j].position.z)
-          }
-        }
-      }
-
-      group.remove(lines)
-      lineGeometry.dispose()
-      
-      lineGeometry = new THREE.BufferGeometry()
-      lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3))
-      lines = new THREE.LineSegments(lineGeometry, lineMaterial)
-      group.add(lines)
-
-      // Slow baseline rotation
-      group.rotation.y += 0.001
-
-      renderer.render(scene, camera)
-    }
-
-    animate()
-
-    // Resize handler
-    const handleResize = () => {
-      if (!container) return
-      camera.aspect = container.clientWidth / container.clientHeight
-      camera.updateProjectionMatrix()
-      renderer.setSize(container.clientWidth, container.clientHeight)
-    }
-    window.addEventListener('resize', handleResize)
-
-    return () => {
-      container.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('resize', handleResize)
-      cancelAnimationFrame(animId)
-      
-      scene.clear()
-      nodeGeometry.dispose()
-      nodeMaterial.dispose()
-      lineGeometry.dispose()
-      lineMaterial.dispose()
-      renderer.dispose()
-      if (container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement)
-      }
-    }
-  }, [])
-
-  return <div ref={canvasRef} style={{ width: '100%', height: '100%', minHeight: '350px' }} />
+function computeRoi({ roles, cvs, minutes, hourly }) {
+  const hours = Math.round((roles * cvs * minutes) / 60)
+  const monthly = hours * hourly
+  return { hours, monthly, yearly: monthly * 12, days: Math.round(hours / 8) }
 }
 
-export default function SkillMatchPage({ goBack }) {
+/* ══════════════ SAYFA ══════════════ */
+export default function SkillMatchPage({ goBack, onDemo }) {
+  const [openFaq, setOpenFaq] = useState(0)
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => { window.scrollTo(0, 0) }, [])
+
   useEffect(() => {
-    window.scrollTo(0, 0)
+    let raf = 0
+    const measure = () => {
+      raf = 0
+      const h = document.documentElement.scrollHeight - window.innerHeight
+      setProgress(h > 0 ? Math.min(100, (window.scrollY / h) * 100) : 0)
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(measure) }
+    measure()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      if (raf) cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
   }, [])
 
-  const features = [
-    { title: 'Semantik CV Analizi', desc: 'Adayların özgeçmişlerini sadece kelime bazlı değil, anlamsal ve yetkinlik bazlı olarak analiz eder.' },
-    { title: 'Pozisyon Eşleştirme', desc: 'Aday yetenek setleri ile şirket pozisyon gereksinimlerini çok boyutlu vektör uzayında karşılaştırır.' },
-    { title: 'Darboğaz Tespiti', desc: 'İşe alım sürecindeki gecikmeleri ve verimsiz aşamaları otomatik olarak raporlar.' },
-    { title: 'Mülakat Zekası', desc: 'Aday mülakat yanıtlarını değerlendirerek yetkinlik eşleşmesini sayısal metriklere döker.' }
-  ]
+  const demo = useCallback(() => {
+    if (onDemo) onDemo()
+    else goBack?.()
+  }, [onDemo, goBack])
 
   return (
-    <main className="vpage">
-      <Background density={1} color="34,197,94" boost={0.4} />
-      <div className="hero__veil" style={{ background: 'linear-gradient(180deg, rgba(4,14,9,0.15) 0%, rgba(4,14,9,0.95) 100%)' }} />
+    <main className="epage epage--skill">
+      <div className="epage__progress" style={{ width: `${progress}%` }} />
 
-      <section className="vpage__hero" style={{ paddingBottom: '3rem', position: 'relative', zIndex: 10 }}>
+      {/* ── HERO ── */}
+      <section className="ehero">
+        <div className="ehero__bg" />
+        <div className="ehero__grid" />
         <div className="wrap">
-          <button 
-            onClick={goBack} 
-            className="cta-btn" 
-            style={{ 
-              background: 'rgba(255,255,255,0.06)', 
-              color: '#fff', 
-              border: '1px solid rgba(255,255,255,0.1)',
-              marginBottom: '2.5rem',
-              cursor: 'pointer'
-            }}
-          >
-            ← Geri Dön
-          </button>
-          
-          <div className="product-split" style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '4rem', alignItems: 'center' }}>
-            {/* Left Column: Text Content */}
+          <button className="eback" onClick={goBack}>← Ana sayfaya dön</button>
+
+          <div className="ehero__in">
             <div>
-              <span className="elabel elabel--light" style={{ color: '#34d399' }}>SKILLMATCH AI</span>
-              <h1 className="vpage__h1" style={{ textAlign: 'left', marginTop: '1rem' }}>
-                İşe alımda manuel filtrelemeyi sonlandırın.<br />
-                <em>Yetenekleri anlamsal vektörlerle eşleyin.</em>
+              <span className="ehero__eye"><i />SkillMatch AI · Recruitment Intelligence</span>
+              <h1 className="ehero__h1">
+                CV'leri değil,<br /><em>yetenek potansiyelini görün.</em>
               </h1>
-              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.1rem', lineHeight: '1.8', marginBottom: '2.5rem' }}>
-                SkillMatch AI, işe alım süreçlerindeki karmaşıklığı ortadan kaldırarak adaylar ile pozisyonları en yüksek doğrulukla eşleştiren kurumsal yapay zekâ asistanınızdır.
+              <p className="ehero__sub">
+                Başvuruları saniyeler içinde yapılandıran, pozisyonla uyumu gerekçesiyle açıklayan
+                ve işe alım kararını ölçülebilir hâle getiren platform.
               </p>
-              <div>
-                <a 
-                  href="https://skillmatch.sryverse.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="cta-btn"
-                  style={{ background: '#10b981', color: '#fff', boxShadow: '0 10px 30px rgba(16,185,129,0.3)', marginRight: '1rem' }}
-                >
-                  Platformu Aç (Launch App) →
+              <div className="ehero__ctas">
+                <button className="ebtn ebtn--solid" onClick={demo}>Pilot başlat <span>→</span></button>
+                <a className="ebtn ebtn--ghost" href="https://skillmatch.sryverse.com" target="_blank" rel="noopener noreferrer">
+                  Platformu aç <span>→</span>
                 </a>
               </div>
             </div>
 
-            {/* Right Column: Dedicated 3D Canvas */}
-            <div className="product-3d-box" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '24px', padding: '1rem', overflow: 'hidden', boxShadow: '0 30px 60px rgba(0,0,0,0.4)', height: '450px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <SkillMatch3D />
-            </div>
+            <div className="ehero__3d"><SkillMatch3D /></div>
+          </div>
+
+          <div className="estrip">
+            {[
+              { v: '1.4 sn', l: 'CV analiz süresi' },
+              { v: '%90', l: 'ön eleme tasarrufu' },
+              { v: '12 tesis', l: 'tek merkezden yönetim' },
+              { v: '6 adım', l: 'ihtiyaçtan yayına' },
+            ].map((x, i) => (
+              <div key={i} className="estrip__i">
+                <div className="estrip__v"><Count value={x.v} /></div>
+                <span className="estrip__l">{x.l}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="vpage__blocks" style={{ paddingTop: '4rem', position: 'relative', zIndex: 10 }}>
+      {/* ── EKRAN TURU ── */}
+      <section className="esec esec--tint">
         <div className="wrap">
-          <h2 style={{ fontFamily: 'var(--fs)', fontSize: '2.5rem', color: '#fff', textAlign: 'center', marginBottom: '3.5rem' }}>
-            Öne Çıkan <em>Yetenekler</em>
-          </h2>
-          
-          <div className="vpage__grid">
-            {features.map((f, i) => (
-              <div key={i} className="vblock" style={{ borderLeft: '4px solid #10b981' }}>
-                <span className="vblock__id">0{i+1}</span>
-                <h3 className="vblock__h" style={{ fontSize: '1.6rem' }}>{f.title}</h3>
-                <p className="vblock__p">{f.desc}</p>
-              </div>
+          <Rev>
+            <div className="esec__head">
+              <span className="eeye">Ürün turu</span>
+              <h2 className="eh2">Kadro ihtiyacından işe girişe, <em>tek akışta.</em></h2>
+              <p className="ep">
+                Bütçedeki açık kadrodan ilana, ilandan aday havuzuna ve işe girişe kadar her adım
+                aynı sistemin parçası.
+              </p>
+            </div>
+          </Rev>
+          <Rev delay={100}>
+            <ScreenTour
+              screens={SCREENS}
+              domain="skillmatch.sryverse.com"
+              product="SkillMatch AI"
+            />
+          </Rev>
+        </div>
+      </section>
+
+      {/* ── MODULLER ── */}
+      <section className="esec">
+        <div className="wrap">
+          <Rev>
+            <div className="esec__head">
+              <span className="eeye">Yetenekler</span>
+              <h2 className="eh2">Planlamadan işe girişe, <em>her adımda bir karşılığı var.</em></h2>
+            </div>
+          </Rev>
+          <div className="emods">
+            {MODULES.map((m, i) => (
+              <Rev key={m.id} delay={i * 70}>
+                <div className="emod">
+                  <span className="emod__id">{m.id}</span>
+                  <h3 className="emod__h">{m.h}</h3>
+                  <p className="emod__p">{m.p}</p>
+                  <ul className="emod__list">
+                    {m.list.map((li, j) => <li key={j}>{li}</li>)}
+                  </ul>
+                </div>
+              </Rev>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div style={{ marginTop: '5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '3.5rem', textAlign: 'center' }}>
-            <h3 style={{ fontFamily: 'var(--fs)', fontSize: '2.1rem', color: '#fff', marginBottom: '1.5rem' }}>
-              Operasyonunuzu Hızlandırmaya Hazır Mısınız?
-            </h3>
-            <p style={{ color: 'rgba(255,255,255,0.6)', maxWidth: '600px', margin: '0 auto 2.5rem', fontSize: '1.05rem' }}>
-              İşe alım huninizdeki dönüşüm oranlarını artırmak ve aday kalitesini sayısal olarak izlemek için entegrasyon sürecini hemen başlatın.
-            </p>
-            <button 
-              onClick={() => {
-                goBack();
-                setTimeout(() => {
-                  const contactEl = document.querySelector('#contact');
-                  if (contactEl) contactEl.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-              }}
-              className="cta-btn"
-              style={{ background: '#fff', color: '#000' }}
-            >
-              Demo Talep Et
-            </button>
+      {/* ── ROI ── */}
+      <section className="esec esec--tint">
+        <div className="wrap">
+          <Rev>
+            <div className="esec__head esec__head--mid">
+              <span className="eeye">Kendi ekibinizle hesaplayın</span>
+              <h2 className="eh2">Ön elemeden <em>kazandığınız zaman.</em></h2>
+              <p className="ep">
+                Değerleri değiştirin; yalnızca CV ön eleme süresinden doğan kazanımı anında görün.
+              </p>
+            </div>
+          </Rev>
+          <Rev delay={100}>
+            <RoiCalc
+              fields={ROI_FIELDS}
+              initial={{ roles: 8, cvs: 120, minutes: 7, hourly: 450 }}
+              compute={computeRoi}
+              note="Hesaplama yalnızca ön eleme süresini temel alır; mülakat planlama, geri bildirim ve raporlama kazanımları dahil değildir."
+            />
+          </Rev>
+        </div>
+      </section>
+
+      {/* ── FIYATLANDIRMA ── */}
+      <section className="esec">
+        <div className="wrap">
+          <Rev>
+            <div className="esec__head esec__head--mid">
+              <span className="eeye">Büyümeye hazır</span>
+              <h2 className="eh2">Ekibiniz neredeyse, <em>oradan başlayın.</em></h2>
+            </div>
+          </Rev>
+          <div className="eplans">
+            {PLANS.map((p, i) => (
+              <Rev key={p.n} delay={i * 90}>
+                <div className={`eplan${p.best ? ' eplan--best' : ''}`}>
+                  {p.best && <span className="eplan__tag">En çok tercih edilen</span>}
+                  <span className="eplan__n">{p.n}</span>
+                  <h3 className="eplan__h">{p.h}</h3>
+                  <p className="eplan__p">{p.p}</p>
+                  <ul className="eplan__ul">
+                    {p.ul.map((li, j) => <li key={j}>{li}</li>)}
+                  </ul>
+                  <button className="eplan__btn" onClick={demo}>{p.cta}</button>
+                </div>
+              </Rev>
+            ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── SSS ── */}
+      <section className="esec esec--tint">
+        <div className="wrap">
+          <Rev>
+            <div className="esec__head esec__head--mid">
+              <span className="eeye">Sık sorulanlar</span>
+              <h2 className="eh2">Merak edilenler.</h2>
+            </div>
+          </Rev>
+          <Rev delay={80}>
+            <div className="efaqs">
+              {FAQS.map((f, i) => (
+                <Faq
+                  key={i}
+                  q={f.q}
+                  a={f.a}
+                  open={openFaq === i}
+                  onToggle={() => setOpenFaq(openFaq === i ? -1 : i)}
+                />
+              ))}
+            </div>
+          </Rev>
+        </div>
+      </section>
+
+      {/* ── KAPANIS ── */}
+      <section className="esec">
+        <div className="wrap">
+          <Rev>
+            <div className="ecta">
+              <div className="ecta__glow" />
+              <div className="ecta__in">
+                <h2 className="ecta__h">
+                  İşe alımınızın<br /><em>yeni işletim sistemi.</em>
+                </h2>
+                <p className="ecta__p">
+                  Doğru aday. Doğru pozisyon. Doğru zaman. Pilot programa katılın, sürecinizi
+                  birlikte kuralım.
+                </p>
+                <div className="ecta__row">
+                  <button className="ebtn ebtn--solid" onClick={demo}>Pilot programa katıl <span>→</span></button>
+                  <a
+                    className="ebtn ebtn--ghost"
+                    href="https://wa.me/905315178170?text=Merhaba%2C%20SkillMatch%20AI%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum."
+                    target="_blank" rel="noopener noreferrer"
+                  >
+                    WhatsApp'tan yazın <span>→</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </Rev>
         </div>
       </section>
     </main>
