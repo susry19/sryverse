@@ -1,0 +1,16 @@
+# Apache / cPanel sunucularda tek sayfa uygulaması yönlendirmesi.
+# Var olmayan bir dosya istendiğinde index.html döndürülür ki
+# /skillmatch gibi adresler doğrudan açıldığında 404 vermesin.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Gerçek dosya veya klasör varsa dokunma (görseller, js, css)
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Geri kalan her şeyi uygulamaya devret
+  RewriteRule ^ index.html [L]
+</IfModule>

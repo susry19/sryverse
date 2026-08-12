@@ -20,7 +20,12 @@
   --font-mono: 'DM Mono', monospace;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* Yatay taşmayı kökten engelle; iOS Safari'de body tek başına yetmez */
+  overflow-x: hidden;
+  max-width: 100%;
+}
 body {
   font-family: var(--font-sans);
   background: var(--bg);
@@ -28,7 +33,20 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  max-width: 100%;
+  position: relative;
 }
+
+/* Medya öğeleri kabına sığsın */
+img, svg, video, canvas { max-width: 100%; height: auto; }
+canvas { display: block; }
+
+/* Uzun kelime ve adresler kutuyu zorlamasın */
+h1, h2, h3, h4, p, li, a, span, label, button { overflow-wrap: break-word; }
+
+/* Grid ve flex çocukları içeriğe göre şişmesin — mobil taşmanın
+   en yaygın sebebi budur (min-width varsayılanı auto'dur). */
+.wrap > *, main, section { min-width: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }

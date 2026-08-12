@@ -354,6 +354,6 @@ npm run preview  # Preview production build locally
 - **Social**: LinkedIn, GitHub (links in footer)
 
 ---
-
+------
 *Last Updated: 2026-08-06*
 *Maintained by: beyzaacetin*

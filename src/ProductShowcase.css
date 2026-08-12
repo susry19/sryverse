@@ -1038,50 +1038,115 @@
 @media (max-width: 900px) {
   /* Mobilde yapışkanlığı bırak: kartlar üstte yatay şerit, hikâye altta akar */
   .pshow__stage { grid-template-columns: 1fr; gap: 1.5rem; }
+
+  /* Grid çocuğunun içeriğe göre genişlemesini engelle — taşmanın ana sebebi */
+  .pshow__rail,
+  .pshow__story { min-width: 0; max-width: 100%; }
+
   .pshow__rail {
     position: sticky;
-    top: 74px;
-    background: rgba(255, 255, 255, .9);
+    top: 68px;
+    background: rgba(255, 255, 255, .92);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    margin: 0 -1.5rem;
-    padding: .85rem 1.5rem;
+    /* Şeridi kenardan kenara taşır; padding aynı değerle telafi eder */
+    margin-left: calc(-1 * var(--wrap-pad));
+    margin-right: calc(-1 * var(--wrap-pad));
+    padding: .7rem var(--wrap-pad);
     border-bottom: 1px solid var(--border);
     z-index: 20;
   }
   .prail {
     flex-direction: row;
-    gap: .6rem;
+    gap: .5rem;
     overflow-x: auto;
+    overflow-y: hidden;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    /* Şeridin sonunda son kart kenara yapışmasın */
+    padding-right: var(--wrap-pad);
   }
   .prail::-webkit-scrollbar { display: none; }
   .prail__spine { display: none; }
+  .prail__count { display: none; }
+
   .prcard {
     flex: 0 0 auto;
-    min-width: 166px;
-    padding: .8rem 1.05rem;
+    width: 44vw;
+    max-width: 190px;
+    min-width: 0;
+    padding: .75rem .9rem;
     transform: none !important;
     scale: 1 !important;
-    opacity: .8;
+    opacity: .78;
+    scroll-snap-align: start;
   }
-  .prcard--on { padding: .8rem 1.05rem; opacity: 1; }
-  .prcard__desc, .prcard__cta, .prcard__canvas { display: none; }
-  .prcard__name { font-size: 1.15rem; }
-  .prcard--on .prcard__name { font-size: 1.15rem; }
-  .prcard__cat { font-size: 10px; }
-  .pmetrics, .pprobs { grid-template-columns: 1fr; }
-  .pmatch, .proi, .ptrust { grid-template-columns: 1fr; }
-  .pflow { grid-template-columns: 1fr; }
+  .prcard--on { padding: .75rem .9rem; opacity: 1; }
+  .prcard__desc, .prcard__cta, .prcard__canvas,
+  .prcard__sheen, .prcard__ring { display: none; }
+  .prcard__name,
+  .prcard--on .prcard__name {
+    font-size: 1.02rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .prcard__cat {
+    font-size: 9px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  /* Ağ ve derinlik efektleri mobilde kapalı */
+  .pshow__web { display: none; }
+  .pscene { transform: none !important; opacity: 1 !important; }
+
+  /* Çok sütunlu her şey tek sütuna */
+  .pmetrics, .pprobs, .pmatch, .proi, .ptrust, .pflow {
+    grid-template-columns: 1fr;
+  }
   .pversus { grid-template-columns: 1fr; gap: 1rem; text-align: center; }
   .pvs__arrow { transform: rotate(90deg); }
 }
 
 @media (max-width: 600px) {
-  .pshow { padding-top: 4.5rem; }
-  .pscene__in { padding: 1.75rem 1.35rem 2rem; }
+  .pshow { padding-top: 4rem; }
+  .pscene__in { padding: 1.5rem 1.15rem 1.75rem; }
+  .pstory__unit { padding-bottom: 3rem; }
+
+  /* Arama kutusu ve butonlar alt alta */
+  .psearch { padding: 1.1rem; }
   .psearch__bar { flex-direction: column; align-items: stretch; }
-  .pbub { max-width: 94%; }
+  .psearch__btn { width: 100%; }
+
+  /* Sonuç kartı: skor üstte, metin altta */
+  .pres { grid-template-columns: 1fr; gap: .5rem; padding: .9rem 1rem; }
+  .pres__score { text-align: left; min-width: 0; font-size: 1.2rem; }
+
+  .pbub { max-width: 100%; }
+  .pchat__body { padding: 1rem; }
+  .pchat__qs { padding: 0 1rem 1rem; }
+  .pchat__status { display: none; }
+
+  .pcta-row { flex-direction: column; align-items: stretch; }
+  .pbtn { justify-content: center; width: 100%; }
+
+  .pscore__ring { width: 96px; height: 96px; }
+  .proi__out { padding: 1.35rem; }
+  .pmetric__v { font-size: 1.6rem; }
+}
+
+@media (max-width: 380px) {
+  .prcard { width: 52vw; }
+  .pscene__in { padding: 1.25rem 1rem 1.5rem; }
+}
+
+/* Sabit WhatsApp butonu bölüm sonundaki metni kapatmasın */
+@media (max-width: 900px) {
+  .pshow__outro { height: 5rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

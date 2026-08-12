@@ -828,9 +828,15 @@
 .ecta__row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
 
 /* ── RESPONSIVE ── */
+
+/* Grid çocukları içeriğe göre şişmesin */
+.ehero__in > *, .etour > *, .eroi > *, .emods > *, .eplans > * { min-width: 0; }
+
 @media (max-width: 1024px) {
   .ehero__in { grid-template-columns: 1fr; gap: 3rem; }
   .ehero__3d { height: 340px; }
+
+  /* Tur: liste üstte yatay, ekran altta */
   .etour { grid-template-columns: 1fr; gap: 1.75rem; }
   .etour__viewport { border-left: none; border-bottom: 1px solid rgba(255,255,255,.1); }
   .etour__page { flex-direction: row; }
@@ -839,14 +845,20 @@
     min-width: 0;
     min-height: 0;
     border-radius: 10px 10px 0 0;
-    padding: .9rem 1rem;
+    padding: .9rem .75rem;
   }
   .etour__btn::before { left: 0; right: 0; top: auto; bottom: -1px; width: auto; height: 2px; transform: scaleX(0); transform-origin: left; }
-  .etour__btn--on { padding-left: 1rem; }
+  .etour__btn--on { padding-left: .75rem; }
   .etour__btn--on::before { transform: scaleX(1); }
   .etour__d { display: none; }
-  .etour__t { font-size: .92rem; }
+  .etour__t {
+    font-size: .9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .etour__ctrl { padding-left: 0; }
+
   .eplans { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
   .eroi { grid-template-columns: 1fr; gap: 2rem; padding: 2rem; }
 }
@@ -857,12 +869,63 @@
   .ehero { padding: 9.5rem 0 3.5rem; }
   .esec { padding: 4.5rem 0; }
   .ecta { padding: 3rem 1.75rem; }
+  .ehero__3d { height: 300px; }
+}
+
+@media (max-width: 620px) {
+  .ehero { padding: 8.5rem 0 2.5rem; }
+  .ehero__3d { height: 260px; }
+  .ehero__sub { font-size: 1rem; }
+  .estrip { grid-template-columns: repeat(2, 1fr); gap: 1.1rem; margin-top: 2.5rem; padding-top: 2rem; }
+  .estrip__v { font-size: 1.6rem; }
+
+  /* Tur butonları: 3 yan yana dar ekranda sığmıyor — numara + kısa ad */
+  .etour__btn { padding: .75rem .5rem; text-align: center; }
+  .etour__n { margin-bottom: .25rem; font-size: .58rem; }
+  .etour__t { font-size: .78rem; }
+  .etour__ctrl { gap: .5rem; }
+  .etour__arrow { width: 30px; height: 30px; font-size: 1.1rem; }
+  .etour__count { font-size: .62rem; }
+
+  /* Dar ekranda görüntüyü kırpmak yerine tamamını göster.
+     Panel ekranları geniş olduğu için çerçeve de yatay kalmalı,
+     yoksa görsel küçücük kalıp okunmaz oluyor. */
+  .eshot__frame { aspect-ratio: 16 / 10; }
+  .eshot__img { object-fit: contain; object-position: center; background: #05161a; }
+  .eshot__url { font-size: .6rem; }
+
+  /* Sabit WhatsApp butonu son bölümün metnini kapatmasın */
+  .esec:last-of-type { padding-bottom: 7rem; }
+
+  .emod { padding: 1.5rem 1.35rem; }
+  .emod__h { font-size: 1.3rem; }
+
+  .eroi { padding: 1.5rem; gap: 1.5rem; }
+  .eroi__out { padding: 1.35rem; }
+  .eroi__big { font-size: 2rem; }
+
+  .eplan { padding: 1.85rem 1.5rem; }
+  .eplan__p { min-height: 0; }
+
+  .efaq__q { font-size: .96rem; padding: 1.2rem .25rem; gap: 1rem; }
+  .efaq__q:hover { padding-left: .25rem; }
+  .efaq--on .efaq__a { padding: 0 .25rem 1.3rem; }
+  .efaq__a p { font-size: .92rem; }
+
+  .ecta { padding: 2.5rem 1.35rem; }
+  .ecta__row { flex-direction: column; align-items: stretch; }
+  .esec__head { margin-bottom: 2.5rem; }
 }
 
 @media (max-width: 520px) {
   .estrip { grid-template-columns: 1fr; }
   .ehero__ctas { flex-direction: column; align-items: stretch; }
-  .ebtn { justify-content: center; }
+  .ebtn { justify-content: center; width: 100%; }
+  .eback { margin-bottom: 1.75rem; }
+}
+
+@media (max-width: 380px) {
+  .etour__t { font-size: .72rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

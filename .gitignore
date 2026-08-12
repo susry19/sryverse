@@ -1,6 +1,9 @@
 # Bağımlılıklar
 node_modules/
 
+# Build çıktısı — Vercel her deploy'da kendisi üretir
+dist/
+
 # Log dosyaları
 *.log
 npm-debug.log*

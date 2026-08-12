@@ -4,6 +4,7 @@ import Terminal from './Terminal.jsx'
 import SkillMatchPage from './SkillMatchPage.jsx'
 import EstateMatchPage from './EstateMatchPage.jsx'
 import ProductShowcase from './ProductShowcase.jsx'
+import useRoute from './useRoute.js'
 import './App.css'
 
 /* ── hooks ── */
@@ -262,7 +263,7 @@ function VisionPage() {
 export default function App() {
   const [scrollY, setScrollY] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [page, setPage] = useState('home')
+  const [page, setPage] = useRoute()
   const [heroRef, heroOn] = useReveal(0.05)
 
   useEffect(() => {
@@ -311,7 +312,7 @@ export default function App() {
             </span>
           </a>
           <nav className={`hdr__nav${menuOpen?' hdr__nav--open':''}`}>
-            {nav.map(n => <a key={n.label} href={n.target==='vision'?'#':n.target} className={`nlink${(n.target==='vision'&&page==='vision') ? ' nlink--cur' : ''}`} onClick={e=>{e.preventDefault(); go(n.target)}}>{n.label}</a>)}
+            {nav.map(n => <a key={n.label} href={n.target==='vision'?'/vizyon':n.target} className={`nlink${(n.target==='vision'&&page==='vision') ? ' nlink--cur' : ''}`} onClick={e=>{e.preventDefault(); go(n.target)}}>{n.label}</a>)}
           </nav>
           <div className="hdr__act">
             <a href="#products" className="hbtn hbtn--g" onClick={e=>{e.preventDefault(); go('#products')}}>Ürünleri Keşfet</a>
@@ -441,12 +442,12 @@ export default function App() {
           </div>
           <div className="footer__links">
             <div className="fcol"><h5>Ürünler</h5>
-              <a href="#products" onClick={e=>{e.preventDefault(); go('#products')}}>SkillMatch AI</a>
-              <a href="#products" onClick={e=>{e.preventDefault(); go('#products')}}>EstateMatch AI</a>
+              <a href="/skillmatch" onClick={e=>{e.preventDefault(); setPage('skillmatch')}}>SkillMatch AI</a>
+              <a href="/estatematch" onClick={e=>{e.preventDefault(); setPage('estatematch')}}>EstateMatch AI</a>
               <a href="#products" onClick={e=>{e.preventDefault(); go('#products')}}>Metraj AI <span style={{opacity:.5,fontSize:'.78em'}}>· yakında</span></a>
             </div>
             <div className="fcol"><h5>Şirket</h5>
-              <a href="#" onClick={e=>{e.preventDefault(); go('vision')}}>Vizyon & Misyon</a>
+              <a href="/vizyon" onClick={e=>{e.preventDefault(); go('vision')}}>Vizyon & Misyon</a>
               <a href="#methodology" onClick={e=>{e.preventDefault(); go('#methodology')}}>Metodoloji</a>
               <a href="#contact" onClick={e=>{e.preventDefault(); go('#contact')}}>İletişim</a>
             </div>

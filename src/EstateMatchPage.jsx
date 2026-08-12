@@ -145,7 +145,6 @@ export default function EstateMatchPage({ goBack, onDemo }) {
 
           <div className="ehero__in">
             <div>
-              <span className="ehero__eye"><i />EstateMatch AI · Real Estate Intelligence</span>
               <h1 className="ehero__h1">
                 Portföylerinizi değil,<br /><em>fırsatlarınızı yönetin.</em>
               </h1>
