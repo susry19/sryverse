@@ -1358,6 +1358,39 @@
   box-shadow: 0 14px 34px rgba(var(--pc), .18);
 }
 
+/* ── Gerçek ürün ekranı (tarayıcı çerçevesi) — soyut demoların arasında somut kanıt ── */
+.pshot {
+  position: relative;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: linear-gradient(160deg, rgba(var(--pc), .08), #05161a);
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .4);
+}
+.pshot__bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: .7rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  background: rgba(255, 255, 255, .03);
+}
+.pshot__dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .18); }
+.pshot__url {
+  margin-left: .6rem;
+  font-family: var(--fm);
+  font-size: .64rem;
+  color: rgba(255, 255, 255, .35);
+  letter-spacing: .03em;
+}
+.pshot__img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top center;
+}
+
 /* Mobilde ağ ve derinlik kapalı — performans ve okunabilirlik */
 @media (max-width: 900px) {
   .pshow__web { display: none; }

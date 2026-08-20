@@ -52,6 +52,42 @@ function ProblemScene() {
   )
 }
 
+/* ── Sahne 1.5: Gerçek ürün ekranı — soyut anlatının arasında somut kanıt ── */
+function ProductScene({ onOpenPage, pageKey }) {
+  return (
+    <Scene>
+      <Fx><Eye>Gerçek ürün</Eye></Fx>
+      <Fx delay={60}>
+        <H>Konsept değil, <em>çalışan platform.</em></H>
+      </Fx>
+      <Fx delay={120}>
+        <P>
+          Aşağıda EstateMatch AI panelinden bir kesit görüyorsunuz — aktif portföy, sıcak
+          müşteriler ve AI öngörüleri tek ekranda toplanır.
+        </P>
+      </Fx>
+      <Fx delay={180}>
+        <div className="pshot">
+          <div className="pshot__bar">
+            <span className="pshot__dot" /><span className="pshot__dot" /><span className="pshot__dot" />
+            <span className="pshot__url">estate.sryverse.com — Panel</span>
+          </div>
+          <img className="pshot__img" src="/screens/dashboard.png" alt="EstateMatch AI panel ekranı" loading="lazy" />
+        </div>
+      </Fx>
+      {onOpenPage && pageKey && (
+        <Fx delay={240}>
+          <div className="pcta-row">
+            <button className="pbtn pbtn--solid" onClick={() => onOpenPage(pageKey)}>
+              Tüm ekranları gör <span>→</span>
+            </button>
+          </div>
+        </Fx>
+      )}
+    </Scene>
+  )
+}
+
 /* ── Sahne 2: Akıllı arama (interaktif) ── */
 const LISTINGS = [
   {
@@ -555,6 +591,7 @@ export default function EstateStory({ onDemo, onOpenPage, pageKey }) {
       </Scene>
 
       <ProblemScene />
+      <ProductScene onOpenPage={onOpenPage} pageKey={pageKey} />
       <SearchScene />
       <FlowScene />
       <MatchScene />

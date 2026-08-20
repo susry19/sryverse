@@ -336,7 +336,22 @@
   .lticker{padding:1.75rem 1.5rem}.vpage__hero{padding:10rem 0 5rem}
   .method__bignum{position:static;transform:none;font-size:5.5rem;margin-bottom:-.5rem;animation:fadeUp .5s ease}
 }
-@media(max-width:480px){:root{--wrap-pad:1.15rem}.lticker__grid{grid-template-columns:1fr}.hero__ctas{flex-direction:column;align-items:flex-start}.iflow{display:none}.terminal-tabs .ttab__name{font-size:8.5px}}
+@media(max-width:480px){
+  :root{--wrap-pad:1.15rem}
+  .lticker__grid{grid-template-columns:1fr}
+  .hero__ctas{flex-direction:column;align-items:flex-start}
+  .terminal-tabs .ttab__name{font-size:8.5px}
+  /* Intel Flow: dar ekranda tek satır + yatay kaydırma; adım çemberleri ve
+     bağlantı çizgileri aynı kalır, sadece taşma yerine kaydırılabilir olur. */
+  .iflow{flex-wrap:nowrap;overflow-x:auto;padding:1.6rem 1.25rem 1.5rem;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .iflow::-webkit-scrollbar{display:none}
+  .iflow__scan{display:none}
+  .fn{flex:0 0 74px}
+  .fn__c{width:38px;height:38px;margin-bottom:.65rem}
+  .fn__c span{font-size:.68rem}
+  .fn__line{top:19px;left:calc(50% + 19px);right:calc(-50% + 19px)}
+  .fn__txt b{font-size:.72rem;white-space:normal;line-height:1.15}
+}
 
 
 /* ══ WHATSAPP ══ */

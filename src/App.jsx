@@ -4,6 +4,7 @@ import Terminal from './Terminal.jsx'
 import SkillMatchPage from './SkillMatchPage.jsx'
 import EstateMatchPage from './EstateMatchPage.jsx'
 import ProductShowcase from './ProductShowcase.jsx'
+import SiteAssistant from './SiteAssistant.jsx'
 import useRoute from './useRoute.js'
 import './App.css'
 
@@ -423,6 +424,8 @@ export default function App() {
 
       </main>
       )}
+
+      <SiteAssistant />
 
       <a className="wa-fab" href="https://wa.me/905315178170?text=Merhaba%2C%20SRYVERSE%20%C3%BCr%C3%BCnleri%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ile iletişime geçin">
         <span className="wa-fab__label">WhatsApp'tan Yazın</span>
