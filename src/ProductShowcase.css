@@ -1161,7 +1161,9 @@
    ══════════════════════════════════════════════════════ */
 
 /* Bölüm zemininde aktif ürünün rengini taşıyan hare */
-.pshow { --pc: 52, 211, 153; overflow: clip; }
+/* overflow-x ile sınırlı: yatay taşmayı keser ama dikey `position: sticky`
+   davranışını bozmaz (overflow: clip tüm eksenlerde sticky'yi devre dışı bırakır). */
+.pshow { --pc: 52, 211, 153; }
 .pshow__aura {
   position: absolute;
   inset: 0;

@@ -68,7 +68,7 @@ function RailCard({ p, state, index, progress, onJump, onOpenPage }) {
       ref={ref}
       className={`prcard prcard--${state}${p.soon ? ' prcard--soon' : ''}`}
       style={{ '--pc': p.rgb }}
-      onClick={() => (state === 'on' && p.page) ? onOpenPage(p.page) : onJump(index)}
+      onClick={() => p.page ? onOpenPage(p.page) : onJump(index)}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       aria-current={state === 'on'}

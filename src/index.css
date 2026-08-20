@@ -32,9 +32,10 @@ body {
   color: var(--text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-  max-width: 100%;
-  position: relative;
+  /* overflow-x/position burada YOK: html'deki overflow-x:hidden yatay taşmayı
+     zaten engelliyor. body'ye ayrıca overflow-x veya position:relative vermek
+     body'yi kendi scroll/containing-block bağlamına dönüştürüyor ve sayfadaki
+     TÜM position:sticky öğelerini (ör. ürün rafı) kırıyor. */
 }
 
 /* Medya öğeleri kabına sığsın */
