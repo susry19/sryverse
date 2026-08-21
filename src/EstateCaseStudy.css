@@ -427,6 +427,22 @@
 }
 .ecs-grid__wide img { width: 100%; display: block; }
 
+/* ── YÖNETİCİ GÖRÜNÜMÜ ── */
+.ecs-mgr { padding: 6rem 0; }
+.ecs-mgr__grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3.5rem; align-items: center; }
+.ecs-mgr__text .ecs__h2 { margin-top: .8rem; }
+.ecs-mgr__list { list-style: none; margin: 2.2rem 0 0; padding: 0; display: flex; flex-direction: column; }
+.ecs-mgr__list li {
+  display: flex; align-items: baseline; gap: 1rem;
+  padding: 1.1rem 0; border-top: 1px solid var(--line);
+}
+.ecs-mgr__list li:first-child { border-top: none; padding-top: 0; }
+.ecs-mgr__list b { font-family: var(--fs); font-weight: 500; font-size: 1.6rem; color: var(--green); min-width: 100px; }
+.ecs-mgr__list span { font-family: var(--fn); font-size: .9rem; color: var(--muted); }
+@media (max-width: 900px) {
+  .ecs-mgr__grid { grid-template-columns: 1fr; gap: 2.2rem; }
+}
+
 /* ── CLOSING ── */
 .ecs-closing { padding: 6rem 2rem 6.5rem; display: flex; flex-direction: column; align-items: center; }
 .ecs-closing__h {

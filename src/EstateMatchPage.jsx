@@ -365,6 +365,37 @@ export default function EstateMatchPage({ goBack, onDemo }) {
         </div>
       </section>
 
+      {/* ── YÖNETİCİ GÖRÜNÜMÜ ── */}
+      <section className="ecs">
+        <div className="wrap ecs-mgr">
+          <Rev>
+            <div className="ecs-mgr__grid">
+              <div className="ecs-mgr__visual">
+                <div className="ecs-panel">
+                  <div className="ecs-panel__bar">
+                    <span className="ecs-panel__dot" /><span className="ecs-panel__dot" /><span className="ecs-panel__dot" />
+                    <span className="ecs-panel__url">estate.sryverse.com/raporlar</span>
+                  </div>
+                  <div className="ecs-panel__screen">
+                    <img src="/screens/wide-reports.png" alt="Yönetici raporlar ekranı" />
+                  </div>
+                </div>
+              </div>
+              <div className="ecs-mgr__text">
+                <span className="ecs__eye">Yöneticiler için</span>
+                <h2 className="ecs__h2">Sahadaki her danışmanın performansı, <em>tek panelde.</em></h2>
+                <p className="ecs__p">Portföy sağlığı, danışman performansı ve pipeline aynı ekranda; müşterilerin kişisel verilerine dokunmadan.</p>
+                <ul className="ecs-mgr__list">
+                  <li><b>₺62,4M</b><span>Yıllık ciro</span></li>
+                  <li><b>%13,6</b><span>Ortalama dönüşüm oranı</span></li>
+                  <li><b>4 / 12</b><span>Danışman hedefin üzerinde</span></li>
+                </ul>
+              </div>
+            </div>
+          </Rev>
+        </div>
+      </section>
+
       {/* ── CLOSING — güven ── */}
       <section className="ecs">
         <div className="ecs-closing">
