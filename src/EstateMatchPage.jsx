@@ -37,6 +37,19 @@ const COMPARE = [
   { label: 'Yönetici görünürlüğü', before: 'Haftalık elle hazırlanan rapor', after: 'Gerçek zamanlı panel' },
 ]
 
+/* ── Güvenlik ve şeffaflık ── */
+const TRUST = [
+  { h: 'Veri izolasyonu', p: 'Her acentenin verisi birbirinden tamamen izole tutulur.',
+    ic: <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" /> },
+  { h: 'Kişisel veri maskeleme', p: "İsim, telefon ve e-posta, AI'ye gönderilmeden önce maskelenir.",
+    ic: <><path d="M3 12c2-4 6-6 9-6s7 2 9 6c-2 4-6 6-9 6s-7-2-9-6z" /><circle cx="12" cy="12" r="2.4" /><path d="M4 4l16 16" /></> },
+  { h: 'Rol bazlı yetkilendirme', p: 'Kimin neyi göreceğini yönetici belirler.',
+    ic: <><rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></> },
+  { h: 'Açıklanabilir öneriler', p: 'AI karar vermez; gerekçeli önerir. Onay her zaman danışmanda kalır.',
+    ic: <><path d="M4 5h16v10H9l-5 4V5z" /><path d="M8 9h8M8 12h5" /></> },
+]
+const ARCH = ['Veri toplama\n(maskelenmiş)', 'Kural bazlı\nön eleme', 'AI\nskorlama', 'Danışman\nincelemesi', 'Onaylı\neşleşme']
+
 /* ── Ekran turu ── */
 const SCREENS = [
   { key: 'dashboard', n: '01', t: 'Panel',          d: 'Aktif portföy, sıcak müşteri, dönüşüm oranı ve AI öngörüleri tek ekranda.', icon: '◱' },
@@ -467,6 +480,43 @@ export default function EstateMatchPage({ goBack, onDemo }) {
                 <div className="ecs-closing__phone-screen">
                   <img src="/screens/portfolio.png" alt="Portföy ekranı" />
                 </div>
+              </div>
+            </div>
+          </Rev>
+        </div>
+      </section>
+
+      {/* ── GÜVENLİK VE ŞEFFAFLIK ── */}
+      <section className="ecs">
+        <div className="wrap ecs-trustwrap">
+          <Rev>
+            <span className="ecs__eye">Güvenlik ve şeffaflık</span>
+            <h2 className="ecs__h2">Karar her zaman <em>danışmanda kalır.</em></h2>
+            <p className="ecs__p">EstateMatch AI karar vermez; puanlar, gerekçelendirir ve önerir. Onaylamak, göndermek ya da reddetmek — hepsi danışmanın elinde.</p>
+          </Rev>
+
+          <Rev delay={100}>
+            <div className="ecs-trust__grid">
+              {TRUST.map(t => (
+                <div className="ecs-trust__card" key={t.h}>
+                  <svg className="ecs-trust__ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{t.ic}</svg>
+                  <h3>{t.h}</h3>
+                  <p>{t.p}</p>
+                </div>
+              ))}
+            </div>
+          </Rev>
+
+          <Rev delay={160}>
+            <div className="ecs-arch">
+              <span className="ecs-arch__h">Bir talebin AI'dan geçiş yolu</span>
+              <div className="ecs-arch__row">
+                {ARCH.map((a, i) => (
+                  <div className="ecs-arch__step" key={a}>
+                    <span className="ecs-arch__n">{i + 1}</span>
+                    <span className="ecs-arch__l">{a.split('\n').map((ln, j) => <span key={j}>{ln}</span>)}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </Rev>
