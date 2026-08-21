@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import EstateMatch3D from './EstateMatch3D.jsx'
-import { Rev, Count, ScreenTour, Faq, RoiCalc } from './pageParts.jsx'
+import { Rev, Count, ScreenTour, Faq, RoiCalc, DeviceStage, DeviceMock } from './pageParts.jsx'
 import './ProductPage.css'
 
 /* ── Ekran turu ── */
@@ -19,32 +18,32 @@ const SCREENS = [
 /* ── Moduller ── */
 const MODULES = [
   {
-    id: '01', h: 'Portföy ve İlan Aktarımı',
+    id: '01', icon: '⇱', h: 'Portföy ve İlan Aktarımı',
     p: 'Sahibinden, Hürriyet Emlak ve Emlakjet ilanlarınızı URL ile içe aktarın; portföyünüz dakikalar içinde sisteme taşınsın.',
     list: ['Tek tıkla portal ilan aktarımı', 'Görsel portföy kartları ve hızlı filtreleme', 'İlan açıklamasında geçen tek kelimeyi bulma'],
   },
   {
-    id: '02', h: 'Semantik Müşteri Eşleştirme',
+    id: '02', icon: '✦', h: 'Semantik Müşteri Eşleştirme',
     p: 'Müşteri talebini doğal dilde kaydedin; sistem anlamı yakalayarak en uygun portföyleri gerekçesiyle sıralar.',
     list: ['Dönüşüm olasılığı, risk skoru ve AI uyum puanı', 'Uyumsuzluk uyarısı ile yanlış eşleşmeyi önleme', '"Denize yakın, sakin" gibi ifadeleri anlama'],
   },
   {
-    id: '03', h: 'Satış Akışı ve Takip',
+    id: '03', icon: '⇉', h: 'Satış Akışı ve Takip',
     p: 'Talepten kapanışa kadar her adım Kanban üzerinde görünür; hiçbir fırsat unutulmaz.',
     list: ['Randevu ve gösterim takvimi', 'Otomatik hatırlatıcı ve takip planı', 'WhatsApp / e-posta ile ilan paylaşımı'],
   },
   {
-    id: '04', h: 'AI İlan Üreteci',
+    id: '04', icon: '✎', h: 'AI İlan Üreteci',
     p: 'Portföyden bir mülk seçin; Sahibinden, Instagram ve WhatsApp için hazır metinler saniyeler içinde üretilsin.',
     list: ['Çoklu mecra için tek tıkla içerik', 'Hedef müşteriye göre kişiselleştirilmiş ton', 'WhatsApp kampanya şablonları'],
   },
   {
-    id: '05', h: 'Yönetim ve Yetkilendirme',
+    id: '05', icon: '◈', h: 'Yönetim ve Yetkilendirme',
     p: 'Rol bazlı erişim ile kimin neyi göreceğine yönetici karar verir.',
     list: ['Süper yönetici, acente yöneticisi, danışman, görüntüleyici', 'Acente verileri birbirinden izole', 'KVKK odaklı kişisel veri maskeleme'],
   },
   {
-    id: '06', h: 'Raporlama ve İçgörü',
+    id: '06', icon: '◲', h: 'Raporlama ve İçgörü',
     p: 'Gelir, dönüşüm ve danışman performansı güncel olarak izlenir.',
     list: ['Gelir trendi ve satış hunisi', 'Danışman bazlı hedef takibi', 'Lead kaynak analizi'],
   },
@@ -160,7 +159,28 @@ export default function EstateMatchPage({ goBack, onDemo }) {
               </div>
             </div>
 
-            <div className="ehero__3d"><EstateMatch3D /></div>
+            <div className="ehero__stage">
+              <DeviceStage className="ehero__devicestage">
+                <DeviceMock
+                  src="/screens/dashboard.png"
+                  alt="EstateMatch AI panel ekranı"
+                  domain="estate.sryverse.com"
+                  className="ephone--hero"
+                  chips={<>
+                    <div className="efcard efcard--a">
+                      <span className="efcard__l">Aktif Portföy</span>
+                      <span className="efcard__v">184</span>
+                      <span className="efcard__d pos">+12 bu ay</span>
+                    </div>
+                    <div className="efcard efcard--b">
+                      <span className="efcard__ic">✦</span>
+                      <span className="efcard__v">%96</span>
+                      <span className="efcard__l">AI uyum skoru</span>
+                    </div>
+                  </>}
+                />
+              </DeviceStage>
+            </div>
           </div>
 
           <div className="estrip">
@@ -214,7 +234,10 @@ export default function EstateMatchPage({ goBack, onDemo }) {
             {MODULES.map((m, i) => (
               <Rev key={m.id} delay={i * 70}>
                 <div className="emod">
-                  <span className="emod__id">{m.id}</span>
+                  <div className="emod__top">
+                    <span className="emod__icon">{m.icon}</span>
+                    <span className="emod__id">{m.id}</span>
+                  </div>
                   <h3 className="emod__h">{m.h}</h3>
                   <p className="emod__p">{m.p}</p>
                   <ul className="emod__list">
