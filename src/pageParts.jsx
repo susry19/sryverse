@@ -72,7 +72,6 @@ export function ScreenTour({ screens, domain, product }) {
   const missing = failed.has(s.key)
   const page = Math.floor(active / PER_PAGE)
   const frameRef = useRef(null)
-  const word = (product || '').replace(/\s*AI$/i, '')
 
   const onFrameMove = useCallback((e) => {
     const el = frameRef.current
@@ -150,10 +149,9 @@ export function ScreenTour({ screens, domain, product }) {
       </div>
 
       <div className="eshot-stage">
-        <span className="eshot-stage__word" aria-hidden="true">{word}</span>
-        <div className="eshot-stage__grid" aria-hidden="true" />
         <div className="eshot-stage__glow" aria-hidden="true" />
         <div className="eshot-stage__glow eshot-stage__glow--b" aria-hidden="true" />
+        <div className="eshot-stage__glow eshot-stage__glow--c" aria-hidden="true" />
 
         <div
           className="ephone"

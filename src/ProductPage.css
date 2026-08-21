@@ -385,68 +385,64 @@
 /* ── Ekran turu sahnesi: canli, hareketli bir zemin uzerinde yuzen ekran ── */
 .eshot-stage {
   position: relative;
-  border-radius: 22px;
+  border-radius: 26px;
   overflow: hidden;
-  padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 6vw, 4.5rem);
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 6vw, 4.5rem);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse 90% 70% at 50% 0%, rgba(var(--ec), .1), transparent 60%),
-              linear-gradient(165deg, #03110d 0%, #061d16 60%, #041210 100%);
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 8%, rgba(var(--ec), .35), transparent 62%),
+    radial-gradient(ellipse 60% 55% at 88% 92%, rgba(52, 211, 153, .28), transparent 60%),
+    linear-gradient(165deg, #062219 0%, #04140f 55%, #051912 100%);
 }
-.eshot-stage__word {
+/* Cihazin altinda yumusak bir isik havuzu — urun bir vitrinde duruyormus hissi */
+.eshot-stage::after {
+  content: '';
   position: absolute;
-  left: 50%; top: 50%;
-  transform: translate(-50%, -52%);
-  font-family: var(--fs);
-  font-weight: 500;
-  font-size: clamp(4rem, 13vw, 10rem);
-  letter-spacing: -.02em;
-  text-transform: uppercase;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, .08);
-  white-space: nowrap;
+  left: 50%; bottom: -6%;
+  transform: translateX(-50%);
+  width: 70%; height: 40%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(var(--ec), .3), transparent 72%);
+  filter: blur(6px);
   pointer-events: none;
   z-index: 0;
 }
-.eshot-stage__grid {
-  position: absolute;
-  inset: -20%;
-  background-image:
-    linear-gradient(rgba(var(--ec), .07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(var(--ec), .07) 1px, transparent 1px);
-  background-size: 42px 42px;
-  mask-image: radial-gradient(ellipse 65% 55% at 50% 45%, #000 25%, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 45%, #000 25%, transparent 75%);
-  animation: eshotDrift 14s linear infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-@keyframes eshotDrift { from { transform: translate(0, 0); } to { transform: translate(42px, 42px); } }
 .eshot-stage__glow {
   position: absolute;
-  width: 46%; height: 60%;
-  left: -6%; top: -8%;
+  width: 50%; height: 62%;
+  left: -10%; top: -12%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(var(--ec), .22), transparent 65%);
-  filter: blur(4px);
+  background: radial-gradient(circle, rgba(var(--ec), .32), transparent 65%);
+  filter: blur(2px);
   pointer-events: none;
   z-index: 0;
   animation: eshotFloatA 11s ease-in-out infinite;
 }
 .eshot-stage__glow--b {
-  left: auto; right: -8%; top: auto; bottom: -12%;
-  width: 40%; height: 55%;
-  background: radial-gradient(circle, rgba(147, 112, 219, .18), transparent 65%);
+  left: auto; right: -12%; top: auto; bottom: -14%;
+  width: 44%; height: 58%;
+  background: radial-gradient(circle, rgba(52, 211, 153, .3), transparent 65%);
   animation: eshotFloatB 13s ease-in-out infinite;
 }
+.eshot-stage__glow--c {
+  left: 50%; top: 45%; width: 55%; height: 55%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(var(--ec), .16), transparent 70%);
+  animation: eshotFloatC 9s ease-in-out infinite;
+}
 @keyframes eshotFloatA {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: .8; }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: .85; }
   50%      { transform: translate(4%, 6%) scale(1.15); opacity: 1; }
 }
 @keyframes eshotFloatB {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: .7; }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: .8; }
   50%      { transform: translate(-5%, -5%) scale(1.12); opacity: 1; }
+}
+@keyframes eshotFloatC {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: .5; }
+  50%      { transform: translate(-50%, -50%) scale(1.2); opacity: .8; }
 }
 
 /* Telefon maketi — sahnenin uzerinde hafifce yatik duran, kaydiran ve parlayan cihaz */
@@ -1035,7 +1031,6 @@
 
   /* Dar ekranda yuzen rozetler cerceve disina tasip kirpilabiliyor — kapat. */
   .ephone__chip { display: none; }
-  .eshot-stage__word { font-size: clamp(3rem, 20vw, 5rem); }
   .eshot-stage { padding: 2.5rem 1.25rem; }
 
   /* Sabit WhatsApp butonu son bölümün metnini kapatmasın */
@@ -1075,6 +1070,6 @@
 @media (prefers-reduced-motion: reduce) {
   .erev { opacity: 1; transform: none; }
   .eshot__phscan, .ecta__glow { animation: none; }
-  .ephone__scroll, .ephone__sheen, .ephone__chip, .eshot-stage__grid, .eshot-stage__glow { animation: none; }
+  .ephone__scroll, .ephone__sheen, .ephone__chip, .eshot-stage__glow { animation: none; }
   .ephone { transform: none; }
 }
