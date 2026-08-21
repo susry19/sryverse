@@ -297,6 +297,80 @@
 }
 .ecs-poster__eye b { color: rgba(255, 255, 255, .9); font-weight: 600; }
 
+/* ── CANLI ÖRNEK — koyu, tam genişlik AI gerekçe kartı ── */
+.ecs-live {
+  padding: 6rem 0;
+  background: radial-gradient(120% 100% at 15% 0%, #123c30 0%, var(--green-dark) 46%, #04140d 100%);
+}
+.ecs-live__grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.6rem;
+  margin-top: 3rem;
+  align-items: start;
+}
+.ecs-live__req {
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 18px;
+  padding: 1.6rem;
+}
+.ecs-live__tag {
+  font-family: var(--fm); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--sage);
+}
+.ecs-live__req p {
+  font-family: var(--fs); font-weight: 500; font-size: 1.2rem; line-height: 1.5; margin-top: 1rem; color: #fff;
+}
+.ecs-live__match { background: var(--white); border-radius: 20px; padding: 1.8rem 2rem; }
+.ecs-live__matchhead {
+  display: flex; align-items: center; gap: .8rem; flex-wrap: wrap;
+  font-family: var(--fn); font-weight: 600; font-size: .95rem; color: var(--ink);
+}
+.ecs-live__score { margin-left: auto; font-family: var(--fs); font-weight: 500; font-size: 2rem; color: var(--gold); }
+.ecs-live__reasons { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; flex-direction: column; }
+.ecs-live__reasons li {
+  display: grid; grid-template-columns: 110px 50px 1fr; gap: .9rem; align-items: baseline;
+  padding: .75rem 0; border-top: 1px solid var(--line); font-size: .86rem;
+}
+.ecs-live__reasons li:first-child { border-top: none; padding-top: 0; }
+.ecs-live__reasons span { font-family: var(--fn); font-weight: 600; color: var(--ink); }
+.ecs-live__reasons b { font-family: var(--fm); font-weight: 600; color: var(--green); }
+.ecs-live__reasons em { font-style: normal; color: var(--muted); }
+.ecs-live__actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.7rem; }
+.ecs-btn--ghost-dark { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+.ecs-btn--ghost-dark:hover { border-color: var(--green); color: var(--green); transform: translateY(-2px); }
+@media (max-width: 860px) {
+  .ecs-live__grid { grid-template-columns: 1fr; }
+  .ecs-live__match { padding: 1.5rem; }
+  .ecs-live__reasons li { grid-template-columns: 92px 40px 1fr; gap: .6rem; }
+}
+
+/* ── BUGÜNÜN ÖNCELİĞİ — takip kuyruğu ── */
+.ecs-queue { padding: 6rem 0; }
+.ecs-queue__list { margin-top: 2.6rem; display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.ecs-qrow {
+  display: grid; grid-template-columns: 40px 1fr 70px auto; align-items: center; gap: 1.2rem;
+  padding: 1.3rem 0; border-bottom: 1px solid var(--line);
+}
+.ecs-qrow__rank { font-family: var(--fs); font-weight: 500; font-size: 1.35rem; color: var(--sage); }
+.ecs-qrow__body { display: flex; flex-direction: column; gap: .25rem; }
+.ecs-qrow__body strong { font-family: var(--fn); font-weight: 600; color: var(--ink); font-size: .98rem; }
+.ecs-qrow__body span { font-family: var(--fn); font-size: .82rem; color: var(--muted); }
+.ecs-qrow__score { font-family: var(--fm); font-weight: 600; font-size: 1.05rem; text-align: right; }
+.ecs-qrow__cta {
+  font-family: var(--fn); font-weight: 600; font-size: .84rem; color: var(--green);
+  background: var(--green-soft); border: none; border-radius: 999px; padding: .6rem 1.15rem;
+  cursor: pointer; transition: background .2s, color .2s, transform .2s; white-space: nowrap;
+}
+.ecs-qrow__cta span { transition: transform .2s; display: inline-block; }
+.ecs-qrow__cta:hover { background: var(--green); color: #fff; transform: translateY(-1px); }
+.ecs-qrow__cta:hover span { transform: translateX(3px); }
+@media (max-width: 640px) {
+  .ecs-qrow { grid-template-columns: 28px 1fr; row-gap: .6rem; }
+  .ecs-qrow__score { grid-column: 2; order: 3; text-align: left; }
+  .ecs-qrow__cta { grid-column: 2; order: 4; width: 100%; text-align: center; }
+}
+
 /* ── IMPACT ── */
 .ecs-impact { padding: 6rem 0; }
 .ecs-impact__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-top: 3rem; }

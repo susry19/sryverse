@@ -20,6 +20,14 @@ const FLOW_BARS = [
   { l: 'Onaylandı', left: '80%', top: 62, w: '20%', bg: '#3f8f68' },
 ]
 
+/* ── Bugünün önceliği: eşleşme kuyruğu ── */
+const QUEUE = [
+  { name: 'Müşteri #482', detail: '3+1 · Beşiktaş · ₺15M bütçe — 2 gündür yanıt bekliyor', score: '%91' },
+  { name: 'Müşteri #317', detail: 'Yatırımlık daire · Kadıköy · ₺6-8M bütçe', score: '%84' },
+  { name: 'Müşteri #205', detail: 'Villa · Sarıyer · Deniz manzaralı, havuzlu', score: '%79' },
+  { name: 'Müşteri #143', detail: '2+1 · Merkeze yakın · Kiralık', score: '%73' },
+]
+
 /* ── Ekran turu ── */
 const SCREENS = [
   { key: 'dashboard', n: '01', t: 'Panel',          d: 'Aktif portföy, sıcak müşteri, dönüşüm oranı ve AI öngörüleri tek ekranda.', icon: '◱' },
@@ -182,6 +190,68 @@ export default function EstateMatchPage({ goBack, onDemo }) {
           </div>
           <div className="ecs-laptop__base" />
           <div className="ecs-laptop__foot" />
+        </div>
+      </section>
+
+      {/* ── CANLI ÖRNEK — AI eşleştirme gerekçesi ── */}
+      <section className="ecs ecs-live">
+        <div className="wrap">
+          <Rev>
+            <span className="ecs__eye" style={{ color: 'var(--sage)' }}>Örnek eşleştirme</span>
+            <h2 className="ecs__h2" style={{ color: '#fff' }}>AI, bir eşleşmeye <em style={{ fontStyle: 'normal', color: 'var(--sage)' }}>nasıl karar veriyor?</em></h2>
+            <p className="ecs__p" style={{ color: 'rgba(255,255,255,.65)' }}>Gerçek bir müşteri talebi üzerinden, EstateMatch AI'nin adım adım gerekçelendirmesi.</p>
+          </Rev>
+          <Rev delay={100}>
+            <div className="ecs-live__grid">
+              <div className="ecs-live__req">
+                <span className="ecs-live__tag">Müşteri talebi</span>
+                <p>"Lara'da deniz manzaralı, 3+1, bütçe 12-15M, kapalı otopark şart."</p>
+              </div>
+              <div className="ecs-live__match">
+                <div className="ecs-live__matchhead">
+                  <span>Aday ilan: Lara Deniz Manzaralı Rezidans</span>
+                  <span className="ecs-live__score">%91</span>
+                </div>
+                <ul className="ecs-live__reasons">
+                  <li><span>Konum</span><b>+38</b><em>Lara, deniz manzarası kriteriyle birebir uyumlu</em></li>
+                  <li><span>Bütçe</span><b>+27</b><em>₺13,4M — aralığın ortasında</em></li>
+                  <li><span>Oda sayısı</span><b>+18</b><em>3+1, tam eşleşme</em></li>
+                  <li><span>Otopark</span><b>+8</b><em>Kapalı otopark mevcut</em></li>
+                </ul>
+                <div className="ecs-live__actions">
+                  <button className="ecs-btn ecs-btn--solid">Danışmana gönder <span>→</span></button>
+                  <button className="ecs-btn ecs-btn--ghost-dark">Müşteriyle paylaş <span>→</span></button>
+                  <button className="ecs-btn ecs-btn--ghost-dark">Alternatif öner <span>→</span></button>
+                </div>
+              </div>
+            </div>
+          </Rev>
+        </div>
+      </section>
+
+      {/* ── BUGÜNÜN ÖNCELİĞİ — takip kuyruğu ── */}
+      <section className="ecs">
+        <div className="wrap ecs-queue">
+          <Rev>
+            <span className="ecs__eye">Bugünün önceliği</span>
+            <h2 className="ecs__h2">Danışmanın günü, <em>otomatik sıralanır.</em></h2>
+            <p className="ecs__p">EstateMatch AI, en yüksek dönüşüm ihtimaline sahip görüşmeleri her sabah üst sıraya taşır. Karar her zaman danışmanda kalır.</p>
+          </Rev>
+          <Rev delay={100}>
+            <div className="ecs-queue__list">
+              {QUEUE.map((q, i) => (
+                <div className="ecs-qrow" key={q.name}>
+                  <span className="ecs-qrow__rank">{i + 1}</span>
+                  <div className="ecs-qrow__body">
+                    <strong>{q.name}</strong>
+                    <span>{q.detail}</span>
+                  </div>
+                  <span className="ecs-qrow__score" style={{ color: i === 0 ? 'var(--gold)' : 'var(--green)' }}>{q.score}</span>
+                  <button className="ecs-qrow__cta">Bugün ara <span>→</span></button>
+                </div>
+              ))}
+            </div>
+          </Rev>
         </div>
       </section>
 
