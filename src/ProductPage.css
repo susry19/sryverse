@@ -382,48 +382,194 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Ekran cercevesi */
-.eshot {
+/* ── Ekran turu sahnesi: canli, hareketli bir zemin uzerinde yuzen ekran ── */
+.eshot-stage {
   position: relative;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, .12);
-  background: linear-gradient(160deg, rgba(var(--ec), .07), #05161a);
+  border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 34px 80px rgba(0, 0, 0, .5);
-}
-.eshot__bar {
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 6vw, 4.5rem);
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: .8rem 1.1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, .08);
-  background: rgba(255, 255, 255, .03);
+  justify-content: center;
+  background: radial-gradient(ellipse 90% 70% at 50% 0%, rgba(var(--ec), .1), transparent 60%),
+              linear-gradient(165deg, #03110d 0%, #061d16 60%, #041210 100%);
 }
-.eshot__dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 255, 255, .18); }
-.eshot__url {
-  margin-left: .75rem;
-  font-family: var(--fm);
-  font-size: .68rem;
-  color: rgba(255, 255, 255, .35);
-  letter-spacing: .04em;
+.eshot-stage__word {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -52%);
+  font-family: var(--fs);
+  font-weight: 500;
+  font-size: clamp(4rem, 13vw, 10rem);
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, .08);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
 }
-.eshot__frame {
+.eshot-stage__grid {
+  position: absolute;
+  inset: -20%;
+  background-image:
+    linear-gradient(rgba(var(--ec), .07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--ec), .07) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse 65% 55% at 50% 45%, #000 25%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 45%, #000 25%, transparent 75%);
+  animation: eshotDrift 14s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes eshotDrift { from { transform: translate(0, 0); } to { transform: translate(42px, 42px); } }
+.eshot-stage__glow {
+  position: absolute;
+  width: 46%; height: 60%;
+  left: -6%; top: -8%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--ec), .22), transparent 65%);
+  filter: blur(4px);
+  pointer-events: none;
+  z-index: 0;
+  animation: eshotFloatA 11s ease-in-out infinite;
+}
+.eshot-stage__glow--b {
+  left: auto; right: -8%; top: auto; bottom: -12%;
+  width: 40%; height: 55%;
+  background: radial-gradient(circle, rgba(147, 112, 219, .18), transparent 65%);
+  animation: eshotFloatB 13s ease-in-out infinite;
+}
+@keyframes eshotFloatA {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: .8; }
+  50%      { transform: translate(4%, 6%) scale(1.15); opacity: 1; }
+}
+@keyframes eshotFloatB {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: .7; }
+  50%      { transform: translate(-5%, -5%) scale(1.12); opacity: 1; }
+}
+
+/* Telefon maketi — sahnenin uzerinde hafifce yatik duran, kaydiran ve parlayan cihaz */
+.ephone {
+  --etx: 2deg;
+  --ety: -5deg;
   position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: #051a14;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: perspective(1500px) rotateX(var(--etx)) rotateY(var(--ety));
+  transition: transform .4s cubic-bezier(.2, .8, .2, 1);
 }
-.eshot__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
+.ephone__badge {
+  font-family: var(--fm);
+  font-size: .66rem;
+  letter-spacing: .06em;
+  color: rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 20px;
+  padding: .4rem .95rem;
+  margin-bottom: 1.4rem;
+}
+.ephone__body {
+  position: relative;
+  width: min(280px, 62vw);
+  padding: 14px 13px 20px;
+  border-radius: 44px;
+  background: linear-gradient(160deg, #232323, #060606);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, .07),
+    inset 0 -2px 6px rgba(0, 0, 0, .6),
+    0 45px 90px rgba(0, 0, 0, .55),
+    0 0 0 1px rgba(var(--ec), .15);
+}
+.ephone__notch {
+  position: absolute;
+  top: 14px; left: 50%;
+  transform: translateX(-50%);
+  width: 34%; height: 22px;
+  border-radius: 14px;
+  background: #000;
+  z-index: 3;
+}
+.ephone__screen {
+  position: relative;
+  aspect-ratio: 9 / 18.6;
+  border-radius: 30px;
+  overflow: hidden;
+  background: #fff;
+}
+.ephone__scroll {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  animation: ephoneScroll 11s cubic-bezier(.65, 0, .35, 1) infinite;
+  will-change: transform;
+}
+.ephone:hover .ephone__scroll { animation-play-state: paused; }
+@keyframes ephoneScroll {
+  0%, 10%  { transform: translateY(0); }
+  50%      { transform: translateY(-24%); }
+  90%, 100% { transform: translateY(0); }
+}
+.ephone__img {
   display: block;
+  width: 100%;
+  height: auto;
   animation: shotIn .6s cubic-bezier(.2, .8, .2, 1);
 }
 @keyframes shotIn {
   from { opacity: 0; transform: scale(1.03); }
   to   { opacity: 1; transform: none; }
+}
+/* Cam parlama sweep'i — telefon ekranindan gecen ince isik */
+.ephone__sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, .4) 50%, transparent 58%);
+  transform: translateX(-130%);
+  animation: ephoneSheen 7s ease-in-out infinite;
+  mix-blend-mode: overlay;
+}
+@keyframes ephoneSheen {
+  0%, 55%, 100% { transform: translateX(-130%); }
+  78%           { transform: translateX(130%); }
+}
+.ephone__home {
+  width: 34%;
+  height: 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .3);
+  margin: 12px auto 0;
+}
+/* Yuzen rozetler — canli/AI vurgusu */
+.ephone__chip {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--fn);
+  font-size: .72rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  background: rgba(6, 18, 13, .85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 20px;
+  padding: .55rem .95rem;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, .4);
+  animation: ephoneChipFloat 5s ease-in-out infinite;
+  z-index: 2;
+}
+.ephone__chip--live { top: 12%; left: -4%; }
+.ephone__chip--live i { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px #4ade80; }
+.ephone__chip--ai { bottom: 18%; right: -6%; color: rgb(var(--ec)); animation-delay: 1.6s; }
+@keyframes ephoneChipFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
 }
 
 /* Gorsel yokken gosterilen yer tutucu */
@@ -887,12 +1033,10 @@
   .etour__arrow { width: 30px; height: 30px; font-size: 1.1rem; }
   .etour__count { font-size: .62rem; }
 
-  /* Dar ekranda görüntüyü kırpmak yerine tamamını göster.
-     Panel ekranları geniş olduğu için çerçeve de yatay kalmalı,
-     yoksa görsel küçücük kalıp okunmaz oluyor. */
-  .eshot__frame { aspect-ratio: 16 / 10; }
-  .eshot__img { object-fit: contain; object-position: center; background: #05161a; }
-  .eshot__url { font-size: .6rem; }
+  /* Dar ekranda yuzen rozetler cerceve disina tasip kirpilabiliyor — kapat. */
+  .ephone__chip { display: none; }
+  .eshot-stage__word { font-size: clamp(3rem, 20vw, 5rem); }
+  .eshot-stage { padding: 2.5rem 1.25rem; }
 
   /* Sabit WhatsApp butonu son bölümün metnini kapatmasın */
   .esec:last-of-type { padding-bottom: 7rem; }
@@ -931,4 +1075,6 @@
 @media (prefers-reduced-motion: reduce) {
   .erev { opacity: 1; transform: none; }
   .eshot__phscan, .ecta__glow { animation: none; }
+  .ephone__scroll, .ephone__sheen, .ephone__chip, .eshot-stage__grid, .eshot-stage__glow { animation: none; }
+  .ephone { transform: none; }
 }

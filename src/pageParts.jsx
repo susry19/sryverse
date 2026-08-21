@@ -71,6 +71,24 @@ export function ScreenTour({ screens, domain, product }) {
   const s = screens[active]
   const missing = failed.has(s.key)
   const page = Math.floor(active / PER_PAGE)
+  const frameRef = useRef(null)
+  const word = (product || '').replace(/\s*AI$/i, '')
+
+  const onFrameMove = useCallback((e) => {
+    const el = frameRef.current
+    if (!el || window.matchMedia('(max-width: 900px)').matches) return
+    const r = el.getBoundingClientRect()
+    const mx = (e.clientX - r.left) / r.width - .5
+    const my = (e.clientY - r.top) / r.height - .5
+    el.style.setProperty('--etx', `${(-my * 6).toFixed(2)}deg`)
+    el.style.setProperty('--ety', `${(mx * 8).toFixed(2)}deg`)
+  }, [])
+  const onFrameLeave = useCallback(() => {
+    const el = frameRef.current
+    if (!el) return
+    el.style.setProperty('--etx', '2deg')
+    el.style.setProperty('--ety', '-5deg')
+  }, [])
 
   const goPage = useCallback((p) => {
     const next = ((p % pages) + pages) % pages
@@ -131,31 +149,48 @@ export function ScreenTour({ screens, domain, product }) {
         </div>
       </div>
 
-      <div className="eshot">
-        <div className="eshot__bar">
-          <span className="eshot__dot" /><span className="eshot__dot" /><span className="eshot__dot" />
-          <span className="eshot__url">{domain} — {s.t}</span>
-        </div>
-        <div className="eshot__frame">
-          {!missing && (
-            <img
-              key={s.key}
-              className="eshot__img"
-              src={s.src}
-              alt={`${product} — ${s.t} ekranı`}
-              loading="lazy"
-              onError={() => setFailed(prev => new Set(prev).add(s.key))}
-            />
-          )}
-          {missing && (
-            <div className="eshot__ph">
-              <div className="eshot__phgrid" />
-              <div className="eshot__phscan" />
-              <span className="eshot__phicon">{s.icon}</span>
-              <span className="eshot__phtitle">{s.t}</span>
-              <span className="eshot__phnote">Ekran görüntüsü yakında</span>
+      <div className="eshot-stage">
+        <span className="eshot-stage__word" aria-hidden="true">{word}</span>
+        <div className="eshot-stage__grid" aria-hidden="true" />
+        <div className="eshot-stage__glow" aria-hidden="true" />
+        <div className="eshot-stage__glow eshot-stage__glow--b" aria-hidden="true" />
+
+        <div
+          className="ephone"
+          ref={frameRef}
+          onMouseMove={onFrameMove}
+          onMouseLeave={onFrameLeave}
+        >
+          <span className="ephone__badge">{domain}</span>
+          <div className="ephone__body">
+            <div className="ephone__notch" />
+            <div className="ephone__screen">
+              {!missing && (
+                <div className="ephone__scroll" key={s.key}>
+                  <img
+                    className="ephone__img"
+                    src={s.src}
+                    alt={`${product} — ${s.t} ekranı`}
+                    loading="lazy"
+                    onError={() => setFailed(prev => new Set(prev).add(s.key))}
+                  />
+                </div>
+              )}
+              {missing && (
+                <div className="eshot__ph">
+                  <div className="eshot__phgrid" />
+                  <div className="eshot__phscan" />
+                  <span className="eshot__phicon">{s.icon}</span>
+                  <span className="eshot__phtitle">{s.t}</span>
+                  <span className="eshot__phnote">Ekran görüntüsü yakında</span>
+                </div>
+              )}
+              <div className="ephone__sheen" />
             </div>
-          )}
+            <div className="ephone__home" />
+          </div>
+          <span className="ephone__chip ephone__chip--live"><i />Canlı ürün</span>
+          <span className="ephone__chip ephone__chip--ai">✦ AI destekli</span>
         </div>
       </div>
     </div>
