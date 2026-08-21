@@ -39,19 +39,19 @@ const PLANS = [
   {
     n: 'Starter', h: 'Küçük ekipler',
     p: 'Temel operasyonu tek merkeze taşımak isteyen butik acenteler için.',
-    ul: ['10 kullanıcı', '500 ilan', 'Aylık 50.000 AI token', 'Tüm temel modüller'],
-    cta: 'Pilot başlat',
+    ul: ['10 kullanıcı', '500 ilan', 'Sınırsız AI eşleştirme', 'Tüm temel modüller'],
+    cta: 'Demo planla',
   },
   {
-    n: 'Professional', h: 'Büyüyen acenteler', best: true,
+    n: 'Professional', h: 'Büyüyen acenteler',
     p: 'Portföyü ve danışman ekibi hızla büyüyen emlak şirketleri için.',
-    ul: ['25 kullanıcı', '2.500 ilan', 'Aylık 250.000 AI token', 'Gelişmiş raporlar ve yönetim'],
+    ul: ['25 kullanıcı', '2.500 ilan', 'Sınırsız AI eşleştirme', 'Gelişmiş raporlar ve yönetim'],
     cta: 'Demo talep et',
   },
   {
     n: 'Enterprise', h: 'Kurumsal yapı',
     p: 'Çok şubeli, özel entegrasyon ve yüksek ölçek ihtiyacı olan kurumlar için.',
-    ul: ['Esnek kullanıcı', 'Esnek portföy limiti', 'Özel AI kullanım planı', 'Kuruma özel çözümler'],
+    ul: ['Esnek kullanıcı', 'Esnek portföy limiti', 'Özel entegrasyonlar', 'Kuruma özel çözümler'],
     cta: 'Görüşelim',
   },
 ]
@@ -83,7 +83,7 @@ const FAQS = [
   { q: 'Pilot süreç nasıl işliyor?',
     a: 'Önce operasyonunuzu birlikte inceliyoruz, ardından sınırlı bir ekiple pilot başlatıyoruz. Pilot süresince portföy aktarımı, eğitim ve süreç uyarlaması bizim tarafımızdan yürütülür.' },
   { q: 'AI kullanımı maliyeti nasıl kontrol ediliyor?',
-    a: 'Ön eleme ve önbellekleme sayesinde her sorgu yapay zekâya gitmez. Paketlerde aylık token limiti tanımlıdır; kullanım paneliden şeffaf biçimde izlenir.' },
+    a: 'Fiyatlandırma kullanıcı ve portföy büyüklüğüne göredir; AI eşleştirme kullanım limitiyle sınırlanmaz. Ön eleme ve önbellekleme sayesinde sistem her sorguda yeniden hesaplama yapmaz, maliyeti öngörülebilir tutar.' },
 ]
 
 /* ══════════════ SAYFA ══════════════ */
@@ -133,24 +133,37 @@ export default function EstateMatchPage({ goBack, onDemo }) {
           </div>
 
           <div className="ecs-hero__mid">
-            <h1 className="ecs-hero__h1">Yapay zekâ ile modern emlağa <em style={{ fontStyle: 'normal', color: 'var(--cs-brand)' }}>netlik kazandırın.</em></h1>
-            <p className="ecs-hero__sub">Her ilan, her alıcı, her eşleşme — AI tarafından puanlanır ve gerekçelendirilir; tek ve sakin bir çalışma alanında.</p>
+            <h1 className="ecs-hero__h1">Bugün hangi müşteriyi arayacağınızı, <em style={{ fontStyle: 'normal', color: 'var(--cs-brand)' }}>AI söylesin.</em></h1>
+            <p className="ecs-hero__sub">EstateMatch AI, portföyünüzü ve müşteri taleplerinizi karşılaştırır; en yüksek ihtimalli eşleşmeleri gerekçesiyle sıralar. Danışman onaylamadan hiçbir eşleşme müşteriye gitmez.</p>
             <div className="ecs-hero__ctas">
-              <button className="ecs-btn ecs-btn--solid" onClick={demo}>Pilot başlat <span>→</span></button>
-              <a className="ecs-btn ecs-btn--ghost" href="https://estate.sryverse.com" target="_blank" rel="noopener noreferrer">
-                Platformu aç <span>→</span>
+              <a className="ecs-btn ecs-btn--solid" href="https://estate.sryverse.com" target="_blank" rel="noopener noreferrer">
+                Canlı ürünü keşfet <span>→</span>
               </a>
+              <button className="ecs-btn ecs-btn--ghost" onClick={demo}>Demo planla <span>→</span></button>
             </div>
           </div>
 
-          <div className="ecs-hero__stage">
-            <div className="ecs-phone">
-              <div className="ecs-phone__notch" />
-              <div className="ecs-phone__screen">
-                <div className="ecs-phone__scroll">
-                  <img className="ecs-phone__img" src="/screens/dashboard.png" alt="EstateMatch AI panel ekranı" />
-                </div>
+          <div className="ecs-hero__stage ecs-hero__stage--panel">
+            <div className="ecs-panel">
+              <div className="ecs-panel__bar">
+                <span className="ecs-panel__dot" /><span className="ecs-panel__dot" /><span className="ecs-panel__dot" />
+                <span className="ecs-panel__url">estate.sryverse.com</span>
               </div>
+              <div className="ecs-panel__screen">
+                <img src="/screens/wide-dashboard.png" alt="EstateMatch AI panel — masaüstü görünümü" />
+              </div>
+            </div>
+            <div className="ecs-float ecs-float--a">
+              <span className="ecs-float__eye">Müşteri talebi</span>
+              <strong>3+1 · Beşiktaş · ₺15M bütçe</strong>
+            </div>
+            <div className="ecs-float ecs-float--b">
+              <span className="ecs-float__eye">AI uyum skoru</span>
+              <strong className="ecs-float__gold">%91</strong>
+            </div>
+            <div className="ecs-float ecs-float--c">
+              <span className="ecs-float__eye">Önerilen aksiyon</span>
+              <strong>Bugün ara — Müşteri #482</strong>
             </div>
             <div className="ecs-hero__fade" />
           </div>
@@ -329,10 +342,10 @@ export default function EstateMatchPage({ goBack, onDemo }) {
         <div className="wrap">
           <Rev>
             <div className="esec__head esec__head--mid">
-              <span className="eeye">Kendi operasyonunuzla hesaplayın</span>
+              <span className="eeye">Örnek operasyon senaryosu</span>
               <h2 className="eh2">Kazandırdığı <em>zamanı görün.</em></h2>
               <p className="ep">
-                Değerleri değiştirin; yalnızca portföy eşleştirme süresinden doğan kazanımı anında hesaplayın.
+                Değerleri kendi ekibinize göre değiştirin. Aşağıdaki sonuçlar bir örnek hesaplamadır; gerçek kazanım operasyonunuza göre değişir.
               </p>
             </div>
           </Rev>
@@ -341,7 +354,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
               fields={ROI_FIELDS}
               initial={{ consultants: 10, leads: 30, minutes: 120, hourly: 400 }}
               compute={computeRoi}
-              note="Hesaplama yalnızca portföy arama süresini temel alır; takip, ilan üretimi, raporlama ve iletişim kazanımları dahil değildir."
+              note="Örnek senaryo: yalnızca portföy arama süresini temel alır; takip, ilan üretimi, raporlama ve iletişim kazanımları dahil değildir."
             />
           </Rev>
         </div>

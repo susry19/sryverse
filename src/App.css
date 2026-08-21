@@ -357,14 +357,6 @@
 /* ══ WHATSAPP ══ */
 .wa-btn{display:inline-flex;align-items:center;gap:.6rem;margin-top:2rem;padding:.85rem 1.5rem;border-radius:10px;background:#0e6b46;color:#fff;font-size:.95rem;font-weight:500;font-family:var(--fn);text-decoration:none;transition:all .25s;box-shadow:0 6px 20px rgba(14,107,70,.25)}
 .wa-btn:hover{background:#0a5436;transform:translateY(-2px);box-shadow:0 10px 28px rgba(14,107,70,.35)}
-.wa-fab{position:fixed;bottom:26px;right:26px;z-index:500;display:flex;align-items:center;gap:0;text-decoration:none}
-.wa-fab__circle{width:60px;height:60px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(37,211,102,.4);transition:transform .25s,box-shadow .25s;position:relative}
-.wa-fab__circle::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(37,211,102,.5);animation:waPulse 2s ease-out infinite}
-@keyframes waPulse{0%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(1.45)}}
-.wa-fab:hover .wa-fab__circle{transform:scale(1.08);box-shadow:0 14px 36px rgba(37,211,102,.5)}
-.wa-fab__label{max-width:0;overflow:hidden;white-space:nowrap;background:#0b3d2e;color:#fff;font-size:.85rem;font-weight:500;font-family:var(--fn);border-radius:8px;padding:0;opacity:0;transition:max-width .35s ease,padding .35s ease,opacity .3s ease,margin .35s ease;margin-right:0}
-.wa-fab:hover .wa-fab__label{max-width:200px;padding:.6rem 1rem;opacity:1;margin-right:12px}
-@media(max-width:768px){.wa-fab{bottom:18px;right:18px}.wa-fab__circle{width:54px;height:54px}}
 
 
 /* ══ PRODUCT INTRO PAGES ══ */
