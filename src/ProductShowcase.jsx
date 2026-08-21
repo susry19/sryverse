@@ -64,11 +64,14 @@ function RailCard({ p, state, index, progress, onJump, onOpenPage }) {
   const fill = state === 'on' ? progress : state === 'done' ? 1 : 0
 
   return (
-    <button
+    <div
       ref={ref}
       className={`prcard prcard--${state}${p.soon ? ' prcard--soon' : ''}`}
       style={{ '--pc': p.rgb }}
-      onClick={() => p.page ? onOpenPage(p.page) : onJump(index)}
+      role="button"
+      tabIndex={0}
+      onClick={() => onJump(index)}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onJump(index) } }}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       aria-current={state === 'on'}
@@ -80,18 +83,22 @@ function RailCard({ p, state, index, progress, onJump, onOpenPage }) {
         <h3 className="prcard__name">{p.name}</h3>
         <span className="prcard__cat" lang="en">{p.category}</span>
         <p className="prcard__desc">{p.desc}</p>
-        <span className="prcard__cta">
-          {p.soon
-            ? <>Yakında <span>✦</span></>
-            : (state === 'on' && p.page)
-              ? <>Detaylı incele <span>→</span></>
-              : <>Tanıtımı gör <span>→</span></>}
-        </span>
+        {p.soon ? (
+          <span className="prcard__cta">Yakında <span>✦</span></span>
+        ) : (
+          <button
+            type="button"
+            className="prcard__cta prcard__cta--btn"
+            onClick={e => { e.stopPropagation(); onOpenPage(p.page) }}
+          >
+            Detaylı incele <span>→</span>
+          </button>
+        )}
         <div className="prcard__prog">
           <div className="prcard__progfill" style={{ width: `${fill * 100}%` }} />
         </div>
       </div>
-    </button>
+    </div>
   )
 }
 

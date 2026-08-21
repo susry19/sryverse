@@ -200,6 +200,21 @@
 .prcard__cta span { transition: transform .2s; }
 .prcard:hover .prcard__cta span { transform: translateX(3px); }
 
+/* CTA artık ayrı bir düğme: kart tıklaması sadece o ürüne atlar,
+   sayfaya gitmek için "Detaylı incele" düğmesine tıklamak gerekir. */
+.prcard__cta--btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  cursor: pointer;
+  position: relative;
+  z-index: 3;
+}
+.prcard__cta--btn:hover { color: #fff; }
+.prcard__cta--btn:hover span { transform: translateX(3px); }
+.prcard__cta--btn:focus-visible { outline: 1.5px solid rgba(var(--pc), .8); outline-offset: 3px; border-radius: 4px; }
+
 /* ── SAĞ: akan hikâye paneli ── */
 .pshow__story {
   position: relative;
