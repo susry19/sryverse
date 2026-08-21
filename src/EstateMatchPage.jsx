@@ -1,6 +1,24 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Rev, Count, ScreenTour, Faq, RoiCalc, DeviceStage, DeviceMock } from './pageParts.jsx'
+import { Rev, ScreenTour, Faq, RoiCalc } from './pageParts.jsx'
 import './ProductPage.css'
+import './EstateCaseStudy.css'
+
+/* ── Impact: öne çıkan 3 sonuç ── */
+const IMPACT_STATS = [
+  { tag: 'AI Eşleştirme', tagBg: '#e8f4ee', tagFg: '#0F5132', v: '%87', p: 'Güvenilir mülk–alıcı eşleşmeleri, gerekçesiyle satır satır puanlanır.', lit: 35 },
+  { tag: 'İçerik AI', tagBg: '#fef3c7', tagFg: '#92400e', v: '5×', p: 'Tek bir ilan, saniyeler içinde beş hazır paylaşım formatına dönüşür.', lit: 20 },
+  { tag: 'İş Akışı', tagBg: '#eff6ff', tagFg: '#1d4ed8', v: '6', p: 'Her fırsat aşamalandırılır, değerlenir ve kapanışa kadar izlenir.', lit: 24 },
+]
+
+/* ── Impact: eşleştirme akışı (asamalı, kaydırılmış çubuklar) ── */
+const FLOW_LABELS = ['Kriter Toplama', 'AI Skorlama', 'Aday Sıralama', 'Danışman Onayı', 'Müşteri Eşleşmesi']
+const FLOW_BARS = [
+  { l: 'Alıcı tercihleri', left: '0%', top: 14, w: '37%', bg: '#0F5132' },
+  { l: 'Veto → çarpan → taban → bonus', left: '16%', top: 62, w: '44%', bg: '#3f8f68' },
+  { l: 'İlk 5, sıralı', left: '38%', top: 110, w: '34%', bg: '#a9d3bd', fg: '#12261d' },
+  { l: 'Açıkla ve gönder', left: '64%', top: 14, w: '20%', bg: '#0F5132' },
+  { l: 'Onaylandı', left: '80%', top: 62, w: '20%', bg: '#3f8f68' },
+]
 
 /* ── Ekran turu ── */
 const SCREENS = [
@@ -15,39 +33,6 @@ const SCREENS = [
   { key: 'reports',   n: '09', t: 'Raporlar',       d: 'Ciro, satış hunisi, dönüşüm ve danışman performansı.', icon: '◲' },
 ].map(s => ({ ...s, src: `/screens/${s.key}.png` }))
 
-/* ── Moduller ── */
-const MODULES = [
-  {
-    id: '01', icon: '⇱', h: 'Portföy ve İlan Aktarımı',
-    p: 'Sahibinden, Hürriyet Emlak ve Emlakjet ilanlarınızı URL ile içe aktarın; portföyünüz dakikalar içinde sisteme taşınsın.',
-    list: ['Tek tıkla portal ilan aktarımı', 'Görsel portföy kartları ve hızlı filtreleme', 'İlan açıklamasında geçen tek kelimeyi bulma'],
-  },
-  {
-    id: '02', icon: '✦', h: 'Semantik Müşteri Eşleştirme',
-    p: 'Müşteri talebini doğal dilde kaydedin; sistem anlamı yakalayarak en uygun portföyleri gerekçesiyle sıralar.',
-    list: ['Dönüşüm olasılığı, risk skoru ve AI uyum puanı', 'Uyumsuzluk uyarısı ile yanlış eşleşmeyi önleme', '"Denize yakın, sakin" gibi ifadeleri anlama'],
-  },
-  {
-    id: '03', icon: '⇉', h: 'Satış Akışı ve Takip',
-    p: 'Talepten kapanışa kadar her adım Kanban üzerinde görünür; hiçbir fırsat unutulmaz.',
-    list: ['Randevu ve gösterim takvimi', 'Otomatik hatırlatıcı ve takip planı', 'WhatsApp / e-posta ile ilan paylaşımı'],
-  },
-  {
-    id: '04', icon: '✎', h: 'AI İlan Üreteci',
-    p: 'Portföyden bir mülk seçin; Sahibinden, Instagram ve WhatsApp için hazır metinler saniyeler içinde üretilsin.',
-    list: ['Çoklu mecra için tek tıkla içerik', 'Hedef müşteriye göre kişiselleştirilmiş ton', 'WhatsApp kampanya şablonları'],
-  },
-  {
-    id: '05', icon: '◈', h: 'Yönetim ve Yetkilendirme',
-    p: 'Rol bazlı erişim ile kimin neyi göreceğine yönetici karar verir.',
-    list: ['Süper yönetici, acente yöneticisi, danışman, görüntüleyici', 'Acente verileri birbirinden izole', 'KVKK odaklı kişisel veri maskeleme'],
-  },
-  {
-    id: '06', icon: '◲', h: 'Raporlama ve İçgörü',
-    p: 'Gelir, dönüşüm ve danışman performansı güncel olarak izlenir.',
-    list: ['Gelir trendi ve satış hunisi', 'Danışman bazlı hedef takibi', 'Lead kaynak analizi'],
-  },
-]
 
 /* ── Fiyat paketleri ── */
 const PLANS = [
@@ -135,67 +120,55 @@ export default function EstateMatchPage({ goBack, onDemo }) {
     <main className="epage epage--estate">
       <div className="epage__progress" style={{ width: `${progress}%` }} />
 
-      {/* ── HERO ── */}
-      <section className="ehero">
-        <div className="ehero__bg" />
-        <div className="ehero__grid" />
-        <div className="wrap">
-          <button className="eback" onClick={goBack}>← Ana sayfaya dön</button>
+      {/* ── HERO (açık tema, vaka çalışması dili) ── */}
+      <section className="ecs">
+        <div className="ecs-hero">
+          <button className="ecs-hero__back" onClick={goBack}>← Ana sayfaya dön</button>
+          <div className="ecs-hero__brand">
+            <svg width="28" height="28" viewBox="0 0 30 30" fill="none">
+              <circle cx="15" cy="15" r="14" fill="#0F5132" />
+              <circle cx="19" cy="11" r="4.2" fill="#eafff2" />
+            </svg>
+            <span>EstateMatch AI</span>
+          </div>
 
-          <div className="ehero__in">
-            <div>
-              <h1 className="ehero__h1">
-                Portföylerinizi değil,<br /><em>fırsatlarınızı yönetin.</em>
-              </h1>
-              <p className="ehero__sub">
-                Müşteri talebini anlayan, en doğru portföyü saniyenin altında bulan ve danışmana
-                nedenini açıklayan emlak operasyon platformu.
-              </p>
-              <div className="ehero__ctas">
-                <button className="ebtn ebtn--solid" onClick={demo}>Pilot başlat <span>→</span></button>
-                <a className="ebtn ebtn--ghost" href="https://estate.sryverse.com" target="_blank" rel="noopener noreferrer">
-                  Platformu aç <span>→</span>
-                </a>
-              </div>
-            </div>
-
-            <div className="ehero__stage">
-              <DeviceStage className="ehero__devicestage">
-                <DeviceMock
-                  src="/screens/dashboard.png"
-                  alt="EstateMatch AI panel ekranı"
-                  domain="estate.sryverse.com"
-                  className="ephone--hero"
-                  chips={<>
-                    <div className="efcard efcard--a">
-                      <span className="efcard__l">Aktif Portföy</span>
-                      <span className="efcard__v">184</span>
-                      <span className="efcard__d pos">+12 bu ay</span>
-                    </div>
-                    <div className="efcard efcard--b">
-                      <span className="efcard__ic">✦</span>
-                      <span className="efcard__v">%96</span>
-                      <span className="efcard__l">AI uyum skoru</span>
-                    </div>
-                  </>}
-                />
-              </DeviceStage>
+          <div className="ecs-hero__mid">
+            <h1 className="ecs-hero__h1">Yapay zekâ ile modern emlağa <em style={{ fontStyle: 'normal', color: 'var(--cs-brand)' }}>netlik kazandırın.</em></h1>
+            <p className="ecs-hero__sub">Her ilan, her alıcı, her eşleşme — AI tarafından puanlanır ve gerekçelendirilir; tek ve sakin bir çalışma alanında.</p>
+            <div className="ecs-hero__ctas">
+              <button className="ecs-btn ecs-btn--solid" onClick={demo}>Pilot başlat <span>→</span></button>
+              <a className="ecs-btn ecs-btn--ghost" href="https://estate.sryverse.com" target="_blank" rel="noopener noreferrer">
+                Platformu aç <span>→</span>
+              </a>
             </div>
           </div>
 
-          <div className="estrip">
-            {[
-              { v: '0.2 sn', l: 'ortalama eşleştirme' },
-              { v: '%95', l: 'zaman tasarrufu' },
-              { v: '4 rol', l: 'kontrollü erişim' },
-              { v: '7/24', l: 'akıllı operasyon' },
-            ].map((x, i) => (
-              <div key={i} className="estrip__i">
-                <div className="estrip__v"><Count value={x.v} /></div>
-                <span className="estrip__l">{x.l}</span>
+          <div className="ecs-hero__stage">
+            <div className="ecs-phone">
+              <div className="ecs-phone__notch" />
+              <div className="ecs-phone__screen">
+                <div className="ecs-phone__scroll">
+                  <img className="ecs-phone__img" src="/screens/dashboard.png" alt="EstateMatch AI panel ekranı" />
+                </div>
               </div>
-            ))}
+            </div>
+            <div className="ecs-hero__fade" />
           </div>
+        </div>
+      </section>
+
+      {/* ── POSTER — marka duruşu ── */}
+      <section className="ecs-poster">
+        <div className="ecs-poster__word" aria-hidden="true"><span>ESTATEMATCH</span></div>
+        <span className="ecs-poster__eye">EstateMatch AI — <b>AI Destekli Emlak CRM</b></span>
+        <div className="ecs-laptop">
+          <div className="ecs-laptop__lid">
+            <div className="ecs-laptop__screen">
+              <img src="/screens/wide-dashboard.png" alt="EstateMatch AI panel — geniş ekran görünümü" />
+            </div>
+          </div>
+          <div className="ecs-laptop__base" />
+          <div className="ecs-laptop__foot" />
         </div>
       </section>
 
@@ -221,32 +194,133 @@ export default function EstateMatchPage({ goBack, onDemo }) {
         </div>
       </section>
 
-      {/* ── MODULLER ── */}
-      <section className="esec">
-        <div className="wrap">
+      {/* ── IMPACT — sonuç ve akış ── */}
+      <section className="ecs">
+        <div className="wrap ecs-impact">
           <Rev>
-            <div className="esec__head">
-              <span className="eeye">Yetenekler</span>
-              <h2 className="eh2">Operasyonun her adımında <em>bir karşılığı var.</em></h2>
-            </div>
+            <span className="ecs__eye">Etki</span>
+            <h2 className="ecs__h2">Emlak ekiplerinin gerçekten <em>nasıl çalıştığına göre kuruldu.</em></h2>
           </Rev>
-          <div className="emods">
-            {MODULES.map((m, i) => (
-              <Rev key={m.id} delay={i * 70}>
-                <div className="emod">
-                  <div className="emod__top">
-                    <span className="emod__icon">{m.icon}</span>
-                    <span className="emod__id">{m.id}</span>
+
+          <div className="ecs-impact__stats">
+            {IMPACT_STATS.map((s, i) => (
+              <Rev key={s.tag} delay={i * 90}>
+                <div className="ecs-stat">
+                  <span className="ecs-stat__tag" style={{ background: s.tagBg, color: s.tagFg }}>{s.tag}</span>
+                  <p className="ecs-stat__p">{s.p}</p>
+                  <div className="ecs-stat__v">{s.v}</div>
+                  <div className="ecs-dots">
+                    {Array.from({ length: 40 }, (_, j) => (
+                      <i key={j} style={{ background: j < s.lit ? s.tagFg : undefined }} />
+                    ))}
                   </div>
-                  <h3 className="emod__h">{m.h}</h3>
-                  <p className="emod__p">{m.p}</p>
-                  <ul className="emod__list">
-                    {m.list.map((li, j) => <li key={j}>{li}</li>)}
-                  </ul>
                 </div>
               </Rev>
             ))}
           </div>
+
+          <Rev delay={120}>
+            <div className="ecs-flow">
+              <h3 className="ecs-flow__h">EstateMatch doğru eşleşmeyi nasıl buluyor.</h3>
+              <div className="ecs-flow__labels">
+                {FLOW_LABELS.map(l => <span key={l}>{l}</span>)}
+              </div>
+              <div className="ecs-flow__bars">
+                {FLOW_BARS.map((b, i) => (
+                  <div key={i} className="ecs-flow__bar" style={{ left: b.left, top: b.top, width: b.w, background: b.bg, color: b.fg || '#fff' }}>
+                    {b.l}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Rev>
+        </div>
+      </section>
+
+      {/* ── GRID — eşleşme özeti + portföy ── */}
+      <section className="ecs ecs-grid">
+        <div className="wrap">
+          <Rev>
+            <span className="ecs__eye">Uygulamadan</span>
+            <h2 className="ecs__h2">Her eşleşmenin arkasında <em>okunabilir bir gerekçe var.</em></h2>
+          </Rev>
+
+          <Rev delay={100}>
+            <div className="ecs-grid__row">
+              <div className="ecs-grid__phone">
+                <div className="ecs-grid__phone-screen">
+                  <img src="/screens/match.png" alt="Müşteri eşleştirme ekranı" />
+                </div>
+              </div>
+
+              <div className="ecs-summary">
+                <div className="ecs-summary__h">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F5132" strokeWidth="1.8"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v2M16 4v2" /></svg>
+                  Eşleşme özeti
+                </div>
+                <div className="ecs-summary__grid">
+                  <div><div className="ecs-summary__v">17</div><div className="ecs-summary__l">Aktif ilan</div></div>
+                  <div><div className="ecs-summary__v">₺156M</div><div className="ecs-summary__l">Portföy değeri</div></div>
+                </div>
+                <div>
+                  <div className="ecs-summary__v">%87</div>
+                  <div className="ecs-summary__l">Bu haftanın en yüksek AI uyum skoru</div>
+                </div>
+                <div className="ecs-summary__warn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#92400e" strokeWidth="2" style={{ flexShrink: 0, marginTop: 2 }}><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 18a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /></svg>
+                  <span>Bir aday ilan, alıcıya gönderilmeden önce danışman incelemesi bekliyor.</span>
+                </div>
+              </div>
+            </div>
+          </Rev>
+
+          <Rev delay={160}>
+            <div className="ecs-grid__wide">
+              <img src="/screens/wide-portfolio.png" alt="Portföy kartları" />
+            </div>
+          </Rev>
+        </div>
+      </section>
+
+      {/* ── CLOSING — güven ── */}
+      <section className="ecs">
+        <div className="ecs-closing">
+          <Rev>
+            <h2 className="ecs-closing__h">Bu platform, her eşleşmeye ve her anlaşmaya <em style={{ fontStyle: 'normal', color: 'var(--cs-brand)' }}>netlik kazandırır.</em></h2>
+          </Rev>
+
+          <Rev delay={80}>
+            <div className="ecs-phone" style={{ marginTop: '2.5rem', width: 260 }}>
+              <div className="ecs-phone__notch" />
+              <div className="ecs-phone__screen">
+                <div className="ecs-phone__scroll">
+                  <img className="ecs-phone__img" src="/screens/reports.png" alt="EstateMatch AI raporlar ekranı" />
+                </div>
+              </div>
+            </div>
+          </Rev>
+
+          <Rev delay={140}>
+            <div className="ecs-closing__row">
+              <div className="ecs-quote">
+                <svg width="24" height="18" viewBox="0 0 32 24" fill="none"><path d="M0 24V13.5C0 6 4.5 0.8 12 0v5.5C7.8 6.3 5.5 9 5.3 13H12V24H0Z" fill="#eafff2" opacity=".85" /><path d="M20 24V13.5C20 6 24.5 0.8 32 0v5.5C27.8 6.3 25.5 9 25.3 13H32V24H20Z" fill="#eafff2" opacity=".85" /></svg>
+                <p>"Boğaz'da kaç satılık yalım var?" — sorulur, ilgili ilanlarla birlikte anında yanıtlanır.</p>
+                <div className="ecs-quote__row">
+                  <div style={{ display: 'flex' }}>
+                    <span className="ecs-quote__av" style={{ background: '#e8f4ee', color: '#0F5132' }}>DE</span>
+                    <span className="ecs-quote__av" style={{ background: '#3f8f68', color: '#fff', marginLeft: -8 }}>AI</span>
+                  </div>
+                  <span className="ecs-quote__cap">Danışman ve AI, aynı listede birlikte çalışıyor</span>
+                </div>
+              </div>
+
+              <div className="ecs-closing__phone">
+                <div className="ecs-closing__phone-screen">
+                  <img src="/screens/portfolio.png" alt="Portföy ekranı" />
+                </div>
+              </div>
+            </div>
+          </Rev>
         </div>
       </section>
 
