@@ -28,6 +28,15 @@ const QUEUE = [
   { name: 'Müşteri #143', detail: '2+1 · Merkeze yakın · Kiralık', score: '%73' },
 ]
 
+/* ── Öncesi / sonrası karşılaştırma ── */
+const COMPARE = [
+  { label: 'Eşleştirme süresi', before: 'Elle arama, saatler sürer', after: 'AI önerisi, saniyeler içinde' },
+  { label: 'Takip önceliği', before: 'Kimin aranacağı tahminle belirlenir', after: 'Otomatik sıralı öncelik listesi' },
+  { label: 'İlan paylaşım içeriği', before: 'Her platform için elle yazılır', after: '5 formatta otomatik üretim' },
+  { label: 'Karar gerekçesi', before: 'Sezgiyle, kayıt altına alınmaz', after: 'Puanlanmış, açıklanabilir gerekçe' },
+  { label: 'Yönetici görünürlüğü', before: 'Haftalık elle hazırlanan rapor', after: 'Gerçek zamanlı panel' },
+]
+
 /* ── Ekran turu ── */
 const SCREENS = [
   { key: 'dashboard', n: '01', t: 'Panel',          d: 'Aktif portföy, sıcak müşteri, dönüşüm oranı ve AI öngörüleri tek ekranda.', icon: '◱' },
@@ -391,6 +400,32 @@ export default function EstateMatchPage({ goBack, onDemo }) {
                   <li><b>4 / 12</b><span>Danışman hedefin üzerinde</span></li>
                 </ul>
               </div>
+            </div>
+          </Rev>
+        </div>
+      </section>
+
+      {/* ── ÖNCESİ / SONRASI ── */}
+      <section className="ecs">
+        <div className="wrap ecs-cmpwrap">
+          <Rev>
+            <span className="ecs__eye">Fark</span>
+            <h2 className="ecs__h2">Eskisi <em>ile yenisi.</em></h2>
+          </Rev>
+          <Rev delay={100}>
+            <div className="ecs-cmp">
+              <div className="ecs-cmp__row ecs-cmp__row--head">
+                <span className="ecs-cmp__label" />
+                <span className="ecs-cmp__before ecs-cmp__before--h">Öncesi</span>
+                <span className="ecs-cmp__after ecs-cmp__after--h">EstateMatch AI ile</span>
+              </div>
+              {COMPARE.map(row => (
+                <div className="ecs-cmp__row" key={row.label}>
+                  <span className="ecs-cmp__label">{row.label}</span>
+                  <span className="ecs-cmp__before"><i>✕</i>{row.before}</span>
+                  <span className="ecs-cmp__after"><i>✓</i>{row.after}</span>
+                </div>
+              ))}
             </div>
           </Rev>
         </div>
