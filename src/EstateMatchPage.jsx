@@ -20,6 +20,21 @@ const FLOW_BARS = [
   { l: 'Onaylandı', left: '80%', top: 62, w: '20%', bg: '#3f8f68' },
 ]
 
+/* ── Yetenek şeridi ── */
+const CAPS = [
+  'AI Eşleştirme', 'Portföy Yönetimi', 'İlan İçerik Üretimi', 'İş Akışı Takibi',
+  'Takvim & Takip', 'Raporlama', 'Danışman Performansı', 'Müşteri Talebi Analizi',
+]
+
+/* ── Problem aynası: dağınık veri vs tek ekran ── */
+const CHAOS = [
+  { t: 'WhatsApp', c: '"3+1 Beşiktaş arıyorum, bütçe 15M civarı"', rot: -4 },
+  { t: 'Excel', c: '184 satır portföy, son güncelleme 3 hafta önce', rot: 3 },
+  { t: 'Telefon notu', c: '"Salı arayacaktım, unutmuşum"', rot: -2 },
+  { t: 'E-posta', c: 'Sahibinden ilan linki, henüz incelenmedi', rot: 5 },
+  { t: 'Kağıt not', c: '"Müşteri #291 — tekrar ara"', rot: -6 },
+]
+
 /* ── Bugünün önceliği: eşleşme kuyruğu ── */
 const QUEUE = [
   { name: 'Müşteri #482', detail: '3+1 · Beşiktaş · ₺15M bütçe — 2 gündür yanıt bekliyor', score: '%91' },
@@ -197,6 +212,48 @@ export default function EstateMatchPage({ goBack, onDemo }) {
             </div>
             <div className="ecs-hero__fade" />
           </div>
+        </div>
+      </section>
+
+      {/* ── YETENEK ŞERİDİ ── */}
+      <section className="ecs">
+        <div className="ecs-marquee" aria-hidden="true">
+          <div className="ecs-marquee__track">
+            {[...CAPS, ...CAPS].map((c, i) => (
+              <span className="ecs-marquee__item" key={i}>{c}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PROBLEM AYNASI ── */}
+      <section className="ecs">
+        <div className="wrap ecs-problem">
+          <Rev>
+            <span className="ecs__eye">Bugün nasıl çalışıyor</span>
+            <h2 className="ecs__h2">Müşteri talepleri WhatsApp'ta, portföy Excel'de — <em>gerçek fırsat kayıp gidiyor.</em></h2>
+          </Rev>
+          <Rev delay={100}>
+            <div className="ecs-problem__grid">
+              <div className="ecs-problem__chaos">
+                {CHAOS.map(x => (
+                  <div className="ecs-problem__note" key={x.t} style={{ '--rot': `${x.rot}deg` }}>
+                    <span>{x.t}</span>
+                    <p>{x.c}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="ecs-problem__arrow" aria-hidden="true">→</div>
+              <div className="ecs-problem__after">
+                <span className="ecs-problem__aftertag">EstateMatch AI ile</span>
+                <ul className="ecs-problem__afterlist">
+                  <li>Tüm talepler tek ekranda toplanır</li>
+                  <li>Öncelik otomatik sıralanır</li>
+                  <li>Her öneri gerekçesiyle gelir</li>
+                </ul>
+              </div>
+            </div>
+          </Rev>
         </div>
       </section>
 
