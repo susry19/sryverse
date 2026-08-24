@@ -136,25 +136,8 @@
   color: var(--cs-ink-soft);
   margin: 1.25rem 0 0;
 }
-.ecs-hero__crm {
-  font-family: var(--fn);
-  font-size: .88rem;
-  color: var(--cs-mut);
-  margin: .6rem 0 0;
-}
 .ecs-hero__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; margin-top: 1.75rem; }
 .ecs-hero__trust { font-family: var(--fn); font-size: .82rem; color: var(--cs-mut); margin: 1.1rem 0 0; text-align: center; }
-.ecs-hero__trustlist {
-  list-style: none; margin: 1.25rem 0 0; padding: 0;
-  display: flex; flex-direction: column; gap: .45rem;
-}
-.ecs-hero__trustlist li {
-  font-family: var(--fn); font-size: .85rem; color: var(--cs-mut);
-  padding-left: 1.4rem; position: relative;
-}
-.ecs-hero__trustlist li::before {
-  content: '✓'; position: absolute; left: 0; color: var(--cs-brand); font-weight: 700; font-size: .78rem;
-}
 .ecs-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
   min-height: 56px;
@@ -173,22 +156,11 @@
 .ecs-btn span { transition: transform .2s; }
 .ecs-btn:hover span { transform: translateX(3px); }
 
-.ecs-hero__stage { position: relative; }
-.ecs-hero__fade {
-  position: absolute; left: -3rem; right: -3rem; bottom: 0; height: 130px;
-  background: linear-gradient(180deg, transparent, var(--cs-bg) 78%);
-  pointer-events: none;
-}
-
-/* ── Masaüstü panel maketi (Hero) — telefon yerine gerçek ürün ekranı ── */
-.ecs-hero__stage--panel {
-  width: 100%;
-  padding: 0 0 3.5rem;
-}
+.ecs-hero__stage { position: relative; width: 100%; }
 @media (max-width: 1080px) {
   .ecs-hero__grid { grid-template-columns: 1fr; }
   .ecs-hero__col { max-width: none; text-align: left; }
-  .ecs-hero__stage--panel { margin-top: 3rem; }
+  .ecs-hero__stage { margin-top: 2.5rem; }
 }
 .ecs-panel {
   position: relative;
@@ -213,65 +185,62 @@
 .ecs-panel__screen { width: 100%; aspect-ratio: 1600 / 900; overflow: hidden; }
 .ecs-panel__screen img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
 
-.ecs-float {
-  position: absolute;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: .8rem 1.05rem;
-  box-shadow: 0 22px 44px -22px rgba(7, 76, 58, .28);
-  display: flex; flex-direction: column; gap: .25rem;
-  animation: ecsFloat 6s ease-in-out infinite;
-  z-index: 2;
-}
-.ecs-float__eye {
-  font-family: var(--fm); font-size: .6rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
-}
-.ecs-float strong { font-family: var(--fs); font-weight: 600; font-size: .92rem; color: var(--ink); white-space: nowrap; }
-.ecs-float__gold { color: var(--gold) !important; font-size: 1.5rem !important; font-weight: 500 !important; }
-.ecs-float--a { top: -10px; left: 6px; animation-delay: 0s; }
-.ecs-float--b { top: 30%; right: -8px; animation-delay: 1.4s; }
-.ecs-float--c { bottom: -14px; left: 12%; animation-delay: 2.8s; }
-@keyframes ecsFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
 @media (max-width: 900px) {
-  .ecs-hero__stage--panel { padding: 0 1rem 2rem; margin-top: 2.5rem; }
-  .ecs-float { display: none; }
   .ecs-panel { border-radius: 12px; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .ecs-float { animation: none; }
-}
 
-/* ── Telefon/laptop maketi (açık zemin üzerinde koyu cihaz) ── */
-.ecs-phone {
-  --etx: 0deg; --ety: 0deg;
-  position: relative; z-index: 1;
-  width: 300px;
-  padding: 13px; border-radius: 42px;
-  background: linear-gradient(160deg, #1c2620, #0c1712);
-  box-shadow: 0 40px 80px -30px rgba(15, 81, 50, .38), 0 12px 30px -12px rgba(0, 0, 0, .18);
-  transform: perspective(1400px) rotateX(var(--etx)) rotateY(var(--ety));
-  transition: transform .4s cubic-bezier(.2, .8, .2, 1);
+/* ── Hero: yaşayan eşleştirme kompozisyonu (statik screenshot yerine) ──
+   Rev tetiklenince (.erev--on) bir kez, staggered nth-child gecikmeleriyle oynar. */
+.ecs-match {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 1.6rem;
+  display: flex; flex-direction: column; gap: 1rem;
 }
-.ecs-phone__notch {
-  position: absolute; top: 13px; left: 50%; transform: translateX(-50%);
-  width: 84px; height: 20px; background: #0c1712; border-radius: 0 0 13px 13px; z-index: 2;
+.ecs-match > * {
+  opacity: 0; transform: translateY(14px);
+  transition: opacity .6s ease, transform .6s ease;
 }
-.ecs-phone__screen {
-  position: relative; width: 100%; aspect-ratio: 9 / 18.3;
-  border-radius: 30px; overflow: hidden; background: #fff;
+.erev--on .ecs-match > * { opacity: 1; transform: none; }
+.erev--on .ecs-match > *:nth-child(1) { transition-delay: .1s; }
+.erev--on .ecs-match > *:nth-child(2) { transition-delay: .3s; }
+.erev--on .ecs-match > *:nth-child(3) { transition-delay: .9s; }
+.ecs-match__req {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px;
+  padding: 1rem 1.2rem; display: flex; flex-direction: column; gap: .3rem;
+  align-self: flex-start;
 }
-.ecs-phone__scroll { position: absolute; top: 0; left: 0; right: 0; animation: ecsScroll 11s cubic-bezier(.65,0,.35,1) infinite; }
-.ecs-phone:hover .ecs-phone__scroll { animation-play-state: paused; }
-@keyframes ecsScroll {
-  0%, 10% { transform: translateY(0); }
-  50%     { transform: translateY(-22%); }
-  90%, 100% { transform: translateY(0); }
+.ecs-match__eye { font-family: var(--fm); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.ecs-match__req strong { font-family: var(--fs); font-weight: 600; font-size: 1.05rem; color: var(--ink); }
+.ecs-match__props { display: flex; flex-direction: column; gap: .6rem; }
+.ecs-match__prop {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  padding: .85rem 1.1rem;
+  transition: border-color .3s, box-shadow .3s, transform .3s;
 }
-.ecs-phone__img { display: block; width: 100%; height: auto; }
+.ecs-match__pname { font-family: var(--fn); font-size: .88rem; color: var(--ink); }
+.ecs-match__pscore { font-family: var(--fm); font-size: .82rem; color: var(--muted); flex-shrink: 0; }
+.erev--on .ecs-match__prop--win {
+  border-color: var(--green);
+  box-shadow: 0 14px 30px -14px rgba(11, 61, 46, .3);
+  transform: translateX(6px);
+  transition: border-color .3s ease 1.1s, box-shadow .3s ease 1.1s, transform .3s ease 1.1s;
+}
+.ecs-match__pscore--win {
+  font-family: var(--fn); font-weight: 700; color: var(--green);
+}
+.ecs-match__approve {
+  align-self: flex-start;
+  font-family: var(--fn); font-size: .82rem; font-weight: 600; color: var(--green);
+  background: var(--green-soft); border-radius: 999px; padding: .55rem 1rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ecs-match > * { transition: none; opacity: 1; transform: none; }
+  .erev--on .ecs-match__prop--win { transition: none; }
+}
 
 /* ── KURUCU PİLOT PROGRAMI — 4 haftalık açık zeminli yolculuk ── */
 .ecs-pilot { padding: 3.5rem 0; }
@@ -364,77 +333,6 @@
   .ecs-problem__arrow { transform: rotate(90deg); padding: .4rem 0; }
 }
 
-/* ── 3 ADIMDA NASIL ÇALIŞIR ── */
-.ecs-steps { padding: 3.5rem 0; }
-.ecs-steps__row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-top: 2.8rem; position: relative; }
-.ecs-steps__item { position: relative; padding-top: 1rem; }
-.ecs-steps__item:not(:last-child)::after {
-  content: ''; position: absolute; top: 1.7rem; left: calc(100% - .2rem); width: calc(1.4rem + .4rem);
-  height: 1px; background: var(--line);
-}
-.ecs-steps__n { font-family: var(--fm); font-weight: 600; font-size: .8rem; color: var(--green); }
-.ecs-steps__h { font-family: var(--fn); font-weight: 700; font-size: 1.1rem; color: var(--ink); margin: .6rem 0 .5rem; }
-.ecs-steps__p { font-size: .88rem; line-height: 1.6; color: var(--muted); margin: 0; }
-.ecs-steps__note { margin-top: 2.4rem; font-family: var(--fn); font-size: .88rem; color: var(--ink); background: var(--green-soft); border-radius: 12px; padding: 1rem 1.3rem; }
-@media (max-width: 760px) {
-  .ecs-steps__row { grid-template-columns: 1fr; gap: 2rem; }
-  .ecs-steps__item::after { display: none; }
-}
-
-/* ── CANLI ÖRNEK — koyu, tam genişlik AI gerekçe kartı ── */
-.ecs-live--card {
-  margin-top: 2.4rem;
-  padding: 2rem 2rem;
-  border-radius: 24px;
-  background: radial-gradient(120% 100% at 15% 0%, #123c30 0%, var(--green-dark) 46%, #04140d 100%);
-}
-.ecs-live__h3 {
-  font-family: var(--fs); font-weight: 500; font-size: clamp(1.5rem, 2.6vw, 2rem);
-  line-height: 1.2; color: #fff; margin: .6rem 0 0;
-}
-.ecs-live__grid {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 1.6rem;
-  margin-top: 3rem;
-  align-items: start;
-}
-.ecs-live__req {
-  background: rgba(255, 255, 255, .06);
-  border: 1px solid rgba(255, 255, 255, .14);
-  border-radius: 18px;
-  padding: 1.6rem;
-}
-.ecs-live__tag {
-  font-family: var(--fm); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--sage);
-}
-.ecs-live__req p {
-  font-family: var(--fs); font-weight: 500; font-size: 1.2rem; line-height: 1.5; margin-top: 1rem; color: #fff;
-}
-.ecs-live__match { background: var(--white); border-radius: 20px; padding: 1.8rem 2rem; }
-.ecs-live__matchhead {
-  display: flex; align-items: center; gap: .8rem; flex-wrap: wrap;
-  font-family: var(--fn); font-weight: 600; font-size: .95rem; color: var(--ink);
-}
-.ecs-live__score { margin-left: auto; font-family: var(--fs); font-weight: 500; font-size: 2rem; color: var(--gold); }
-.ecs-live__reasons { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; flex-direction: column; }
-.ecs-live__reasons li {
-  display: grid; grid-template-columns: 110px 50px 1fr; gap: .9rem; align-items: baseline;
-  padding: .75rem 0; border-top: 1px solid var(--line); font-size: .86rem;
-}
-.ecs-live__reasons li:first-child { border-top: none; padding-top: 0; }
-.ecs-live__reasons span { font-family: var(--fn); font-weight: 600; color: var(--ink); }
-.ecs-live__reasons b { font-family: var(--fm); font-weight: 600; color: var(--green); }
-.ecs-live__reasons em { font-style: normal; color: var(--muted); }
-.ecs-live__actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.7rem; }
-.ecs-btn--ghost-dark { background: transparent; border: 1px solid var(--line); color: var(--ink); }
-.ecs-btn--ghost-dark:hover { border-color: var(--green); color: var(--green); transform: translateY(-2px); }
-@media (max-width: 860px) {
-  .ecs-live__grid { grid-template-columns: 1fr; }
-  .ecs-live__match { padding: 1.5rem; }
-  .ecs-live__reasons li { grid-template-columns: 92px 40px 1fr; gap: .6rem; }
-}
-
 /* ── BUGÜNÜN ÖNCELİĞİ — takip kuyruğu ── */
 .ecs-queue__list { margin-top: 2.6rem; display: flex; flex-direction: column; border-top: 1px solid var(--line); }
 .ecs-qrow {
@@ -460,85 +358,11 @@
   .ecs-qrow__cta { grid-column: 2; order: 4; width: 100%; text-align: center; }
 }
 
-/* ── 3 ANA DEĞER ÖNERİSİ ── */
-.ecs-impact { padding: 3.5rem 0; }
-.ecs-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-top: 3rem; align-items: stretch; }
-.ecs-pillar {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
-  padding: 1.9rem; display: flex; flex-direction: column; gap: 1rem; height: 100%;
-  transition: transform .3s, box-shadow .3s;
-}
-.ecs-pillar:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(15, 81, 50, .08); }
-.ecs-pillar__eye { font-family: var(--fm); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--green); }
-.ecs-pillar__h { font-family: var(--fn); font-weight: 700; font-size: 1.15rem; color: var(--ink); margin: 0; line-height: 1.3; }
-.ecs-pillar__p { font-size: .88rem; line-height: 1.6; color: var(--muted); margin: 0; }
-.ecs-pillar__feats { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .45rem; }
-.ecs-pillar__feats li {
-  font-family: var(--fn); font-size: .82rem; color: var(--ink); padding-left: 1.1rem; position: relative;
-}
-.ecs-pillar__feats li::before { content: ''; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--sage); }
-.ecs-metric {
-  margin-top: auto; padding-top: 1.2rem; border-top: 1px solid var(--line);
-  display: flex; align-items: center; gap: .9rem;
-}
-.ecs-metric__l { font-family: var(--fn); font-weight: 600; font-size: .82rem; color: var(--ink); }
-.ecs-metric__note { font-family: var(--fm); font-size: .66rem; color: var(--muted); margin-top: .15rem; }
-.ecs-metric--cmp { flex-wrap: wrap; }
-.ecs-metric__cmpcol { display: flex; flex-direction: column; gap: .2rem; }
-.ecs-metric__cmplbl { font-family: var(--fm); font-size: .62rem; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
-.ecs-metric__cmpv { font-family: var(--fs); font-weight: 600; font-size: 1.15rem; color: var(--green); }
-.ecs-metric__cmpv--muted { color: var(--muted); font-weight: 500; }
-.ecs-metric__arrow { color: var(--sage); font-size: 1.1rem; }
-.ecs-metric__note--full { width: 100%; margin-top: .3rem; }
-.ecs-metric__bars { display: flex; align-items: flex-end; gap: 5px; height: 40px; flex: 1; }
-.ecs-metric__bar { flex: 1; height: var(--v); border-radius: 3px 3px 0 0; background: var(--green); opacity: .85; }
-.ecs-metric__bar:nth-child(2) { opacity: .7; }
-.ecs-metric__bar:nth-child(3) { opacity: .55; }
-.ecs-metric__bar:nth-child(4) { opacity: .4; }
-
-/* ── CANLI ÖRNEK: gerçek ekran kanıtı (eski GRID'in yerini alır) ── */
-.ecs-live__proof { display: grid; grid-template-columns: 220px 1fr; gap: 1.6rem; align-items: stretch; margin-top: 1.6rem; }
-.ecs-grid__phone {
-  background: #111813; border-radius: 28px; padding: 11px;
-  box-shadow: 0 30px 60px -30px rgba(15, 81, 50, .3);
-}
-.ecs-grid__phone-screen { width: 100%; aspect-ratio: 9 / 19.5; border-radius: 20px; overflow: hidden; background: #fff; }
-.ecs-grid__phone-screen img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
-.ecs-summary {
-  background: #fff; border: 1px solid var(--cs-line); border-radius: 22px;
-  padding: 1.8rem; display: flex; flex-direction: column; gap: 1.2rem; justify-content: center;
-}
-.ecs-summary__h { display: flex; align-items: center; gap: .7rem; font-family: var(--fs); font-weight: 600; font-size: 1.05rem; color: var(--cs-ink); }
-.ecs-summary__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
-.ecs-summary__v { font-family: var(--fs); font-weight: 500; font-size: 2rem; color: var(--cs-ink); }
-.ecs-summary__l { font-size: .78rem; color: var(--cs-mut); margin-top: .2rem; }
-.ecs-summary__warn {
-  display: flex; gap: .6rem; background: #fef3c7; border-radius: 12px; padding: .9rem 1.05rem;
-  font-size: .8rem; line-height: 1.5; color: #78350f;
-}
-@media (max-width: 700px) {
-  .ecs-live__proof { grid-template-columns: 1fr; }
-  .ecs-grid__phone { max-width: 220px; margin: 0 auto; }
-}
-
 /* ── DANIŞMAN VE YÖNETİCİ ── */
 .ecs-mgr { padding: 3.5rem 0; }
-.ecs-mgr__sub { margin-top: 2.6rem; padding-bottom: 3.2rem; border-bottom: 1px solid var(--line); }
+.ecs-mgr__sub { margin-top: 2.6rem; }
 .ecs-mgr__subh { font-family: var(--fs); font-weight: 500; font-size: 1.4rem; color: var(--ink); margin: 0 0 .6rem; }
 .ecs-queue__list--compact { margin-top: 1.6rem; border-top: 1px solid var(--line); }
-.ecs-mgr__grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3.5rem; align-items: center; margin-top: 3.2rem; }
-.ecs-mgr__text .ecs__h2 { margin-top: .8rem; }
-.ecs-mgr__list { list-style: none; margin: 2.2rem 0 0; padding: 0; display: flex; flex-direction: column; }
-.ecs-mgr__list li {
-  display: flex; align-items: baseline; gap: 1rem;
-  padding: 1.1rem 0; border-top: 1px solid var(--line);
-}
-.ecs-mgr__list li:first-child { border-top: none; padding-top: 0; }
-.ecs-mgr__list b { font-family: var(--fs); font-weight: 500; font-size: 1.6rem; color: var(--green); min-width: 100px; }
-.ecs-mgr__list span { font-family: var(--fn); font-size: .9rem; color: var(--muted); }
-@media (max-width: 900px) {
-  .ecs-mgr__grid { grid-template-columns: 1fr; gap: 2.2rem; }
-}
 
 /* ── ALINTI KARTI (Yönetici bölümünün kapanışı) ── */
 .ecs-quote {
@@ -574,51 +398,7 @@
   .ecs-trust__grid { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 900px) {
-  .ecs-pillars { grid-template-columns: 1fr; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ecs-phone__scroll { animation: none; }
-  .ecs-phone { transform: none; }
-}
-
-/* ══════════════════════════════════════════════════════
-   Paylaşılan koyu tema bileşenleri (.etour / .eroi / .eplan)
-   yalnızca .ecs içinde açık zemine göre yeniden boyanır.
-   SkillMatch bu bileşenleri hiçbir zaman .ecs altında
-   kullanmaz — bu kural SkillMatch'i etkilemez.
-   ══════════════════════════════════════════════════════ */
-
-.ecs .etour__tab { border-color: var(--line); background: var(--surface); color: var(--muted); }
-.ecs .etour__tab:hover { color: var(--ink); border-color: var(--sage); }
-.ecs .etour__tab--on { color: #fff; background: var(--green); }
-
-.ecs .etour__viewport { border-left-color: var(--line); }
-.ecs .etour__btn { color: var(--muted); }
-.ecs .etour__btn:hover { color: var(--ink); background: var(--surface); }
-.ecs .etour__btn--on { color: var(--ink); background: var(--green-soft); }
-.ecs .etour__n { color: var(--sage); }
-.ecs .etour__btn--on .etour__n { color: var(--green); }
-.ecs .etour__d { color: var(--muted); }
-
-.ecs .etour__arrow { border-color: var(--line); background: #fff; color: var(--muted); }
-.ecs .etour__arrow:hover { border-color: var(--green); background: var(--green-soft); color: var(--green); }
-.ecs .etour__dot { background: var(--line); }
-.ecs .etour__dot:hover { background: var(--sage); }
-.ecs .etour__count { color: var(--muted); }
-
-/* Ekran vitrini kasıtlı olarak koyu kalır — tek "dramatik ürün gösterimi"
-   alanı burası; ancak neon zümrüt lekesi altın tona çevrilir. */
-.ecs .eshot-stage {
-  background:
-    radial-gradient(ellipse 70% 60% at 50% 8%, rgba(var(--ec), .28), transparent 62%),
-    radial-gradient(ellipse 60% 55% at 88% 92%, rgba(184, 149, 91, .16), transparent 60%),
-    linear-gradient(165deg, #0d3527 0%, #073122 55%, #0a2e21 100%);
-}
-.ecs .eshot-stage__glow--b { background: radial-gradient(circle, rgba(184, 149, 91, .22), transparent 65%); }
-
-/* ── ROI hesaplayıcı ── */
+/* ── ROI hesaplayıcı (paylaşılan .eroi bileşeni, açık zemine boyanır) ── */
 .ecs .eroi { border-color: var(--line); background: linear-gradient(155deg, var(--surface), #fff); }
 .ecs .eroi__f label { color: var(--muted); }
 .ecs .eroi__f label b { color: var(--ink); }
@@ -650,3 +430,83 @@
 .ecs .eplan__btn:hover { background: var(--surface); color: var(--green); }
 .ecs .eplan--best .eplan__btn { background: var(--green); color: #fff; }
 .ecs .eplan--best .eplan__btn:hover { filter: brightness(1.1); }
+
+/* ══════════════════════════════════════════════════════
+   3 SİNEMATİK ÜRÜN SAHNESİ — eski 9 modüllü ekran turunun
+   ve ayrı "değer önerisi" bölümünün yerini alır.
+   ══════════════════════════════════════════════════════ */
+.ecs-scene {
+  display: grid;
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+  padding: 4.5rem 0;
+}
+.ecs-scene--rev { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+.ecs-scene--wide { grid-template-columns: 1fr; text-align: center; padding: 4.5rem 0 5rem; }
+.ecs-scene__text { max-width: 480px; }
+.ecs-scene--wide .ecs-scene__text { max-width: 620px; margin: 0 auto; }
+@media (max-width: 900px) {
+  .ecs-scene, .ecs-scene--rev { grid-template-columns: 1fr; padding: 3.5rem 0; }
+  .ecs-scene__text { max-width: none; }
+}
+
+/* Sahne 1 — telefon, scroll'a bağlı içerik kayması */
+.ecs-scene__stage { display: flex; justify-content: center; }
+.ecs-scene__phone {
+  width: min(300px, 68vw);
+  padding: 12px; border-radius: 40px;
+  background: linear-gradient(160deg, #232323, #0a0a0a);
+  box-shadow: 0 40px 80px -30px rgba(11, 61, 46, .28), 0 12px 30px -14px rgba(0, 0, 0, .18);
+}
+.ecs-scene__phonescreen {
+  position: relative; width: 100%; aspect-ratio: 9 / 18.6;
+  border-radius: 28px; overflow: hidden; background: #fff;
+}
+.ecs-scene__phonescreen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+
+/* Sahne 3 — geniş panel, mevcut .ecs-panel bileşenini yeniden kullanır */
+.ecs-scene__panel { margin-top: 2.6rem; max-width: 960px; margin-left: auto; margin-right: auto; }
+
+/* Sahne 2 — tek siyah istisna: sinematik laptop açılışı */
+.ecs-scene--dark { background: #0a0a0a; }
+.ecs-boot { position: relative; width: min(560px, 92vw); margin: 0 auto; }
+.ecs-boot__lid {
+  position: relative;
+  border-radius: 14px 14px 3px 3px;
+  background: linear-gradient(160deg, #57585c, #232427);
+  padding: 14px 14px 8px;
+  box-shadow: 0 50px 100px -30px rgba(0, 0, 0, .7), inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+.ecs-boot__screen {
+  position: relative; width: 100%; aspect-ratio: 16 / 10;
+  background: #000; border-radius: 4px; overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .6);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .6rem;
+}
+.ecs-boot__base {
+  height: 14px; margin: 0 -22px;
+  background: linear-gradient(160deg, #4c4d50, #202124);
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 14px 26px -10px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+.ecs-boot__base::before {
+  content: ''; display: block; width: 90px; height: 4px; margin: 0 auto;
+  background: rgba(0, 0, 0, .35); border-radius: 0 0 6px 6px;
+}
+.ecs-boot__mono { width: 38px; height: 38px; object-fit: contain; opacity: 0; transition: opacity .5s ease; }
+.ecs-boot__brand { display: flex; flex-direction: column; align-items: center; gap: .3rem; opacity: 0; transition: opacity .5s ease; }
+.ecs-boot__name { font-family: var(--fs); color: #fff; font-size: 1.15rem; letter-spacing: -.01em; }
+.ecs-boot__by { font-family: var(--fm); color: rgba(255, 255, 255, .5); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; }
+.ecs-boot__shot {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top;
+  opacity: 0; transition: opacity .7s ease;
+}
+.ecs-boot--s2 .ecs-boot__mono { opacity: 1; }
+.ecs-boot--s3 .ecs-boot__mono { opacity: .4; }
+.ecs-boot--s3 .ecs-boot__brand { opacity: 1; }
+.ecs-boot--s4 .ecs-boot__mono, .ecs-boot--s4 .ecs-boot__brand { opacity: 0; }
+.ecs-boot--s4 .ecs-boot__shot { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .ecs-boot__mono, .ecs-boot__brand, .ecs-boot__shot { transition: none; }
+}
