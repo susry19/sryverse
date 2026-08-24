@@ -294,6 +294,28 @@ export default function App() {
     {label:'İletişim',   target:'#contact'},
   ]
 
+  const estateNav = [
+    {label:'Nasıl çalışır',    target:'#how'},
+    {label:'Özellikler',       target:'#tour'},
+    {label:'Yöneticiler için', target:'#manager'},
+    {label:'Güvenlik',         target:'#security'},
+    {label:'Paketler',         target:'#pricing'},
+    {label:'SSS',              target:'#faq'},
+  ]
+
+  const goDemo = useCallback(() => {
+    setMenuOpen(false)
+    setPage('home')
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })
+    }))
+  }, [])
+
+  const goInPage = useCallback((target) => {
+    setMenuOpen(false)
+    document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
+
   return (
     <div className="site">
       
@@ -313,11 +335,19 @@ export default function App() {
             </span>
           </a>
           <nav className={`hdr__nav${menuOpen?' hdr__nav--open':''}`}>
-            {nav.map(n => <a key={n.label} href={n.target==='vision'?'/vizyon':n.target} className={`nlink${(n.target==='vision'&&page==='vision') ? ' nlink--cur' : ''}`} onClick={e=>{e.preventDefault(); go(n.target)}}>{n.label}</a>)}
+            {page === 'estatematch'
+              ? estateNav.map(n => <a key={n.label} href={n.target} className="nlink" onClick={e=>{e.preventDefault(); goInPage(n.target)}}>{n.label}</a>)
+              : nav.map(n => <a key={n.label} href={n.target==='vision'?'/vizyon':n.target} className={`nlink${(n.target==='vision'&&page==='vision') ? ' nlink--cur' : ''}`} onClick={e=>{e.preventDefault(); go(n.target)}}>{n.label}</a>)}
           </nav>
           <div className="hdr__act">
-            <a href="#products" className="hbtn hbtn--g" onClick={e=>{e.preventDefault(); go('#products')}}>Ürünleri Keşfet</a>
-            <a href="#contact" className="hbtn hbtn--s" onClick={e=>{e.preventDefault(); go('#contact')}}>Demo Al →</a>
+            {page === 'estatematch' ? (
+              <a href="#contact" className="hbtn hbtn--s" onClick={e=>{e.preventDefault(); goDemo()}}>Ücretsiz Demo →</a>
+            ) : (
+              <>
+                <a href="#products" className="hbtn hbtn--g" onClick={e=>{e.preventDefault(); go('#products')}}>Ürünleri Keşfet</a>
+                <a href="#contact" className="hbtn hbtn--s" onClick={e=>{e.preventDefault(); go('#contact')}}>Demo Al →</a>
+              </>
+            )}
           </div>
           <button className={`burger${menuOpen?' burger--x':''}`} onClick={()=>setMenuOpen(!menuOpen)} aria-label="Menü">
             <span/><span/><span/>
@@ -447,7 +477,10 @@ export default function App() {
               <a href="#methodology" onClick={e=>{e.preventDefault(); go('#methodology')}}>Metodoloji</a>
               <a href="#contact" onClick={e=>{e.preventDefault(); go('#contact')}}>İletişim</a>
             </div>
-            <div className="fcol"><h5>Bağlantı</h5><a href="#">LinkedIn</a><a href="#">GitHub</a></div>
+            <div className="fcol"><h5>İletişim</h5>
+              <a href="https://wa.me/905315178170?text=Merhaba%2C%20SRYVERSE%20%C3%BCr%C3%BCnleri%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer">WhatsApp</a>
+              <a href="#contact" onClick={e=>{e.preventDefault(); go('#contact')}}>Demo talep et</a>
+            </div>
           </div>
         </div>
         <div className="wrap footer__bot">

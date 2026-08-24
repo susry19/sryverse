@@ -37,6 +37,7 @@
   background: var(--cs-bg);
   position: relative;
   z-index: 1;
+  scroll-margin-top: 100px;
 }
 
 .ecs__eye {
@@ -128,6 +129,7 @@
   margin: 1.25rem 0 0;
 }
 .ecs-hero__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: .9rem; margin-top: 1.75rem; }
+.ecs-hero__trust { font-family: var(--fn); font-size: .82rem; color: var(--cs-mut); margin: 1.1rem 0 0; text-align: center; }
 .ecs-btn {
   display: inline-flex; align-items: center; gap: .5rem;
   border-radius: 11px; padding: .95rem 1.7rem;

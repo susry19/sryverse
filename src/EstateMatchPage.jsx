@@ -84,20 +84,20 @@ const PLANS = [
   {
     n: 'Starter', h: 'Küçük ekipler',
     p: 'Temel operasyonu tek merkeze taşımak isteyen butik acenteler için.',
-    ul: ['10 kullanıcı', '500 ilan', 'Sınırsız AI eşleştirme', 'Tüm temel modüller'],
-    cta: 'Demo planla',
+    ul: ['10 kullanıcı', '500 ilan', 'Adil kullanım kapsamında AI eşleştirme', 'Tüm temel modüller'],
+    cta: 'Ücretsiz demo planla',
   },
   {
-    n: 'Professional', h: 'Büyüyen acenteler',
+    n: 'Professional', h: '10-25 danışmanlı ekipler için',
     p: 'Portföyü ve danışman ekibi hızla büyüyen emlak şirketleri için.',
-    ul: ['25 kullanıcı', '2.500 ilan', 'Sınırsız AI eşleştirme', 'Gelişmiş raporlar ve yönetim'],
-    cta: 'Demo talep et',
+    ul: ['25 kullanıcı', '2.500 ilan', 'Adil kullanım kapsamında AI eşleştirme', 'Gelişmiş raporlar ve yönetim'],
+    cta: 'Ücretsiz demo planla',
   },
   {
     n: 'Enterprise', h: 'Kurumsal yapı',
     p: 'Çok şubeli, özel entegrasyon ve yüksek ölçek ihtiyacı olan kurumlar için.',
     ul: ['Esnek kullanıcı', 'Esnek portföy limiti', 'Özel entegrasyonlar', 'Kuruma özel çözümler'],
-    cta: 'Görüşelim',
+    cta: 'Ücretsiz demo planla',
   },
 ]
 
@@ -181,11 +181,12 @@ export default function EstateMatchPage({ goBack, onDemo }) {
             <h1 className="ecs-hero__h1">Bugün hangi müşteriyi arayacağınızı, <em style={{ fontStyle: 'normal', color: 'var(--cs-brand)' }}>AI söylesin.</em></h1>
             <p className="ecs-hero__sub">EstateMatch AI, portföyünüzü ve müşteri taleplerinizi karşılaştırır; en yüksek ihtimalli eşleşmeleri gerekçesiyle sıralar. Danışman onaylamadan hiçbir eşleşme müşteriye gitmez.</p>
             <div className="ecs-hero__ctas">
-              <a className="ecs-btn ecs-btn--solid" href="https://estate.sryverse.com" target="_blank" rel="noopener noreferrer">
+              <button className="ecs-btn ecs-btn--solid" onClick={demo}>Ücretsiz demo planla <span>→</span></button>
+              <a className="ecs-btn ecs-btn--ghost" href="https://estate.sryverse.com" target="_blank" rel="noopener noreferrer">
                 Canlı ürünü keşfet <span>→</span>
               </a>
-              <button className="ecs-btn ecs-btn--ghost" onClick={demo}>Demo planla <span>→</span></button>
             </div>
+            <p className="ecs-hero__trust">Kendi verinizi paylaşmadan inceleyebilirsiniz · Kurulum ve ekip eğitimi dahildir</p>
           </div>
 
           <div className="ecs-hero__stage ecs-hero__stage--panel">
@@ -273,7 +274,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       </section>
 
       {/* ── CANLI ÖRNEK — AI eşleştirme gerekçesi ── */}
-      <section className="ecs ecs-live">
+      <section id="how" className="ecs ecs-live">
         <div className="wrap">
           <Rev>
             <span className="ecs__eye" style={{ color: 'var(--sage)' }}>Örnek eşleştirme</span>
@@ -335,7 +336,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       </section>
 
       {/* ── EKRAN TURU ── */}
-      <section className="esec esec--tint">
+      <section id="tour" className="esec esec--tint">
         <div className="wrap">
           <Rev>
             <div className="esec__head">
@@ -362,6 +363,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
           <Rev>
             <span className="ecs__eye">Etki</span>
             <h2 className="ecs__h2">Emlak ekiplerinin gerçekten <em>nasıl çalıştığına göre kuruldu.</em></h2>
+            <p className="ecs__p" style={{ marginTop: '.6rem', fontSize: '.85rem' }}>Aşağıdaki değerler örnek operasyon verisidir; gerçek sonuç ekibinize göre değişir.</p>
           </Rev>
 
           <div className="ecs-impact__stats">
@@ -445,7 +447,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       </section>
 
       {/* ── YÖNETİCİ GÖRÜNÜMÜ ── */}
-      <section className="ecs">
+      <section id="manager" className="ecs">
         <div className="wrap ecs-mgr">
           <Rev>
             <div className="ecs-mgr__grid">
@@ -544,7 +546,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       </section>
 
       {/* ── GÜVENLİK VE ŞEFFAFLIK ── */}
-      <section className="ecs">
+      <section id="security" className="ecs">
         <div className="wrap ecs-trustwrap">
           <Rev>
             <span className="ecs__eye">Güvenlik ve şeffaflık</span>
@@ -604,7 +606,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       </section>
 
       {/* ── FIYATLANDIRMA ── */}
-      <section className="esec">
+      <section id="pricing" className="esec">
         <div className="wrap">
           <Rev>
             <div className="esec__head esec__head--mid">
@@ -632,7 +634,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       </section>
 
       {/* ── SSS ── */}
-      <section className="esec esec--tint">
+      <section id="faq" className="esec esec--tint">
         <div className="wrap">
           <Rev>
             <div className="esec__head esec__head--mid">
@@ -667,11 +669,11 @@ export default function EstateMatchPage({ goBack, onDemo }) {
                   Emlak operasyonunuzun<br /><em>yeni işletim sistemi.</em>
                 </h2>
                 <p className="ecta__p">
-                  Doğru müşteri. Doğru portföy. Doğru zaman. Pilot programa katılın, sürecinizi
-                  birlikte kuralım.
+                  30 dakikalık görüşmede mevcut portföy ve müşteri takip sürecinizi birlikte
+                  inceliyor, EstateMatch AI'nin ekibinize nasıl uygulanacağını gösteriyoruz.
                 </p>
                 <div className="ecta__row">
-                  <button className="ebtn ebtn--solid" onClick={demo}>Pilot programa katıl <span>→</span></button>
+                  <button className="ebtn ebtn--solid" onClick={demo}>Ücretsiz demo planla <span>→</span></button>
                   <a
                     className="ebtn ebtn--ghost"
                     href="https://wa.me/905315178170?text=Merhaba%2C%20EstateMatch%20AI%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum."
@@ -680,6 +682,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
                     WhatsApp'tan yazın <span>→</span>
                   </a>
                 </div>
+                <p className="ecta__trust">Kendi verinizi paylaşmanız gerekmez · Kurulum ve ekip eğitimi dahildir</p>
               </div>
             </div>
           </Rev>

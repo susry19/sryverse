@@ -234,7 +234,7 @@
 }
 
 /* ── Genel bolum ── */
-.esec { position: relative; padding: 6.5rem 0; }
+.esec { position: relative; padding: 6.5rem 0; scroll-margin-top: 100px; }
 .esec--tint { background: rgba(255, 255, 255, .017); }
 .esec__head { max-width: 720px; margin-bottom: 3.5rem; }
 .esec__head--mid { margin-left: auto; margin-right: auto; text-align: center; }
@@ -1017,6 +1017,7 @@
   margin: 0 auto 2.5rem;
 }
 .ecta__row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+.ecta__trust { font-size: .85rem; color: rgba(255, 255, 255, .4); margin-top: 1.3rem; }
 
 /* ── RESPONSIVE ── */
 
