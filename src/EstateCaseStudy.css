@@ -247,16 +247,34 @@
 .ecs-phone__img { display: block; width: 100%; height: auto; }
 
 /* ── KURUCU PİLOT PROGRAMI ── */
-.ecs-pilot {
-  display: flex; align-items: center; gap: .8rem;
-  background: var(--green-soft); border-radius: 14px;
-  padding: 1rem 1.4rem; max-width: 780px; margin: 0 auto 2rem;
+.ecs-pilotcard {
+  background: var(--green-dark); border-radius: 24px;
+  padding: 2.4rem 2.6rem; position: relative; overflow: hidden;
 }
-.ecs-pilot__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
-.ecs-pilot p { font-family: var(--fn); font-size: .86rem; line-height: 1.6; color: var(--ink); margin: 0; }
-.ecs-pilot b { font-weight: 600; }
+.ecs-pilotcard::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(70% 100% at 100% 0%, rgba(169, 197, 181, .16), transparent 60%);
+  pointer-events: none;
+}
+.ecs-pilotcard__in { position: relative; max-width: 640px; }
+.ecs-pilotcard .ecs__eye { color: var(--sage); }
+.ecs-pilotcard .ecs__h2 { color: #fff; }
+.ecs-pilotcard .ecs__h2 em { color: var(--sage); }
+.ecs-pilotcard .ecs__p { color: rgba(255, 255, 255, .7); }
+.ecs-pilotcard__list {
+  list-style: none; margin: 1.6rem 0 0; padding: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: .7rem 1.5rem;
+}
+.ecs-pilotcard__list li {
+  font-family: var(--fn); font-size: .9rem; color: #fff; padding-left: 1.5rem; position: relative;
+}
+.ecs-pilotcard__list li::before {
+  content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; font-size: .8rem;
+}
+.ecs-pilotcard .ecs-hero__trust { color: rgba(255, 255, 255, .5); }
 @media (max-width: 640px) {
-  .ecs-pilot { flex-direction: column; align-items: flex-start; gap: .5rem; }
+  .ecs-pilotcard { padding: 2rem 1.5rem; border-radius: 18px; }
+  .ecs-pilotcard__list { grid-template-columns: 1fr; }
 }
 
 /* ── YETENEK ŞERİDİ ── */
@@ -279,7 +297,7 @@
 @media (prefers-reduced-motion: reduce) { .ecs-marquee__track { animation: none; } }
 
 /* ── PROBLEM AYNASI ── */
-.ecs-problem { padding: 4.5rem 0; }
+.ecs-problem { padding: 3.5rem 0; }
 .ecs-problem__grid {
   display: grid; grid-template-columns: 1fr auto 1fr; gap: 2.2rem; align-items: center;
   margin-top: 3.2rem;
@@ -314,10 +332,33 @@
   .ecs-problem__arrow { transform: rotate(90deg); padding: .4rem 0; }
 }
 
+/* ── 3 ADIMDA NASIL ÇALIŞIR ── */
+.ecs-steps { padding: 3.5rem 0; }
+.ecs-steps__row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-top: 2.8rem; position: relative; }
+.ecs-steps__item { position: relative; padding-top: 1rem; }
+.ecs-steps__item:not(:last-child)::after {
+  content: ''; position: absolute; top: 1.7rem; left: calc(100% - .2rem); width: calc(1.4rem + .4rem);
+  height: 1px; background: var(--line);
+}
+.ecs-steps__n { font-family: var(--fm); font-weight: 600; font-size: .8rem; color: var(--green); }
+.ecs-steps__h { font-family: var(--fn); font-weight: 700; font-size: 1.1rem; color: var(--ink); margin: .6rem 0 .5rem; }
+.ecs-steps__p { font-size: .88rem; line-height: 1.6; color: var(--muted); margin: 0; }
+.ecs-steps__note { margin-top: 2.4rem; font-family: var(--fn); font-size: .88rem; color: var(--ink); background: var(--green-soft); border-radius: 12px; padding: 1rem 1.3rem; }
+@media (max-width: 760px) {
+  .ecs-steps__row { grid-template-columns: 1fr; gap: 2rem; }
+  .ecs-steps__item::after { display: none; }
+}
+
 /* ── CANLI ÖRNEK — koyu, tam genişlik AI gerekçe kartı ── */
-.ecs-live {
-  padding: 4.5rem 0;
+.ecs-live--card {
+  margin-top: 2.4rem;
+  padding: 2rem 2rem;
+  border-radius: 24px;
   background: radial-gradient(120% 100% at 15% 0%, #123c30 0%, var(--green-dark) 46%, #04140d 100%);
+}
+.ecs-live__h3 {
+  font-family: var(--fs); font-weight: 500; font-size: clamp(1.5rem, 2.6vw, 2rem);
+  line-height: 1.2; color: #fff; margin: .6rem 0 0;
 }
 .ecs-live__grid {
   display: grid;
@@ -387,23 +428,41 @@
   .ecs-qrow__cta { grid-column: 2; order: 4; width: 100%; text-align: center; }
 }
 
-/* ── IMPACT ── */
-.ecs-impact { padding: 4.5rem 0; }
-.ecs-impact__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-top: 3rem; }
-.ecs-stat {
-  background: #fff; border: 1px solid var(--cs-line); border-radius: 20px;
-  padding: 1.9rem; display: flex; flex-direction: column; gap: 1.2rem;
+/* ── 3 ANA DEĞER ÖNERİSİ ── */
+.ecs-impact { padding: 3.5rem 0; }
+.ecs-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-top: 3rem; align-items: stretch; }
+.ecs-pillar {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+  padding: 1.9rem; display: flex; flex-direction: column; gap: 1rem; height: 100%;
   transition: transform .3s, box-shadow .3s;
 }
-.ecs-stat:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(15, 81, 50, .08); }
-.ecs-stat__tag {
-  align-self: flex-start; font-family: var(--fn); font-weight: 600; font-size: .72rem;
-  padding: .35rem .75rem; border-radius: 999px;
+.ecs-pillar:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(15, 81, 50, .08); }
+.ecs-pillar__eye { font-family: var(--fm); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--green); }
+.ecs-pillar__h { font-family: var(--fn); font-weight: 700; font-size: 1.15rem; color: var(--ink); margin: 0; line-height: 1.3; }
+.ecs-pillar__p { font-size: .88rem; line-height: 1.6; color: var(--muted); margin: 0; }
+.ecs-pillar__feats { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .45rem; }
+.ecs-pillar__feats li {
+  font-family: var(--fn); font-size: .82rem; color: var(--ink); padding-left: 1.1rem; position: relative;
 }
-.ecs-stat__p { font-size: .92rem; line-height: 1.6; color: var(--cs-ink-soft); min-height: 3.2em; }
-.ecs-stat__v { font-family: var(--fs); font-weight: 500; font-size: 3rem; color: var(--cs-ink); line-height: 1; }
-.ecs-dots { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
-.ecs-dots i { display: block; width: 100%; aspect-ratio: 1; border-radius: 50%; background: #e3e8e4; }
+.ecs-pillar__feats li::before { content: ''; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--sage); }
+.ecs-metric {
+  margin-top: auto; padding-top: 1.2rem; border-top: 1px solid var(--line);
+  display: flex; align-items: center; gap: .9rem;
+}
+.ecs-metric__l { font-family: var(--fn); font-weight: 600; font-size: .82rem; color: var(--ink); }
+.ecs-metric__note { font-family: var(--fm); font-size: .66rem; color: var(--muted); margin-top: .15rem; }
+.ecs-metric--cmp { flex-wrap: wrap; }
+.ecs-metric__cmpcol { display: flex; flex-direction: column; gap: .2rem; }
+.ecs-metric__cmplbl { font-family: var(--fm); font-size: .62rem; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.ecs-metric__cmpv { font-family: var(--fs); font-weight: 600; font-size: 1.15rem; color: var(--green); }
+.ecs-metric__cmpv--muted { color: var(--muted); font-weight: 500; }
+.ecs-metric__arrow { color: var(--sage); font-size: 1.1rem; }
+.ecs-metric__note--full { width: 100%; margin-top: .3rem; }
+.ecs-metric__bars { display: flex; align-items: flex-end; gap: 5px; height: 40px; flex: 1; }
+.ecs-metric__bar { flex: 1; height: var(--v); border-radius: 3px 3px 0 0; background: var(--green); opacity: .85; }
+.ecs-metric__bar:nth-child(2) { opacity: .7; }
+.ecs-metric__bar:nth-child(3) { opacity: .55; }
+.ecs-metric__bar:nth-child(4) { opacity: .4; }
 
 /* ── CANLI ÖRNEK: gerçek ekran kanıtı (eski GRID'in yerini alır) ── */
 .ecs-live__proof { display: grid; grid-template-columns: 220px 1fr; gap: 1.6rem; align-items: stretch; margin-top: 1.6rem; }
@@ -431,7 +490,7 @@
 }
 
 /* ── DANIŞMAN VE YÖNETİCİ ── */
-.ecs-mgr { padding: 4.5rem 0; }
+.ecs-mgr { padding: 3.5rem 0; }
 .ecs-mgr__sub { margin-top: 2.6rem; padding-bottom: 3.2rem; border-bottom: 1px solid var(--line); }
 .ecs-mgr__subh { font-family: var(--fs); font-weight: 500; font-size: 1.4rem; color: var(--ink); margin: 0 0 .6rem; }
 .ecs-queue__list--compact { margin-top: 1.6rem; border-top: 1px solid var(--line); }
@@ -449,25 +508,20 @@
   .ecs-mgr__grid { grid-template-columns: 1fr; gap: 2.2rem; }
 }
 
-/* ── CLOSING ── */
-.ecs-closing { padding: 4.5rem 2rem 5rem; display: flex; flex-direction: column; align-items: center; }
-.ecs-closing__h {
-  font-family: var(--fs); font-weight: 500; font-size: clamp(1.8rem, 3.4vw, 2.5rem);
-  line-height: 1.2; text-align: center; max-width: 620px; color: var(--cs-ink); margin: 0;
-}
+/* ── ALINTI KARTI (Yönetici bölümünün kapanışı) ── */
 .ecs-quote {
   background: var(--cs-brand); border-radius: 20px; padding: 1.8rem;
   display: flex; flex-direction: column; gap: 1rem; color: #fff;
 }
-.ecs-quote--solo { margin-top: 2.8rem; width: 100%; max-width: 440px; }
+.ecs-quote--solo { margin: 2.8rem auto 0; width: 100%; max-width: 440px; }
 .ecs-quote p { font-size: .9rem; line-height: 1.6; margin: 0; color: var(--cs-mint); }
 .ecs-quote__row { display: flex; align-items: center; gap: .7rem; margin-top: auto; }
 .ecs-quote__av { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--fs); font-weight: 600; font-size: .7rem; border: 2px solid var(--cs-brand); }
 .ecs-quote__cap { font-family: var(--fn); font-weight: 600; font-size: .72rem; color: #cfe9db; }
 
 /* ── GÜVENLİK VE ŞEFFAFLIK ── */
-.ecs-trustwrap { padding: 4.5rem 0; }
-.ecs-trust__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin-top: 2.8rem; }
+.ecs-trustwrap { padding: 3.5rem 0; }
+.ecs-trust__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-top: 2.8rem; }
 .ecs-trust__card {
   background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
   padding: 1.6rem; display: flex; flex-direction: column; gap: .8rem;
@@ -481,34 +535,15 @@
 .ecs-trust__card h3 { font-family: var(--fn); font-weight: 600; font-size: .96rem; color: var(--ink); margin: 0; }
 .ecs-trust__card p { font-family: var(--fn); font-size: .85rem; line-height: 1.6; color: var(--muted); margin: 0; }
 
-.ecs-arch { margin-top: 4rem; }
-.ecs-arch__h { font-family: var(--fm); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-.ecs-arch__row {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: .6rem;
-  margin-top: 1.4rem; border-top: 1px solid var(--line); padding-top: 1.6rem; position: relative;
-}
-.ecs-arch__row::before {
-  content: ''; position: absolute; top: calc(1.6rem + 15px); left: 10%; right: 10%;
-  height: 1px; background: var(--line);
-}
-.ecs-arch__step { display: flex; flex-direction: column; gap: .8rem; position: relative; }
-.ecs-arch__n {
-  width: 30px; height: 30px; border-radius: 50%; background: var(--green); color: #fff;
-  font-family: var(--fm); font-weight: 600; font-size: .82rem;
-  display: flex; align-items: center; justify-content: center; z-index: 1;
-}
-.ecs-arch__l { display: flex; flex-direction: column; font-family: var(--fn); font-size: .82rem; color: var(--ink); line-height: 1.4; }
 @media (max-width: 900px) {
   .ecs-trust__grid { grid-template-columns: 1fr 1fr; }
-  .ecs-arch__row { grid-template-columns: 1fr; gap: 1.4rem; }
-  .ecs-arch__row::before { display: none; }
 }
 @media (max-width: 560px) {
   .ecs-trust__grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 900px) {
-  .ecs-impact__stats { grid-template-columns: 1fr; }
+  .ecs-pillars { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

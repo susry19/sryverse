@@ -288,6 +288,30 @@
   gap: 2.5rem;
   align-items: start;
 }
+
+/* Gruplu (kategori sekmeli) mod — yalnizca `groups` prop'u verilen kullanimlar */
+.etour--grouped { display: grid; grid-template-columns: 300px 1fr; gap: 2.5rem; align-items: start; }
+.etour--grouped .etour__nav { display: flex; flex-direction: column; gap: 1.1rem; min-width: 0; }
+.etour__tabs { display: flex; flex-wrap: wrap; gap: .5rem; }
+.etour__tab {
+  font-family: var(--fn); font-size: .8rem; font-weight: 600;
+  padding: .55rem 1rem; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .03);
+  color: rgba(255, 255, 255, .6);
+  cursor: pointer; transition: all .25s;
+}
+.etour__tab:hover { color: #fff; border-color: rgba(255, 255, 255, .28); }
+.etour__tab--on {
+  color: #04140f;
+  background: rgb(var(--ec));
+  border-color: transparent;
+}
+.etour__grid { display: flex; flex-direction: column; gap: .4rem; }
+.etour--grouped .etour__ctrl { padding-left: 0; }
+@media (max-width: 900px) {
+  .etour--grouped { grid-template-columns: 1fr; gap: 1.75rem; }
+}
 .etour__nav {
   display: flex;
   flex-direction: column;

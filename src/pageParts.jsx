@@ -1,5 +1,71 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
+/**
+ * Sayfaya ozel SEO/meta enjeksiyonu — SPA oldugu icin sayfa gecislerinde
+ * document.title, meta description, canonical, OG/Twitter etiketlerini
+ * gunceller ve component unmount olunca oncesindeki degerlere geri doner
+ * (mevcut etiketleri silmez, yalnizca kendi eklediklerini kaldirir).
+ */
+export function usePageSeo({ title, description, path, ogImage }) {
+  useEffect(() => {
+    const prevTitle = document.title
+    document.title = title
+
+    const upsert = (selector, makeEl, attr, value) => {
+      let el = document.head.querySelector(selector)
+      const existed = !!el
+      const prevValue = existed ? el.getAttribute(attr) : null
+      if (!el) { el = makeEl(); document.head.appendChild(el) }
+      el.setAttribute(attr, value)
+      return { el, existed, prevValue, attr }
+    }
+
+    const url = `https://sryverse.com${path}`
+    const records = [
+      upsert('meta[name="description"]', () => { const m = document.createElement('meta'); m.setAttribute('name', 'description'); return m }, 'content', description),
+      upsert('link[rel="canonical"]', () => { const l = document.createElement('link'); l.setAttribute('rel', 'canonical'); return l }, 'href', url),
+      upsert('meta[property="og:title"]', () => { const m = document.createElement('meta'); m.setAttribute('property', 'og:title'); return m }, 'content', title),
+      upsert('meta[property="og:description"]', () => { const m = document.createElement('meta'); m.setAttribute('property', 'og:description'); return m }, 'content', description),
+      upsert('meta[property="og:type"]', () => { const m = document.createElement('meta'); m.setAttribute('property', 'og:type'); return m }, 'content', 'website'),
+      upsert('meta[property="og:url"]', () => { const m = document.createElement('meta'); m.setAttribute('property', 'og:url'); return m }, 'content', url),
+      upsert('meta[name="twitter:card"]', () => { const m = document.createElement('meta'); m.setAttribute('name', 'twitter:card'); return m }, 'content', 'summary_large_image'),
+      upsert('meta[name="twitter:title"]', () => { const m = document.createElement('meta'); m.setAttribute('name', 'twitter:title'); return m }, 'content', title),
+      upsert('meta[name="twitter:description"]', () => { const m = document.createElement('meta'); m.setAttribute('name', 'twitter:description'); return m }, 'content', description),
+      ...(ogImage ? [upsert('meta[property="og:image"]', () => { const m = document.createElement('meta'); m.setAttribute('property', 'og:image'); return m }, 'content', ogImage)] : []),
+    ]
+
+    return () => {
+      document.title = prevTitle
+      records.forEach(({ el, existed, prevValue, attr }) => {
+        if (existed) el.setAttribute(attr, prevValue)
+        else el.remove()
+      })
+    }
+  }, [title, description, path, ogImage])
+}
+
+/** Sayfaya JSON-LD structured data ekler; unmount olunca kaldirir. */
+export function usePageSchema(schema) {
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.type = 'application/ld+json'
+    script.textContent = JSON.stringify(schema)
+    document.head.appendChild(script)
+    return () => script.remove()
+  }, [schema])
+}
+
+/** Tekrarlayan "kucuk etiket + baslik" bolum girisi (ecs__eye + ecs__h2). */
+export function SectionHead({ eyebrow, children, note }) {
+  return (
+    <>
+      <span className="ecs__eye">{eyebrow}</span>
+      <h2 className="ecs__h2">{children}</h2>
+      {note && <p className="ecs__p" style={{ marginTop: '.6rem', fontSize: '.85rem' }}>{note}</p>}
+    </>
+  )
+}
+
 /* Scroll ile beliren sarmalayici */
 export function Rev({ children, delay = 0 }) {
   const ref = useRef(null)
@@ -132,19 +198,15 @@ const PER_PAGE = 3
  * `screens`: [{ key, n, t, d, icon }]
  * `domain`: cerceve ust cubugunda gosterilen adres
  * `product`: gorsel alt metni icin urun adi
+ * `groups` (opsiyonel): [{ label, keys: [screenKey, ...] }] — verilirse
+ *   ekranlar kategori sekmelerine gruplanir; verilmezse eski sabit
+ *   3'erli sayfalama davranisi degismeden calisir (SkillMatch icin).
  */
-export function ScreenTour({ screens, domain, product }) {
-  const [active, setActive] = useState(0)
+export function ScreenTour({ screens, domain, product, groups }) {
+  const [active, setActive] = useState(() => groups ? Math.max(0, screens.findIndex(x => x.key === groups[0].keys[0])) : 0)
   const [failed, setFailed] = useState(() => new Set())
-  const pages = Math.ceil(screens.length / PER_PAGE)
   const s = screens[active]
   const missing = failed.has(s.key)
-  const page = Math.floor(active / PER_PAGE)
-
-  const goPage = useCallback((p) => {
-    const next = ((p % pages) + pages) % pages
-    setActive(next * PER_PAGE)
-  }, [pages])
 
   const prev = useCallback(() => {
     setActive(a => (a - 1 + screens.length) % screens.length)
@@ -152,6 +214,79 @@ export function ScreenTour({ screens, domain, product }) {
   const next = useCallback(() => {
     setActive(a => (a + 1) % screens.length)
   }, [screens.length])
+  const pages = Math.ceil(screens.length / PER_PAGE)
+  const goPage = useCallback((p) => {
+    const nextPage = ((p % pages) + pages) % pages
+    setActive(nextPage * PER_PAGE)
+  }, [pages])
+
+  if (groups) {
+    const activeGroupIdx = Math.max(0, groups.findIndex(g => g.keys.includes(s.key)))
+    const activeGroup = groups[activeGroupIdx]
+
+    return (
+      <div className="etour etour--grouped">
+        <div className="etour__nav">
+          <div className="etour__tabs" role="tablist">
+            {groups.map((g, gi) => (
+              <button
+                key={g.label}
+                className={`etour__tab${gi === activeGroupIdx ? ' etour__tab--on' : ''}`}
+                role="tab"
+                aria-selected={gi === activeGroupIdx}
+                onClick={() => setActive(screens.findIndex(x => x.key === g.keys[0]))}
+              >
+                {g.label}
+              </button>
+            ))}
+          </div>
+          <div className="etour__grid">
+            {activeGroup.keys.map(k => {
+              const i = screens.findIndex(x => x.key === k)
+              const x = screens[i]
+              return (
+                <button
+                  key={k}
+                  className={`etour__btn${i === active ? ' etour__btn--on' : ''}`}
+                  onClick={() => setActive(i)}
+                  aria-current={i === active}
+                >
+                  <span className="etour__n">{x.n}</span>
+                  <span className="etour__t">{x.t}</span>
+                  <span className="etour__d">{x.d}</span>
+                </button>
+              )
+            })}
+          </div>
+          <div className="etour__ctrl">
+            <button className="etour__arrow" onClick={prev} aria-label="Önceki ekran">‹</button>
+            <span className="etour__count">
+              {String(active + 1).padStart(2, '0')} / {String(screens.length).padStart(2, '0')}
+            </span>
+            <button className="etour__arrow" onClick={next} aria-label="Sonraki ekran">›</button>
+          </div>
+        </div>
+
+        <DeviceStage>
+          <DeviceMock
+            src={s.src}
+            alt={`${product} — ${s.t} ekranı`}
+            domain={domain}
+            missing={missing}
+            icon={s.icon}
+            title={s.t}
+            onImgError={() => setFailed(prev => new Set(prev).add(s.key))}
+            chips={<>
+              <span className="ephone__chip ephone__chip--live"><i />Canlı ürün</span>
+              <span className="ephone__chip ephone__chip--ai">✦ AI destekli</span>
+            </>}
+          />
+        </DeviceStage>
+      </div>
+    )
+  }
+
+  const page = Math.floor(active / PER_PAGE)
 
   return (
     <div className="etour">
