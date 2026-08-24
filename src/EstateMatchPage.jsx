@@ -216,51 +216,59 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       {/* ── HERO (açık tema, vaka çalışması dili) ── */}
       <section className="ecs">
         <div className="ecs-hero">
-          <button className="ecs-hero__back" onClick={goBack}>← Ana sayfaya dön</button>
-          <div className="ecs-hero__brand">
-            <svg width="28" height="28" viewBox="0 0 30 30" fill="none">
-              <circle cx="15" cy="15" r="14" fill="#0F5132" />
-              <circle cx="19" cy="11" r="4.2" fill="#eafff2" />
-            </svg>
-            <span>EstateMatch AI</span>
-          </div>
+          <div className="ecs-hero__inner">
+            <button className="ecs-hero__crumb" onClick={goBack}>Ana Sayfa <span>/</span> EstateMatch AI</button>
 
-          <div className="ecs-hero__mid">
-            <span className="ecs-hero__kicker">Emlak acenteleri ve satış ekipleri için · AI destekli satış işletim sistemi</span>
-            <h1 className="ecs-hero__h1">Bugün hangi müşteriyi arayacağınızı, <em style={{ fontStyle: 'normal', color: 'var(--cs-brand)' }}>AI söylesin.</em></h1>
-            <p className="ecs-hero__sub">EstateMatch AI, portföyünüzü ve müşteri taleplerinizi karşılaştırır; en yüksek ihtimalli eşleşmeleri gerekçesiyle sıralar. Danışman onaylamadan hiçbir eşleşme müşteriye gitmez. Mevcut CRM'inizin yerini alabilir veya sisteminize entegre çalışabilir.</p>
-            <div className="ecs-hero__ctas">
-              <button className="ecs-btn ecs-btn--solid" onClick={demo}>Ücretsiz demo planla <span>→</span></button>
-              <a className="ecs-btn ecs-btn--ghost" href="https://estate.sryverse.com" target="_blank" rel="noopener noreferrer">
-                Canlı ürünü keşfet <span>→</span>
-              </a>
-            </div>
-            <p className="ecs-hero__trust">Kendi verinizi paylaşmadan inceleyebilirsiniz · Kurulum ve ekip eğitimi dahildir</p>
-          </div>
+            <div className="ecs-hero__grid">
+              <div className="ecs-hero__col">
+                <div className="ecs-hero__badge">
+                  <svg width="16" height="16" viewBox="0 0 30 30" fill="none">
+                    <circle cx="15" cy="15" r="14" fill="#0F5132" />
+                    <circle cx="19" cy="11" r="4.2" fill="#eafff2" />
+                  </svg>
+                  <span>EstateMatch AI</span>
+                </div>
+                <span className="ecs-hero__kicker">Emlak acenteleri ve satış ekipleri için · AI destekli satış işletim sistemi</span>
+                <h1 className="ecs-hero__h1">Bugün hangi müşteriyi arayacağınızı, <em style={{ fontStyle: 'normal', color: 'var(--cs-brand)' }}>AI söylesin.</em></h1>
+                <p className="ecs-hero__sub">Müşteri taleplerini portföyünüzle otomatik eşleştirin ve en güçlü satış fırsatlarını gerekçeleriyle görün. Danışman ekibinizin günlük takibini tek merkezden yönetin.</p>
+                <p className="ecs-hero__crm">Mevcut CRM'inizle entegre çalışabilir.</p>
+                <div className="ecs-hero__ctas">
+                  <button className="ecs-btn ecs-btn--solid" onClick={demo}>Ücretsiz demo planla <span>→</span></button>
+                  <a className="ecs-btn ecs-btn--ghost" href="https://estate.sryverse.com" target="_blank" rel="noopener noreferrer">
+                    Canlı ürünü keşfet <span>→</span>
+                  </a>
+                </div>
+                <ul className="ecs-hero__trustlist">
+                  <li>Kendi verinizi paylaşmadan inceleyin</li>
+                  <li>Kurulum ve ekip eğitimi dahil</li>
+                </ul>
+              </div>
 
-          <div className="ecs-hero__stage ecs-hero__stage--panel">
-            <div className="ecs-panel">
-              <div className="ecs-panel__bar">
-                <span className="ecs-panel__dot" /><span className="ecs-panel__dot" /><span className="ecs-panel__dot" />
-                <span className="ecs-panel__url">estate.sryverse.com</span>
+              <div className="ecs-hero__stage ecs-hero__stage--panel">
+                <div className="ecs-panel">
+                  <div className="ecs-panel__bar">
+                    <span className="ecs-panel__dot" /><span className="ecs-panel__dot" /><span className="ecs-panel__dot" />
+                    <span className="ecs-panel__url">estate.sryverse.com</span>
+                  </div>
+                  <div className="ecs-panel__screen">
+                    <img src="/screens/wide-dashboard.png" alt="EstateMatch AI panel — masaüstü görünümü" />
+                  </div>
+                </div>
+                <div className="ecs-float ecs-float--a">
+                  <span className="ecs-float__eye">Müşteri talebi</span>
+                  <strong>3+1 · Beşiktaş · ₺15M bütçe</strong>
+                </div>
+                <div className="ecs-float ecs-float--b">
+                  <span className="ecs-float__eye">AI uyum skoru</span>
+                  <strong className="ecs-float__gold">%91</strong>
+                </div>
+                <div className="ecs-float ecs-float--c">
+                  <span className="ecs-float__eye">Önerilen aksiyon</span>
+                  <strong>Bugün ara — Müşteri #482</strong>
+                </div>
+                <div className="ecs-hero__fade" />
               </div>
-              <div className="ecs-panel__screen">
-                <img src="/screens/wide-dashboard.png" alt="EstateMatch AI panel — masaüstü görünümü" />
-              </div>
             </div>
-            <div className="ecs-float ecs-float--a">
-              <span className="ecs-float__eye">Müşteri talebi</span>
-              <strong>3+1 · Beşiktaş · ₺15M bütçe</strong>
-            </div>
-            <div className="ecs-float ecs-float--b">
-              <span className="ecs-float__eye">AI uyum skoru</span>
-              <strong className="ecs-float__gold">%91</strong>
-            </div>
-            <div className="ecs-float ecs-float--c">
-              <span className="ecs-float__eye">Önerilen aksiyon</span>
-              <strong>Bugün ara — Müşteri #482</strong>
-            </div>
-            <div className="ecs-hero__fade" />
           </div>
         </div>
       </section>

@@ -9,11 +9,21 @@ const FALLBACK = 'Bu konuda hazır bir yanıtım yok. Aşağıdaki konulardan bi
 export default function SiteAssistant() {
   const [menu, setMenu] = useState(false)
   const [open, setOpen] = useState(false)
+  const [visible, setVisible] = useState(false)
   const [msgs, setMsgs] = useState([{ from: 'bot', text: GREETING }])
   const [input, setInput] = useState('')
   const logRef = useRef(null)
   const panelId = useId()
   const expanded = menu || open
+
+  useEffect(() => {
+    if (window.scrollY > 400) { setVisible(true); return }
+    const onScroll = () => {
+      if (window.scrollY > 400) { setVisible(true); window.removeEventListener('scroll', onScroll) }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const toggleFab = useCallback(() => {
     if (open) { setOpen(false); setMenu(false); return }
@@ -68,13 +78,12 @@ export default function SiteAssistant() {
       )}
 
       <button
-        className={`sa-fab${expanded ? ' sa-fab--open' : ''}`}
+        className={`sa-fab${expanded ? ' sa-fab--open' : ''}${visible || expanded ? '' : ' sa-fab--hidden'}`}
         onClick={toggleFab}
         aria-label={expanded ? 'İletişim menüsünü kapat' : 'İletişim seçeneklerini aç'}
         aria-expanded={expanded}
         aria-controls={panelId}
       >
-        <span className="sa-fab__dot" />
         {expanded ? (
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
         ) : (
