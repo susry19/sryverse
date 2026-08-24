@@ -559,20 +559,14 @@
 }
 .ephone__scroll {
   position: absolute;
-  top: 0; left: 0; right: 0;
-  animation: ephoneScroll 11s cubic-bezier(.65, 0, .35, 1) infinite;
-  will-change: transform;
-}
-.ephone:hover .ephone__scroll { animation-play-state: paused; }
-@keyframes ephoneScroll {
-  0%, 10%  { transform: translateY(0); }
-  50%      { transform: translateY(-24%); }
-  90%, 100% { transform: translateY(0); }
+  inset: 0;
 }
 .ephone__img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
   animation: shotIn .6s cubic-bezier(.2, .8, .2, 1);
 }
 @keyframes shotIn {

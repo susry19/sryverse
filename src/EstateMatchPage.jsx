@@ -3,6 +3,14 @@ import { Rev, ScreenTour, Faq, RoiCalc, SectionHead, usePageSeo, usePageSchema }
 import './ProductPage.css'
 import './EstateCaseStudy.css'
 
+/* ── Kurucu pilot programı: 4 haftalık görsel yolculuk ── */
+const PILOT_WEEKS = [
+  { w: '1. hafta', h: 'Operasyon analizi', icon: 'M4 12h4l2-7 4 14 2-7h4' },
+  { w: '2. hafta', h: 'Veri ve portföy aktarımı', icon: 'M12 4v11m0 0-4-4m4 4 4-4M5 19h14' },
+  { w: '3. hafta', h: 'Ekip kullanımı ve uyarlama', icon: 'M9 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7 8v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1m18 0v-1a4 4 0 0 0-3-3.87M14.5 5.13a4 4 0 0 1 0 7.75' },
+  { w: '4. hafta', h: 'Sonuç ve kazanım raporu', icon: 'M4 20V10m6 10V4m6 16v-7' },
+]
+
 /* ── 3 ana değer önerisi: 9 özellik, 3 ticari sonuç altında ── */
 const PILLARS = [
   {
@@ -273,30 +281,34 @@ export default function EstateMatchPage({ goBack, onDemo }) {
         </div>
       </section>
 
-      {/* ── KURUCU PİLOT PROGRAMI — ayrı dönüşüm bölümü ── */}
-      <section className="ecs">
+      {/* ── KURUCU PİLOT PROGRAMI — 4 haftalık görsel yolculuk ── */}
+      <section className="ecs ecs-pilot">
         <div className="wrap">
           <Rev>
-            <div className="ecs-pilotcard">
-              <div className="ecs-pilotcard__in">
-                <SectionHead eyebrow="Kurucu pilot programı" note="İlk 5 emlak ekibiyle 30 günlük kurucu pilot programı.">
-                  EstateMatch'i operasyonunuza göre <em>birlikte kuralım.</em>
-                </SectionHead>
-
-                <ul className="ecs-pilotcard__list">
-                  <li>Mevcut operasyonun analizi</li>
-                  <li>Portföy aktarımı</li>
-                  <li>Müşteri veri yapısının uyarlanması</li>
-                  <li>Ekip eğitimi</li>
-                  <li>Kullanım takibi</li>
-                  <li>30 günlük sonuç raporu</li>
-                </ul>
-
-                <div className="ecs-hero__ctas" style={{ justifyContent: 'flex-start', marginTop: '1.8rem' }}>
-                  <button className="ecs-btn ecs-btn--solid" onClick={demo}>Kurucu pilot programına başvur <span>→</span></button>
+            <SectionHead eyebrow="Kurucu pilot programı" note="İlk 5 emlak ekibiyle, 30 gün.">
+              Birlikte <em>kuralım.</em>
+            </SectionHead>
+          </Rev>
+          <Rev delay={100}>
+            <div className="ecs-pilot__timeline">
+              {PILOT_WEEKS.map((w, i) => (
+                <div className="ecs-pilot__step" key={w.w}>
+                  <div className="ecs-pilot__card">
+                    <span className="ecs-pilot__ic">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={w.icon} /></svg>
+                    </span>
+                    <span className="ecs-pilot__w">{w.w}</span>
+                    <h3 className="ecs-pilot__h">{w.h}</h3>
+                  </div>
+                  {i < PILOT_WEEKS.length - 1 && <span className="ecs-pilot__link" aria-hidden="true" />}
                 </div>
-                <p className="ecs-hero__trust" style={{ textAlign: 'left', marginTop: '1rem' }}>Pilot sürecinde kendi verinizi paylaşmadan örnek veriyle başlayabilirsiniz.</p>
-              </div>
+              ))}
+            </div>
+          </Rev>
+          <Rev delay={160}>
+            <div className="ecs-pilot__foot">
+              <button className="ecs-btn ecs-btn--solid" onClick={demo}>Kurucu pilot programına başvur <span>→</span></button>
+              <p className="ecs-hero__trust" style={{ textAlign: 'left', margin: 0 }}>Kendi verinizi paylaşmadan örnek veriyle başlayabilirsiniz.</p>
             </div>
           </Rev>
         </div>
@@ -421,16 +433,12 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       </section>
 
       {/* ── EKRAN TURU ── */}
-      <section id="tour" className="esec esec--tint">
+      <section id="tour" className="esec ecs">
         <div className="wrap">
           <Rev>
-            <div className="esec__head">
-              <span className="eeye">Ürün turu</span>
-              <h2 className="eh2">Danışmanın bütün günü, <em>tek akışta.</em></h2>
-              <p className="ep">
-                Her modül ayrı bir araç değil; müşteri kazanımını hızlandıran aynı sistemin parçası.
-              </p>
-            </div>
+            <SectionHead eyebrow="Ürün turu">
+              Danışmanın bütün günü, <em>tek akışta.</em>
+            </SectionHead>
           </Rev>
           <Rev delay={100}>
             <ScreenTour
@@ -602,15 +610,13 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       </section>
 
       {/* ── ROI ── */}
-      <section className="esec esec--tint">
+      <section className="esec ecs">
         <div className="wrap">
           <Rev>
-            <div className="esec__head esec__head--mid">
-              <span className="eeye">Örnek operasyon senaryosu</span>
-              <h2 className="eh2">Kazandırdığı <em>zamanı görün.</em></h2>
-              <p className="ep">
-                Değerleri kendi ekibinize göre değiştirin. Aşağıdaki sonuçlar bir örnek hesaplamadır; gerçek kazanım operasyonunuza göre değişir.
-              </p>
+            <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto' }}>
+              <SectionHead eyebrow="Örnek operasyon senaryosu" note="Değerleri kendi ekibinize göre değiştirin — sonuçlar bir örnek hesaplamadır.">
+                Kazandırdığı <em>zamanı görün.</em>
+              </SectionHead>
             </div>
           </Rev>
           <Rev delay={100}>
@@ -625,12 +631,13 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       </section>
 
       {/* ── FIYATLANDIRMA ── */}
-      <section id="pricing" className="esec">
+      <section id="pricing" className="esec ecs">
         <div className="wrap">
           <Rev>
-            <div className="esec__head esec__head--mid">
-              <span className="eeye">Büyümeye hazır</span>
-              <h2 className="eh2">Ekibiniz neredeyse, <em>oradan başlayın.</em></h2>
+            <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto' }}>
+              <SectionHead eyebrow="Büyümeye hazır">
+                Ekibiniz neredeyse, <em>oradan başlayın.</em>
+              </SectionHead>
             </div>
           </Rev>
           <div className="eplans">

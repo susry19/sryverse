@@ -2,21 +2,22 @@
    ESTATEMATCH — "vaka çalışması" tarzı açık tema bölümler
    Sadece EstateMatchPage.jsx içinde kullanılır; SkillMatch'e
    ve ProductPage.css'teki paylaşılan koyu tema kurallarına dokunmaz.
-   Marka rengi: SRYVERSE yeşili (--primary #0B3D2E ailesi).
+   Renkler ana sayfanın gerçek :root token'larından birebir alınır
+   (src/App.css) — ayrı bir EstateMatch paleti icat edilmez.
    ══════════════════════════════════════════════════════ */
 
 .ecs {
-  /* Marka renk sözlüğü — sadece EstateMatch vaka çalışması bölümlerinde. */
-  --background: #F7F5EF;
-  --surface: #FCFBF7;
-  --ink: #15261F;
-  --green-dark: #074C3A;
-  --green: #0B6B50;
-  --green-soft: #DCEAE2;
-  --sage: #A9C5B5;
-  --line: rgba(21, 38, 31, 0.12);
-  --muted: #67736D;
-  --gold: #B8955B;
+  /* Marka renk sözlüğü — ana sayfanın :root değerleriyle birebir aynı. */
+  --background: #FFFFFF;              /* App.css --white / .hero arka planı */
+  --surface: #EAF6F0;                 /* App.css --soft */
+  --ink: #0B3D2E;                     /* App.css --text / --primary */
+  --green-dark: #062B20;              /* App.css --dark */
+  --green: #0B3D2E;                   /* App.css --primary */
+  --green-soft: #EAF6F0;              /* App.css --soft */
+  --sage: #5F857A;                    /* App.css --light */
+  --line: rgba(11, 61, 46, 0.13);     /* App.css --border */
+  --muted: #2E4C42;                   /* App.css --muted */
+  --gold: #B8955B;                    /* sınırlı, ölçülü aksan — ana sayfada karşılığı yok */
   --white: #FFFFFF;
 
   /* Dahili takma adlar — mevcut bölümler bunları kullanıyor. */
@@ -272,35 +273,39 @@
 }
 .ecs-phone__img { display: block; width: 100%; height: auto; }
 
-/* ── KURUCU PİLOT PROGRAMI ── */
-.ecs-pilotcard {
-  background: var(--green-dark); border-radius: 24px;
-  padding: 2.4rem 2.6rem; position: relative; overflow: hidden;
+/* ── KURUCU PİLOT PROGRAMI — 4 haftalık açık zeminli yolculuk ── */
+.ecs-pilot { padding: 3.5rem 0; }
+.ecs-pilot__timeline {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0; margin-top: 2.8rem;
 }
-.ecs-pilotcard::before {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(70% 100% at 100% 0%, rgba(169, 197, 181, .16), transparent 60%);
-  pointer-events: none;
+.ecs-pilot__step { position: relative; display: flex; align-items: stretch; }
+.ecs-pilot__card {
+  background: #fff; border: 1px solid var(--line); border-radius: 16px;
+  padding: 1.4rem 1.3rem; display: flex; flex-direction: column; gap: .5rem;
+  flex: 1; margin-right: 1.1rem;
 }
-.ecs-pilotcard__in { position: relative; max-width: 640px; }
-.ecs-pilotcard .ecs__eye { color: var(--sage); }
-.ecs-pilotcard .ecs__h2 { color: #fff; }
-.ecs-pilotcard .ecs__h2 em { color: var(--sage); }
-.ecs-pilotcard .ecs__p { color: rgba(255, 255, 255, .7); }
-.ecs-pilotcard__list {
-  list-style: none; margin: 1.6rem 0 0; padding: 0;
-  display: grid; grid-template-columns: 1fr 1fr; gap: .7rem 1.5rem;
+.ecs-pilot__ic {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: var(--surface); color: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: .3rem;
 }
-.ecs-pilotcard__list li {
-  font-family: var(--fn); font-size: .9rem; color: #fff; padding-left: 1.5rem; position: relative;
+.ecs-pilot__w { font-family: var(--fm); font-size: .66rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+.ecs-pilot__h { font-family: var(--fn); font-weight: 700; font-size: .98rem; color: var(--ink); margin: 0; line-height: 1.35; }
+.ecs-pilot__link {
+  display: block; position: absolute; top: 1.9rem; right: 0; width: 1.1rem; height: 1px;
+  background: var(--line);
 }
-.ecs-pilotcard__list li::before {
-  content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; font-size: .8rem;
+.ecs-pilot__foot {
+  display: flex; align-items: center; gap: 1.3rem; flex-wrap: wrap;
+  margin-top: 2.4rem;
 }
-.ecs-pilotcard .ecs-hero__trust { color: rgba(255, 255, 255, .5); }
-@media (max-width: 640px) {
-  .ecs-pilotcard { padding: 2rem 1.5rem; border-radius: 18px; }
-  .ecs-pilotcard__list { grid-template-columns: 1fr; }
+@media (max-width: 860px) {
+  .ecs-pilot__timeline { grid-template-columns: 1fr; gap: 1rem; }
+  .ecs-pilot__step { align-items: flex-start; }
+  .ecs-pilot__card { margin-right: 0; }
+  .ecs-pilot__link { display: none; }
 }
 
 /* ── YETENEK ŞERİDİ ── */
@@ -342,16 +347,17 @@
   font-family: var(--fs); font-size: 2rem; color: var(--sage); display: flex; align-items: center; justify-content: center;
 }
 .ecs-problem__after {
-  background: var(--green-dark); border-radius: 20px; padding: 2rem;
+  background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 2rem;
   display: flex; flex-direction: column; gap: 1.2rem; height: fit-content;
+  box-shadow: 0 20px 44px -28px rgba(11, 61, 46, .18);
 }
-.ecs-problem__aftertag { font-family: var(--fm); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--sage); }
+.ecs-problem__aftertag { font-family: var(--fm); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--green); }
 .ecs-problem__afterlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .9rem; }
 .ecs-problem__afterlist li {
-  font-family: var(--fn); font-size: .96rem; color: #fff; padding-left: 1.6rem; position: relative; line-height: 1.5;
+  font-family: var(--fn); font-size: .96rem; color: var(--ink); padding-left: 1.6rem; position: relative; line-height: 1.5;
 }
 .ecs-problem__afterlist li::before {
-  content: '✓'; position: absolute; left: 0; top: 0; color: var(--gold); font-weight: 700; font-size: .82rem;
+  content: '✓'; position: absolute; left: 0; top: 0; color: var(--green); font-weight: 700; font-size: .82rem;
 }
 @media (max-width: 860px) {
   .ecs-problem__grid { grid-template-columns: 1fr; }
@@ -576,3 +582,71 @@
   .ecs-phone__scroll { animation: none; }
   .ecs-phone { transform: none; }
 }
+
+/* ══════════════════════════════════════════════════════
+   Paylaşılan koyu tema bileşenleri (.etour / .eroi / .eplan)
+   yalnızca .ecs içinde açık zemine göre yeniden boyanır.
+   SkillMatch bu bileşenleri hiçbir zaman .ecs altında
+   kullanmaz — bu kural SkillMatch'i etkilemez.
+   ══════════════════════════════════════════════════════ */
+
+.ecs .etour__tab { border-color: var(--line); background: var(--surface); color: var(--muted); }
+.ecs .etour__tab:hover { color: var(--ink); border-color: var(--sage); }
+.ecs .etour__tab--on { color: #fff; background: var(--green); }
+
+.ecs .etour__viewport { border-left-color: var(--line); }
+.ecs .etour__btn { color: var(--muted); }
+.ecs .etour__btn:hover { color: var(--ink); background: var(--surface); }
+.ecs .etour__btn--on { color: var(--ink); background: var(--green-soft); }
+.ecs .etour__n { color: var(--sage); }
+.ecs .etour__btn--on .etour__n { color: var(--green); }
+.ecs .etour__d { color: var(--muted); }
+
+.ecs .etour__arrow { border-color: var(--line); background: #fff; color: var(--muted); }
+.ecs .etour__arrow:hover { border-color: var(--green); background: var(--green-soft); color: var(--green); }
+.ecs .etour__dot { background: var(--line); }
+.ecs .etour__dot:hover { background: var(--sage); }
+.ecs .etour__count { color: var(--muted); }
+
+/* Ekran vitrini kasıtlı olarak koyu kalır — tek "dramatik ürün gösterimi"
+   alanı burası; ancak neon zümrüt lekesi altın tona çevrilir. */
+.ecs .eshot-stage {
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 8%, rgba(var(--ec), .28), transparent 62%),
+    radial-gradient(ellipse 60% 55% at 88% 92%, rgba(184, 149, 91, .16), transparent 60%),
+    linear-gradient(165deg, #0d3527 0%, #073122 55%, #0a2e21 100%);
+}
+.ecs .eshot-stage__glow--b { background: radial-gradient(circle, rgba(184, 149, 91, .22), transparent 65%); }
+
+/* ── ROI hesaplayıcı ── */
+.ecs .eroi { border-color: var(--line); background: linear-gradient(155deg, var(--surface), #fff); }
+.ecs .eroi__f label { color: var(--muted); }
+.ecs .eroi__f label b { color: var(--ink); }
+.ecs .eroi__f input[type=range] { background: var(--line); }
+.ecs .eroi__f input[type=range]::-webkit-slider-thumb { border-color: #fff; }
+.ecs .eroi__f input[type=range]::-moz-range-thumb { border-color: #fff; }
+.ecs .eroi__out { background: #fff; border-color: var(--line); }
+.ecs .eroi__lbl { color: var(--muted); }
+.ecs .eroi__big { color: var(--ink); }
+.ecs .eroi__sub { color: var(--muted); }
+.ecs .eroi__div { background: var(--line); }
+.ecs .eroi__rv { color: var(--green); }
+.ecs .eroi__note { color: var(--muted); opacity: .85; }
+
+/* ── Fiyatlandırma kartları ── */
+.ecs .eplan { border-color: var(--line); background: #fff; }
+.ecs .eplan:hover { border-color: var(--sage); background: var(--surface); }
+.ecs .eplan--best {
+  border-color: var(--green);
+  background: linear-gradient(165deg, var(--green-soft), #fff);
+  box-shadow: 0 24px 60px rgba(11, 61, 46, .1);
+}
+.ecs .eplan__n { color: var(--green); }
+.ecs .eplan__h { color: var(--ink); }
+.ecs .eplan__p { color: var(--muted); }
+.ecs .eplan__ul li { color: var(--ink); }
+.ecs .eplan__ul li::before { color: var(--green); }
+.ecs .eplan__btn { border-color: var(--line); background: #fff; color: var(--ink); }
+.ecs .eplan__btn:hover { background: var(--surface); color: var(--green); }
+.ecs .eplan--best .eplan__btn { background: var(--green); color: #fff; }
+.ecs .eplan--best .eplan__btn:hover { filter: brightness(1.1); }
