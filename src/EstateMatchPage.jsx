@@ -97,14 +97,6 @@ const FAQS = [
     a: 'Fiyatlandırma kullanıcı ve portföy büyüklüğüne göredir; AI eşleştirme kullanım limitiyle sınırlanmaz.' },
 ]
 
-/* ── Sahada da aynı güç: telefon ekranı scroll ile döngüsel değişir ── */
-const FIELD_SCREENS = [
-  { src: '/screens/mobile-dashboard.png', alt: 'EstateMatch AI — mobil kontrol paneli' },
-  { src: '/screens/mobile-clients.png', alt: 'EstateMatch AI — mobil müşteri listesi' },
-  { src: '/screens/mobile-pipeline.png', alt: 'EstateMatch AI — mobil iş süreçleri' },
-  { src: '/screens/mobile-portfolio.png', alt: 'EstateMatch AI — mobil portföy' },
-]
-
 /* ── Sahnelere göre kısıtlı fare paralaksı: yalnızca hover edilen sahne içinde,
      dokunmatik ve prefers-reduced-motion'da devre dışı, doğrudan DOM'a yazar. ── */
 function useMouseTilt(computeTransform, restTransform) {
@@ -294,25 +286,35 @@ export default function EstateMatchPage({ goBack, onDemo }) {
     return () => io.disconnect()
   }, [])
 
-  // Sahada da aynı güç: telefon ekranı scroll ile döngüsel değişir
-  const [fieldScreen, setFieldScreen] = useState(0)
-  const fieldRef = useRef(null)
+  // Sahada da aynı güç: üç telefonlu sahne — fareye göre kısıtlı derinlik paralaksı
+  const fieldStageRef = useRef(null)
   useEffect(() => {
-    const el = fieldRef.current
-    if (!el) return
+    const stage = fieldStageRef.current
+    if (!stage) return
+    if (window.matchMedia('(hover: none), (prefers-reduced-motion: reduce)').matches) return
     let raf = 0
-    const measure = () => {
+    let next = null
+    const flush = () => {
       raf = 0
-      const r = el.getBoundingClientRect()
-      const total = r.height - window.innerHeight
-      const progress = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0
-      const idx = Math.min(FIELD_SCREENS.length - 1, Math.floor(progress * FIELD_SCREENS.length))
-      setFieldScreen(idx)
+      if (!next) return
+      stage.style.setProperty('--mx', next.x)
+      stage.style.setProperty('--my', next.y)
     }
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(measure) }
-    measure()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => { window.removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf) }
+    const onMove = (e) => {
+      const r = stage.getBoundingClientRect()
+      next = { x: (e.clientX - r.left) / r.width - 0.5, y: (e.clientY - r.top) / r.height - 0.5 }
+      if (!raf) raf = requestAnimationFrame(flush)
+    }
+    const onLeave = () => { next = { x: 0, y: 0 }; if (!raf) raf = requestAnimationFrame(flush) }
+    stage.style.setProperty('--mx', 0)
+    stage.style.setProperty('--my', 0)
+    stage.addEventListener('mousemove', onMove)
+    stage.addEventListener('mouseleave', onLeave)
+    return () => {
+      stage.removeEventListener('mousemove', onMove)
+      stage.removeEventListener('mouseleave', onLeave)
+      if (raf) cancelAnimationFrame(raf)
+    }
   }, [])
 
   // Yönetim Kontrolü: dashboard kabuğu görünür olunca sayaçlar ve grafikler canlanır
@@ -420,17 +422,12 @@ export default function EstateMatchPage({ goBack, onDemo }) {
               </Rev>
             ))}
           </div>
+          <svg className="ecs-eslesme__lines" viewBox="0 0 1440 160" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,30 C 300,50 500,10 800,32 S 1200,60 1440,38" fill="none" stroke="#F4F1EA" strokeWidth="1" />
+            <path d="M0,80 C 320,105 560,60 860,86 S 1250,120 1440,92" fill="none" stroke="#F4F1EA" strokeWidth="1" />
+            <path d="M0,128 C 340,150 580,110 880,132 S 1260,160 1440,138" fill="none" stroke="#F4F1EA" strokeWidth="1" />
+          </svg>
         </div>
-      </section>
-
-      {/* ── GEÇİŞ SAHNESİ: koyu yeşilden ivory'e ── */}
-      <section className="ecs-transition" aria-hidden="true">
-        <div className="ecs-transition__glow" />
-        <svg className="ecs-transition__lines" viewBox="0 0 1440 160" preserveAspectRatio="none">
-          <path d="M0,30 C 300,50 500,10 800,32 S 1200,60 1440,38" fill="none" stroke="#F4F1EA" strokeWidth="1" />
-          <path d="M0,80 C 320,105 560,60 860,86 S 1250,120 1440,92" fill="none" stroke="#F4F1EA" strokeWidth="1" />
-          <path d="M0,128 C 340,150 580,110 880,132 S 1260,160 1440,138" fill="none" stroke="#F4F1EA" strokeWidth="1" />
-        </svg>
       </section>
 
       {/* ── SATIŞ OPERASYON MERKEZİ ── */}
@@ -451,29 +448,33 @@ export default function EstateMatchPage({ goBack, onDemo }) {
         </div>
       </section>
 
-      {/* ── SAHADA DA AYNI GÜÇ ── */}
-      <section id="field" className="ecs ecs-field-section" ref={fieldRef}>
-        <div className="wrap ecs-scene">
-          <div className="ecs-scene__text">
+      {/* ── SAHADA DA AYNI GÜÇ — üç telefonlu ürün ailesi ── */}
+      <section id="field" className="ecs ecs-field-section">
+        <div className="wrap ecs-field-grid">
+          <div className="ecs-field-text">
             <span className="ecs__eye">Sahada da aynı güç</span>
             <h2 className="ecs__h2">Sahada da <em>aynı güç.</em></h2>
             <p className="ecs__p">Müşteri, portföy ve görevlerinize her yerden anında erişin.</p>
+            <ul className="ecs-field-benefits">
+              <li>Müşteri geçmişine sahada anında erişin</li>
+              <li>Portföyü müşteriyle yerinde paylaşın</li>
+              <li>Randevu ve notlar otomatik senkronlanır</li>
+            </ul>
           </div>
-          <div className="ecs-scene__stage">
-            <Rev>
-              <div className="ecs-field">
-                <div className="ecs-field__device">
-                  <div className="ecs-field__screen">
-                    {FIELD_SCREENS.map((s, i) => (
-                      <img key={s.src} src={s.src} alt={s.alt} loading="lazy" className={fieldScreen === i ? 'on' : ''} />
-                    ))}
-                  </div>
-                </div>
-                <div className="ecs-field__dots" aria-hidden="true">
-                  {FIELD_SCREENS.map((s, i) => (
-                    <span key={s.src} className={`ecs-field__dot${fieldScreen === i ? ' ecs-field__dot--on' : ''}`} />
-                  ))}
-                </div>
+          <div className="ecs-field-stage" ref={fieldStageRef}>
+            <Rev delay={220}>
+              <div className="ecs-phone ecs-phone--side ecs-phone--l" aria-hidden="true">
+                <div className="ecs-phone__screen"><img src="/screens/mobile-clients.png" alt="" loading="lazy" /></div>
+              </div>
+            </Rev>
+            <Rev delay={260}>
+              <div className="ecs-phone ecs-phone--side ecs-phone--r" aria-hidden="true">
+                <div className="ecs-phone__screen"><img src="/screens/mobile-portfolio.png" alt="" loading="lazy" /></div>
+              </div>
+            </Rev>
+            <Rev delay={80}>
+              <div className="ecs-phone ecs-phone--main">
+                <div className="ecs-phone__screen"><img src="/screens/mobile-dashboard.png" alt="EstateMatch AI — mobil kontrol paneli" loading="lazy" /></div>
               </div>
             </Rev>
           </div>

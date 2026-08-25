@@ -350,26 +350,21 @@
 .ecs-prospect { background: linear-gradient(190deg, #07110E 0%, #0d1815 38%, #062F27 100%); }
 .ecs-prospect .ecs-shot { max-width: 620px; }
 
-/* ── AKILLI EŞLEŞTİRME ── */
-.ecs-eslesme { background: linear-gradient(180deg, #062F27 0%, #0B6B57 100%); padding-bottom: 0; }
-
-/* ── GEÇİŞ SAHNESİ — koyu yeşilden ivory'e, en fazla 160px, "boş" hissettirmeyen ince bant ── */
-.ecs-transition {
+/* ── AKILLI EŞLEŞTİRME — geçiş bir sonraki bölüme ayrı boş section olarak değil,
+     bu bölümün kendi altına gömülü bir ::after katmanı olarak uygulanır ── */
+.ecs-eslesme {
+  background: linear-gradient(180deg, #062F27 0%, #0B6B57 100%);
   position: relative;
-  height: clamp(96px, 12vh, 160px);
-  background: linear-gradient(180deg, #0B6B57 0%, #6E9C8E 45%, #AFC8BE 75%, #F4F1EA 100%);
-  overflow: hidden;
+  padding-bottom: clamp(140px, 18vw, 280px);
 }
-.ecs-transition__lines {
-  position: absolute; inset: 0; opacity: .3;
-  mix-blend-mode: overlay;
-}
-.ecs-transition__glow {
-  position: absolute; left: 50%; top: 0; transform: translateX(-50%);
-  width: 140%; height: 100%;
-  background: radial-gradient(60% 140% at 50% 0%, rgba(11, 107, 87, .3), transparent 75%);
+.ecs-eslesme::after {
+  content: '';
+  position: absolute; inset-inline: 0; bottom: 0;
+  height: clamp(140px, 18vw, 280px);
+  background: linear-gradient(to bottom, rgba(11, 107, 87, 0), #AFC8BE 56%, #F4F1EA 100%);
   pointer-events: none;
 }
+.ecs-eslesme__lines { position: absolute; inset-inline: 0; bottom: 0; height: clamp(140px, 18vw, 280px); opacity: .28; mix-blend-mode: overlay; pointer-events: none; }
 .ecs-req2 {
   display: inline-flex; flex-wrap: wrap; justify-content: center; gap: .3rem 1rem;
   background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14); border-radius: 14px;
@@ -412,32 +407,70 @@
 /* ── SATIŞ OPERASYON MERKEZİ (açık, .ecs içinde) ── */
 #operations .ecs-shot { max-width: 640px; }
 
-/* ── SAHADA DA AYNI GÜÇ — tek büyük telefon, scroll ile ekran değişir ── */
-.ecs-field-section .ecs-scene { min-height: calc(100svh - 60px); align-items: start; padding-top: clamp(80px, 10vh, 144px); }
-.ecs-field-section .ecs-scene__stage { position: sticky; top: 120px; }
-@media (max-width: 768px) {
-  .ecs-field-section { min-height: auto; }
-  .ecs-field-section .ecs-scene { min-height: 0; align-items: center; padding-top: 0; }
-  .ecs-field-section .ecs-scene__stage { position: static; top: auto; }
+/* ── SAHADA DA AYNI GÜÇ — üç telefonlu ürün ailesi (masaüstü kompozisyonu geri getirildi) ── */
+.ecs-field-section {
+  min-height: min(860px, calc(100svh - 88px));
+  height: auto;
+  padding-block: clamp(80px, 9vh, 120px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
 }
-.ecs-field { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 480px; padding: 1.5rem 0; }
-.ecs-field__device {
-  position: relative; width: min(270px, 70vw); padding: 11px; border-radius: 36px;
+.ecs-field-grid {
+  display: grid;
+  grid-template-columns: minmax(0, .61fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+  width: 100%;
+}
+.ecs-field-text { max-width: 400px; }
+.ecs-field-benefits { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; flex-direction: column; gap: .7rem; }
+.ecs-field-benefits li {
+  font-family: var(--fn); font-size: .88rem; color: var(--ink); padding-left: 1.4rem; position: relative; line-height: 1.5;
+}
+.ecs-field-benefits li::before {
+  content: ''; position: absolute; left: 0; top: .5em; width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+}
+.ecs-field-stage {
+  position: relative; width: 100%; height: clamp(460px, 56vh, 660px);
+  --mx: 0; --my: 0;
+}
+.ecs-phone {
+  position: absolute; bottom: 0; border-radius: 30px;
   background: linear-gradient(160deg, #2a2a2a, #0a0a0a);
   border: 1px solid rgba(244, 241, 234, .14);
-  box-shadow: 0 40px 80px -26px rgba(6, 47, 39, .35);
+  padding: 9px;
 }
-.ecs-field__screen { position: relative; width: 100%; aspect-ratio: 9 / 19.4; border-radius: 26px; overflow: hidden; background: var(--white); }
-.ecs-field__screen img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: block;
-  opacity: 0; transition: opacity .5s ease;
+.ecs-phone__screen { position: relative; width: 100%; height: 100%; border-radius: 21px; overflow: hidden; background: var(--white); }
+.ecs-phone__screen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.ecs-phone--main {
+  height: clamp(460px, 56vh, 660px); aspect-ratio: 9 / 19.4; left: 50%; z-index: 3;
+  box-shadow: 0 50px 90px -24px rgba(6, 47, 39, .45);
+  transform: translateX(-50%) rotate(calc(var(--mx) * 3deg));
+  transition: transform .5s cubic-bezier(.2, .7, .3, 1);
 }
-.ecs-field__screen img.on { opacity: 1; }
-.ecs-field__dots { display: flex; gap: .4rem; justify-content: center; margin-top: 1.2rem; }
-.ecs-field__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line); transition: background .3s, transform .3s; }
-.ecs-field__dot--on { background: var(--green); transform: scale(1.3); }
-@media (max-width: 640px) {
-  .ecs-field { min-height: 400px; }
+.ecs-phone--side {
+  height: calc(clamp(460px, 56vh, 660px) * .83); aspect-ratio: 9 / 19.4; opacity: .55; filter: saturate(.8);
+  z-index: 1; box-shadow: 0 30px 60px -22px rgba(6, 47, 39, .35);
+  transition: transform .5s cubic-bezier(.2, .7, .3, 1), opacity .3s;
+}
+.ecs-phone--l { left: 6%; transform: rotate(-9deg) translate(calc(var(--mx) * -8px), calc(var(--my) * -8px)); }
+.ecs-phone--r { right: 6%; transform: rotate(9deg) translate(calc(var(--mx) * 8px), calc(var(--my) * 8px)); }
+@media (max-width: 1024px) {
+  .ecs-field-grid { grid-template-columns: 1fr; text-align: center; }
+  .ecs-field-text { max-width: none; margin: 0 auto; }
+  .ecs-field-benefits { align-items: center; }
+  .ecs-field-benefits li { padding-left: 0; }
+  .ecs-field-benefits li::before { display: none; }
+}
+@media (max-width: 768px) {
+  .ecs-field-section { min-height: 0; padding-block: clamp(56px, 8vh, 88px); }
+  .ecs-field-stage { height: clamp(380px, 62vh, 520px); }
+  .ecs-phone--main { height: clamp(380px, 62vh, 520px); }
+  .ecs-phone--side { height: calc(clamp(380px, 62vh, 520px) * .83); opacity: .4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ecs-phone { transition: none; }
 }
 
 /* ── YÖNETİM KONTROLÜ — gerçek rapor ekranı üstünde animasyonlu özet rakamlar ── */
@@ -469,10 +502,13 @@
    önceki (ivory) bölümden yumuşak geçişle bağlar, kontrastı
    WCAG AA'ya çıkarır; yalnızca EstateMatch'e uygulanır.
    ══════════════════════════════════════════════════════ */
-.epage--estate #faq { position: relative; scroll-margin-top: 110px; }
+.epage--estate #faq {
+  position: relative; scroll-margin-top: 110px;
+  background: linear-gradient(180deg, #062F27 0%, #07110E 100%);
+}
 .epage--estate #faq::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: clamp(64px, 8vh, 104px);
-  background: linear-gradient(180deg, #F4F1EA 0%, rgba(244, 241, 234, 0) 100%);
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: clamp(140px, 18vw, 280px);
+  background: linear-gradient(180deg, #F4F1EA 0%, #AFC8BE 55%, rgba(6, 47, 39, 0) 100%);
   pointer-events: none; z-index: 0;
 }
 .epage--estate #faq .wrap { position: relative; z-index: 1; }
