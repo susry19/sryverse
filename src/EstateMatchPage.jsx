@@ -28,9 +28,9 @@ const SIGNALS = [
 /* ── Akıllı Eşleştirme: talep + sıralı portföy önerileri ── */
 const MATCH_REQUEST = { rooms: '3+1 daire', area: 'Fulya, Nişantaşı', budget: '₺22-28M', notes: 'Otopark, güvenlik, manzara' }
 const PROPERTIES = [
-  { name: 'Fulya\'da Lüks Residence',      rooms: '3+1', area: 180, floor: '2. Kat', price: '₺27.500.000', score: 91 },
-  { name: 'Nişantaşı\'nda Modern Daire',   rooms: '4+1', area: 160, floor: '4. Kat', price: '₺24.750.000', score: 84 },
-  { name: 'Maçka\'da Manzaralı Daire',     rooms: '3+1', area: 170, floor: '6. Kat', price: '₺22.900.000', score: 76 },
+  { name: 'Fulya\'da Lüks Residence',      rooms: '3+1', area: 180, floor: '2. Kat', price: '₺27.500.000', score: 91, img: '/screens/property-fulya.png' },
+  { name: 'Nişantaşı\'nda Modern Daire',   rooms: '4+1', area: 160, floor: '4. Kat', price: '₺24.750.000', score: 84, img: '/screens/property-nisantasi.png' },
+  { name: 'Maçka\'da Manzaralı Daire',     rooms: '3+1', area: 170, floor: '6. Kat', price: '₺22.900.000', score: 76, img: '/screens/property-macka.png' },
 ]
 
 /* ── Satış Operasyon Merkezi: 3 panel ── */
@@ -338,12 +338,15 @@ export default function EstateMatchPage({ goBack, onDemo }) {
             {PROPERTIES.map((p, i) => (
               <Rev key={p.name} delay={220 + i * 100}>
                 <div className="ecs-prop2">
-                  <div className="ecs-prop2__photo" aria-hidden="true" />
+                  <div className="ecs-prop2__photo">
+                    <img src={p.img} alt={p.name} loading="lazy" />
+                  </div>
                   <span className="ecs-prop2__score">%{p.score} eşleşme</span>
                   <div className="ecs-prop2__body">
                     <strong>{p.name}</strong>
                     <span>{p.rooms} · {p.area} m² · {p.floor}</span>
                     <span className="ecs-prop2__price">{p.price}</span>
+                    <span className="ecs-prop2__note">Temsili görsel</span>
                   </div>
                   <span className="ecs-prop2__save" aria-hidden="true">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 3h12v18l-6-4-6 4V3z" /></svg>
