@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { Rev, Faq, RoiCalc, SectionHead, usePageSeo, usePageSchema } from './pageParts.jsx'
 import './ProductPage.css'
 import './EstateCaseStudy.css'
@@ -38,12 +38,6 @@ const PIPELINE_COLS = [
   { l: 'Yeni', items: ['Mert Yılmaz', 'Selin Aydın'] },
   { l: 'Teklif', items: ['Zeynep Kaya'] },
   { l: 'Kapanış', items: ['Ahmet Öztürk'] },
-]
-
-/* ── Sahada da aynı güç ── */
-const FIELD_TASKS = [
-  { t: 'Mert Yılmaz ile görüş', time: '10:30' },
-  { t: 'Zeynep Kaya, portföy sunumu hazırla', time: '14:00' },
 ]
 
 /* ── Yönetim Kontrolü ── */
@@ -140,6 +134,42 @@ const FAQS = [
     a: 'Fiyatlandırma kullanıcı ve portföy büyüklüğüne göredir; AI eşleştirme kullanım limitiyle sınırlanmaz. Ön eleme ve önbellekleme sayesinde sistem her sorguda yeniden hesaplama yapmaz, maliyeti öngörülebilir tutar.' },
 ]
 
+/* ── Sahnelere göre kısıtlı fare paralaksı: yalnızca hover edilen sahne içinde,
+     dokunmatik ve prefers-reduced-motion'da devre dışı, doğrudan DOM'a yazar. ── */
+function useMouseTilt(computeTransform, restTransform) {
+  const stageRef = useRef(null)
+  const targetRef = useRef(null)
+  useEffect(() => {
+    const stage = stageRef.current
+    const target = targetRef.current
+    if (!stage || !target) return
+    if (window.matchMedia('(hover: none), (prefers-reduced-motion: reduce)').matches) return
+    let raf = 0
+    let next = null
+    const flush = () => { raf = 0; if (next) target.style.transform = next }
+    const onMove = (e) => {
+      const r = stage.getBoundingClientRect()
+      const px = (e.clientX - r.left) / r.width - 0.5
+      const py = (e.clientY - r.top) / r.height - 0.5
+      next = computeTransform(px, py)
+      if (!raf) raf = requestAnimationFrame(flush)
+    }
+    const onLeave = () => {
+      next = restTransform
+      if (!raf) raf = requestAnimationFrame(flush)
+    }
+    target.style.transform = restTransform
+    stage.addEventListener('mousemove', onMove)
+    stage.addEventListener('mouseleave', onLeave)
+    return () => {
+      stage.removeEventListener('mousemove', onMove)
+      stage.removeEventListener('mouseleave', onLeave)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [computeTransform, restTransform])
+  return { stageRef, targetRef }
+}
+
 /* ══════════════ SAYFA ══════════════ */
 const SEO_TITLE = 'EstateMatch AI | Yapay Zekâ Destekli Emlak Satış ve Portföy Yönetimi'
 const SEO_DESC = 'Müşteri taleplerini portföyünüzle otomatik eşleştirin, danışman takiplerini önceliklendirin ve emlak satış operasyonunuzu tek panelden yönetin.'
@@ -204,6 +234,12 @@ export default function EstateMatchPage({ goBack, onDemo }) {
     else goBack?.()
   }, [onDemo, goBack])
 
+  const laptopCompute = useCallback((px, py) => `rotateX(${5 - py * 5}deg) rotateY(${-13 + px * 5}deg)`, [])
+  const { stageRef: laptopStageRef, targetRef: laptopUnitRef } = useMouseTilt(laptopCompute, 'rotateX(5deg) rotateY(-13deg)')
+
+  const boardCompute = useCallback((px, py) => `translate3d(${px * 24}px, ${py * 16}px, 0)`, [])
+  const { stageRef: boardStageRef, targetRef: boardRef } = useMouseTilt(boardCompute, 'translate3d(0,0,0)')
+
   return (
     <main className="epage epage--estate">
       <div className="epage__progress" style={{ width: `${progress}%` }} />
@@ -219,15 +255,18 @@ export default function EstateMatchPage({ goBack, onDemo }) {
             <button className="ecs-btn ecs-btn--solid" onClick={demo}>Ücretsiz demo planla <span>→</span></button>
           </div>
 
-          <div className="ecs-hero2__stage">
+          <div className="ecs-hero2__ground" aria-hidden="true" />
+          <div className="ecs-hero2__stage" ref={laptopStageRef}>
             <Rev>
               <div className="ecs-laptop">
-                <div className="ecs-laptop__lid">
-                  <div className="ecs-laptop__screen">
-                    <img src="/screens/wide-dashboard.png" alt="EstateMatch AI panel — masaüstü görünümü" />
+                <div className="ecs-laptop__unit" ref={laptopUnitRef}>
+                  <div className="ecs-laptop__lid">
+                    <div className="ecs-laptop__screen">
+                      <img src="/screens/wide-dashboard.png" alt="EstateMatch AI panel — masaüstü görünümü" />
+                    </div>
                   </div>
+                  <div className="ecs-laptop__base" />
                 </div>
-                <div className="ecs-laptop__base" />
               </div>
             </Rev>
             <Rev delay={250}>
@@ -238,7 +277,8 @@ export default function EstateMatchPage({ goBack, onDemo }) {
             </Rev>
             <Rev delay={450}>
               <div className="ecs-glass ecs-glass--b">
-                <span className="ecs-glass__l">%91 eşleşme</span>
+                <span className="ecs-glass__l">Eşleşme</span>
+                <strong>%91</strong>
                 <svg className="ecs-glass__spark" width="72" height="26" viewBox="0 0 72 26" fill="none">
                   <polyline points="0,21 12,17 24,19 36,10 48,13 60,4 72,7" stroke="var(--sage)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -284,9 +324,15 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       {/* ── AKILLI PROSPECT ── */}
       <section id="prospect" className="ecs-dark ecs-prospect">
         <div className="wrap ecs-scene ecs-scene--rev">
-          <div className="ecs-scene__stage">
+          <div className="ecs-scene__stage" ref={boardStageRef}>
             <Rev>
-              <div className="ecs-prospect__board">
+              <div className="ecs-prospect__board" ref={boardRef}>
+                <svg className="ecs-prospect__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M14,18 Q 0,0 -6,-12" />
+                  <path d="M86,30 Q 100,14 108,4" />
+                  <path d="M14,82 Q 0,100 -6,108" />
+                  <path d="M86,70 Q 100,86 108,96" />
+                </svg>
                 <div className="ecs-prospect__list">
                   <span className="ecs-prospect__tag">Prospekt Önerileri</span>
                   {PROSPECTS.map(p => (
@@ -358,6 +404,16 @@ export default function EstateMatchPage({ goBack, onDemo }) {
         </div>
       </section>
 
+      {/* ── GEÇİŞ SAHNESİ: koyu yeşilden ivory'e ── */}
+      <section className="ecs-transition" aria-hidden="true">
+        <div className="ecs-transition__glow" />
+        <svg className="ecs-transition__lines" viewBox="0 0 1440 800" preserveAspectRatio="none">
+          <path d="M0,80 C 300,140 500,20 800,90 S 1200,180 1440,110" fill="none" stroke="#F5F4F0" strokeWidth="1" />
+          <path d="M0,220 C 320,300 560,160 860,240 S 1250,340 1440,260" fill="none" stroke="#F5F4F0" strokeWidth="1" />
+          <path d="M0,380 C 340,460 580,320 880,400 S 1260,500 1440,420" fill="none" stroke="#F5F4F0" strokeWidth="1" />
+        </svg>
+      </section>
+
       {/* ── SATIŞ OPERASYON MERKEZİ ── */}
       <section id="operations" className="ecs">
         <div className="wrap ecs-scene ecs-scene--rev">
@@ -422,20 +478,19 @@ export default function EstateMatchPage({ goBack, onDemo }) {
           <div className="ecs-scene__stage">
             <Rev>
               <div className="ecs-field">
-                <div className="ecs-field__phone">
+                <div className="ecs-field__device ecs-field__side ecs-field__side--l" aria-hidden="true">
                   <div className="ecs-field__screen">
-                    <div className="ecs-field__mockbar">Merhaba, Ece 👋</div>
-                    <div className="ecs-field__mockrow"><span>Bugün ara</span><strong>12</strong></div>
-                    {FIELD_TASKS.map(t => (
-                      <div className="ecs-field__task" key={t.t}><span>{t.t}</span><em>{t.time}</em></div>
-                    ))}
+                    <img src="/screens/mobile-clients.png" alt="" loading="lazy" />
                   </div>
                 </div>
-                <div className="ecs-field__tablet">
+                <div className="ecs-field__device ecs-field__side ecs-field__side--r" aria-hidden="true">
                   <div className="ecs-field__screen">
-                    <div className="ecs-field__mockbar">Portföy</div>
-                    <div className="ecs-field__prop"><strong>{PROPERTIES[0].name}</strong><span>{PROPERTIES[0].price}</span></div>
-                    <div className="ecs-field__map" aria-hidden="true" />
+                    <img src="/screens/mobile-portfolio.png" alt="" loading="lazy" />
+                  </div>
+                </div>
+                <div className="ecs-field__device ecs-field__main">
+                  <div className="ecs-field__screen">
+                    <img src="/screens/mobile-dashboard.png" alt="EstateMatch AI — mobil kontrol paneli" loading="lazy" />
                   </div>
                 </div>
               </div>

@@ -295,8 +295,8 @@ export default function App() {
   ]
 
   const estateNav = [
-    {label:'Ürün',             target:'#scene-opportunity'},
-    {label:'Yöneticiler için', target:'#manager'},
+    {label:'Ürün',             target:'#matching'},
+    {label:'Yöneticiler için', target:'#management'},
     {label:'Güvenlik',         target:'#security'},
     {label:'Paketler',         target:'#pricing'},
     {label:'SSS',              target:'#faq'},
