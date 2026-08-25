@@ -324,10 +324,10 @@ export default function App() {
       )}
 
       {/* HEADER */}
-      <header className={`hdr${scrollY>30?' hdr--solid':''}${page==='vision' || page==='skillmatch' ? ' hdr--dark' : ''}`}>
+      <header className={`hdr${scrollY>30?' hdr--solid':''}${page==='vision' || page==='skillmatch' || page==='estatematch' ? ' hdr--dark' : ''}`}>
         <div className="hdr__in">
           <a href="/" className="hdr__logo" onClick={e=>{e.preventDefault(); setPage('home'); window.scrollTo({top:0,behavior:'smooth'})}}>
-            <img src={page==='vision' || page==='skillmatch' ? '/sryverse-badge-white.png' : '/sryverse-badge.png'} alt="SRYVERSE" className="hdr__badge" />
+            <img src={page==='vision' || page==='skillmatch' || page==='estatematch' ? '/sryverse-badge-white.png' : '/sryverse-badge.png'} alt="SRYVERSE" className="hdr__badge" />
             <span className="hdr__wordwrap">
               <span className="hdr__word">SRYVERSE</span>
               <span className="hdr__tag" lang="en">Digital Transformation &amp; AI</span>
