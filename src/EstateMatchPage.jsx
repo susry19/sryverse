@@ -42,10 +42,10 @@ const PIPELINE_COLS = [
 
 /* ── Yönetim Kontrolü ── */
 const KPI = [
-  { l: 'Toplam Gelir', v: '₺124,8M', d: '+%18,6' },
-  { l: 'Aktif Talepler', v: '238', d: '+%24,2' },
-  { l: 'Kapanan Anlaşmalar', v: '42', d: '+%13,3' },
-  { l: 'Dönüşüm Oranı', v: '%24,6', d: '+%6,7' },
+  { l: 'Toplam Gelir', value: 124.8, decimals: 1, prefix: '₺', suffix: 'M', d: '+%18,6' },
+  { l: 'Aktif Talepler', value: 238, decimals: 0, prefix: '', suffix: '', d: '+%24,2' },
+  { l: 'Kapanan Anlaşmalar', value: 42, decimals: 0, prefix: '', suffix: '', d: '+%13,3' },
+  { l: 'Dönüşüm Oranı', value: 24.6, decimals: 1, prefix: '%', suffix: '', d: '+%6,7' },
 ]
 const TEAM_PERF = [
   { name: 'Ece Aydın', v: 92 },
@@ -86,19 +86,19 @@ const PLANS = [
     n: 'Starter', h: 'Küçük ekipler',
     p: 'Temel operasyonu tek merkeze taşımak isteyen butik acenteler için.',
     ul: ['10 kullanıcı', '500 ilan', 'Adil kullanım kapsamında AI eşleştirme', 'Tüm temel modüller'],
-    cta: 'Pilot demo planla',
+    cta: 'Demo planla →',
   },
   {
     n: 'Professional', h: 'Büyüyen acenteler', best: true,
     p: 'Portföyü ve danışman ekibi hızla büyüyen emlak şirketleri için.',
     ul: ['25 kullanıcı', '2.500 ilan', 'Adil kullanım kapsamında AI eşleştirme', 'Gelişmiş raporlar ve yönetim'],
-    cta: 'Ücretsiz demo planla',
+    cta: 'Demo planla →',
   },
   {
     n: 'Enterprise', h: 'Kurumsal yapı',
     p: 'Çok şubeli, özel entegrasyon ve yüksek ölçek ihtiyacı olan kurumlar için.',
     ul: ['Esnek kullanıcı', 'Esnek portföy limiti', 'Özel entegrasyonlar', 'Kuruma özel çözümler'],
-    cta: 'Kurumsal görüşme planla',
+    cta: 'Demo planla →',
   },
 ]
 
@@ -119,19 +119,27 @@ function computeRoi({ consultants, leads, minutes, hourly }) {
 /* ── SSS ── */
 const FAQS = [
   { q: 'Mevcut portföyümüzü sisteme nasıl aktarırız?',
-    a: 'Excel ve CSV dosyalarınızı doğrudan içe aktarabilirsiniz. Pilot sürecinde portföy aktarımını birlikte yapıyor, alan eşleştirmesini sizin veri yapınıza göre ayarlıyoruz.' },
+    a: 'Excel/CSV dosyalarınızı doğrudan içe aktarırsınız; alan eşleştirmesini pilot sürecinde birlikte ayarlarız.' },
   { q: 'Kullandığımız CRM ile entegre çalışır mı?',
-    a: 'Evet. EstateMatch mevcut CRM\'inizin yerini alabilir veya mevcut sisteminize entegre biçimde çalışabilir; hangisinin uygun olduğuna pilot görüşmesinde birlikte karar veririz.' },
+    a: 'Evet — CRM\'inizin yerini alabilir veya entegre çalışabilir; hangisi uygun, pilot görüşmesinde belirlenir.' },
   { q: 'Müşteri verilerimiz güvende mi?',
-    a: 'Her acentenin verisi birbirinden izole tutulur. İsim, telefon ve e-posta gibi kişisel bilgiler yapay zekâya gönderilmeden önce maskelenir. Rol bazlı yetkilendirme ile kimin neyi göreceğini yönetici belirler.' },
+    a: 'Her acentenin verisi izole tutulur, kişisel bilgiler AI\'ye gönderilmeden maskelenir; erişimi yönetici belirler.' },
   { q: 'Yapay zekâ yanlış eşleştirme yaparsa ne olur?',
-    a: 'Karar her zaman danışmanda kalır. Sistem önerir ve gerekçesini açıklar; danışman düzenler ve onaylar. Ayrıca şehir, mülk tipi ve bütçe gibi kritik uyumsuzluklar AI devreye girmeden önce elenir.' },
+    a: 'Karar her zaman danışmanda kalır. Sistem gerekçeli önerir; onaylamak veya düzenlemek danışmana aittir.' },
   { q: 'Ekibimizin teknik bilgisi yok, kullanabilir miyiz?',
-    a: 'Evet. Arayüz danışmanın günlük iş akışına göre tasarlandı; teknik terim yerine emlak diliyle çalışır. Kurulum sonrası ekibinize eğitim veriyoruz.' },
+    a: 'Evet. Arayüz emlak diliyle çalışır, teknik bilgi gerektirmez; kurulum sonrası ekibinize eğitim veririz.' },
   { q: 'Pilot süreç nasıl işliyor?',
-    a: 'Önce operasyonunuzu birlikte inceliyoruz, ardından sınırlı bir ekiple pilot başlatıyoruz. Pilot süresince portföy aktarımı, eğitim ve süreç uyarlaması bizim tarafımızdan yürütülür.' },
+    a: 'Önce operasyonunuzu inceleriz, sonra sınırlı bir ekiple başlarız; aktarım ve eğitim bizim tarafımızdan yürütülür.' },
   { q: 'AI kullanımı maliyeti nasıl kontrol ediliyor?',
-    a: 'Fiyatlandırma kullanıcı ve portföy büyüklüğüne göredir; AI eşleştirme kullanım limitiyle sınırlanmaz. Ön eleme ve önbellekleme sayesinde sistem her sorguda yeniden hesaplama yapmaz, maliyeti öngörülebilir tutar.' },
+    a: 'Fiyatlandırma kullanıcı ve portföy büyüklüğüne göredir; AI eşleştirme kullanım limitiyle sınırlanmaz.' },
+]
+
+/* ── Sahada da aynı güç: telefon ekranı scroll ile döngüsel değişir ── */
+const FIELD_SCREENS = [
+  { src: '/screens/mobile-dashboard.png', alt: 'EstateMatch AI — mobil kontrol paneli' },
+  { src: '/screens/mobile-clients.png', alt: 'EstateMatch AI — mobil müşteri listesi' },
+  { src: '/screens/mobile-pipeline.png', alt: 'EstateMatch AI — mobil iş süreçleri' },
+  { src: '/screens/mobile-portfolio.png', alt: 'EstateMatch AI — mobil portföy' },
 ]
 
 /* ── Sahnelere göre kısıtlı fare paralaksı: yalnızca hover edilen sahne içinde,
@@ -168,6 +176,70 @@ function useMouseTilt(computeTransform, restTransform) {
     }
   }, [computeTransform, restTransform])
   return { stageRef, targetRef }
+}
+
+/* ── Bir kez tetiklenen görünürlük gözlemcisi (Rev ile aynı davranış, boolean döner) ── */
+function useInView(threshold = 0.35) {
+  const ref = useRef(null)
+  const [inView, setInView] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setInView(true); return }
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) { setInView(true); io.disconnect() }
+    }, { threshold })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [threshold])
+  return [ref, inView]
+}
+
+/* ── inView olunca 0'dan hedefe sayan sayaç; Türkçe ondalık biçimlendirme destekler ── */
+function useCountUp(target, inView, duration = 1200, decimals = 0) {
+  const [value, setValue] = useState(0)
+  useEffect(() => {
+    if (!inView) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setValue(target); return }
+    let raf = 0
+    const start = performance.now()
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - t, 3)
+      setValue(target * eased)
+      if (t < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [inView, target, duration])
+  return value.toLocaleString('tr-TR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+}
+
+/* ── Akıllı Eşleştirme: tek bir portföy kartı, skor sırayla sayarak belirir ── */
+function PropCard({ p, i, active, setRef }) {
+  const [ref, inView] = useInView(0.4)
+  const score = useCountUp(p.score, inView, 900 + i * 150, 0)
+  return (
+    <div
+      ref={(el) => { ref.current = el; setRef(el) }}
+      data-i={i}
+      className={`ecs-prop2${active ? ' ecs-prop2--active' : ''}`}
+    >
+      <div className="ecs-prop2__photo">
+        <img src={p.img} alt={p.name} loading="lazy" />
+      </div>
+      <span className="ecs-prop2__score">%{score} eşleşme</span>
+      <div className="ecs-prop2__body">
+        <strong>{p.name}</strong>
+        <span>{p.rooms} · {p.area} m² · {p.floor}</span>
+        <span className="ecs-prop2__price">{p.price}</span>
+        <span className="ecs-prop2__note">Temsili görsel</span>
+      </div>
+      <span className="ecs-prop2__save" aria-hidden="true">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 3h12v18l-6-4-6 4V3z" /></svg>
+      </span>
+    </div>
+  )
 }
 
 /* ══════════════ SAYFA ══════════════ */
@@ -234,11 +306,60 @@ export default function EstateMatchPage({ goBack, onDemo }) {
     else goBack?.()
   }, [onDemo, goBack])
 
-  const laptopCompute = useCallback((px, py) => `rotateX(${5 - py * 5}deg) rotateY(${-13 + px * 5}deg)`, [])
+  const laptopCompute = useCallback((px, py) => `rotateX(${5 - py * 6}deg) rotateY(${-13 + px * 6}deg)`, [])
   const { stageRef: laptopStageRef, targetRef: laptopUnitRef } = useMouseTilt(laptopCompute, 'rotateX(5deg) rotateY(-13deg)')
 
   const boardCompute = useCallback((px, py) => `translate3d(${px * 24}px, ${py * 16}px, 0)`, [])
   const { stageRef: boardStageRef, targetRef: boardRef } = useMouseTilt(boardCompute, 'translate3d(0,0,0)')
+
+  // Akıllı Eşleştirme: en ortadaki kart "aktif" olarak öne gelir
+  const [activeProp, setActiveProp] = useState(1)
+  const propRefs = useRef([])
+  useEffect(() => {
+    const els = propRefs.current.filter(Boolean)
+    if (!els.length) return
+    const io = new IntersectionObserver((entries) => {
+      let best = null
+      entries.forEach(e => {
+        if (!best || e.intersectionRatio > best.intersectionRatio) best = e
+      })
+      if (best && best.intersectionRatio > 0) {
+        setActiveProp(Number(best.target.dataset.i))
+      }
+    }, { threshold: [0.3, 0.5, 0.7, 0.9] })
+    els.forEach(el => io.observe(el))
+    return () => io.disconnect()
+  }, [])
+
+  // Sahada da aynı güç: telefon ekranı scroll ile döngüsel değişir
+  const [fieldScreen, setFieldScreen] = useState(0)
+  const fieldRef = useRef(null)
+  useEffect(() => {
+    const el = fieldRef.current
+    if (!el) return
+    let raf = 0
+    const measure = () => {
+      raf = 0
+      const r = el.getBoundingClientRect()
+      const total = r.height - window.innerHeight
+      const progress = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0
+      const idx = Math.min(FIELD_SCREENS.length - 1, Math.floor(progress * FIELD_SCREENS.length))
+      setFieldScreen(idx)
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(measure) }
+    measure()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => { window.removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf) }
+  }, [])
+
+  // Yönetim Kontrolü: dashboard kabuğu görünür olunca sayaçlar ve grafikler canlanır
+  const [dashRef, dashInView] = useInView(0.25)
+  const kpiValues = [
+    useCountUp(KPI[0].value, dashInView, 1300, KPI[0].decimals),
+    useCountUp(KPI[1].value, dashInView, 1300, KPI[1].decimals),
+    useCountUp(KPI[2].value, dashInView, 1300, KPI[2].decimals),
+    useCountUp(KPI[3].value, dashInView, 1300, KPI[3].decimals),
+  ]
 
   return (
     <main className="epage epage--estate">
@@ -383,21 +504,12 @@ export default function EstateMatchPage({ goBack, onDemo }) {
           <div className="ecs-props2">
             {PROPERTIES.map((p, i) => (
               <Rev key={p.name} delay={220 + i * 100}>
-                <div className="ecs-prop2">
-                  <div className="ecs-prop2__photo">
-                    <img src={p.img} alt={p.name} loading="lazy" />
-                  </div>
-                  <span className="ecs-prop2__score">%{p.score} eşleşme</span>
-                  <div className="ecs-prop2__body">
-                    <strong>{p.name}</strong>
-                    <span>{p.rooms} · {p.area} m² · {p.floor}</span>
-                    <span className="ecs-prop2__price">{p.price}</span>
-                    <span className="ecs-prop2__note">Temsili görsel</span>
-                  </div>
-                  <span className="ecs-prop2__save" aria-hidden="true">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 3h12v18l-6-4-6 4V3z" /></svg>
-                  </span>
-                </div>
+                <PropCard
+                  p={p}
+                  i={i}
+                  active={activeProp === i}
+                  setRef={(el) => { propRefs.current[i] = el }}
+                />
               </Rev>
             ))}
           </div>
@@ -407,10 +519,10 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       {/* ── GEÇİŞ SAHNESİ: koyu yeşilden ivory'e ── */}
       <section className="ecs-transition" aria-hidden="true">
         <div className="ecs-transition__glow" />
-        <svg className="ecs-transition__lines" viewBox="0 0 1440 800" preserveAspectRatio="none">
-          <path d="M0,80 C 300,140 500,20 800,90 S 1200,180 1440,110" fill="none" stroke="#F5F4F0" strokeWidth="1" />
-          <path d="M0,220 C 320,300 560,160 860,240 S 1250,340 1440,260" fill="none" stroke="#F5F4F0" strokeWidth="1" />
-          <path d="M0,380 C 340,460 580,320 880,400 S 1260,500 1440,420" fill="none" stroke="#F5F4F0" strokeWidth="1" />
+        <svg className="ecs-transition__lines" viewBox="0 0 1440 160" preserveAspectRatio="none">
+          <path d="M0,30 C 300,50 500,10 800,32 S 1200,60 1440,38" fill="none" stroke="#F4F1EA" strokeWidth="1" />
+          <path d="M0,80 C 320,105 560,60 860,86 S 1250,120 1440,92" fill="none" stroke="#F4F1EA" strokeWidth="1" />
+          <path d="M0,128 C 340,150 580,110 880,132 S 1260,160 1440,138" fill="none" stroke="#F4F1EA" strokeWidth="1" />
         </svg>
       </section>
 
@@ -468,7 +580,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       </section>
 
       {/* ── SAHADA DA AYNI GÜÇ ── */}
-      <section id="field" className="ecs">
+      <section id="field" className="ecs ecs-field-section" ref={fieldRef}>
         <div className="wrap ecs-scene">
           <div className="ecs-scene__text">
             <span className="ecs__eye">Sahada da aynı güç</span>
@@ -478,20 +590,17 @@ export default function EstateMatchPage({ goBack, onDemo }) {
           <div className="ecs-scene__stage">
             <Rev>
               <div className="ecs-field">
-                <div className="ecs-field__device ecs-field__side ecs-field__side--l" aria-hidden="true">
+                <div className="ecs-field__device">
                   <div className="ecs-field__screen">
-                    <img src="/screens/mobile-clients.png" alt="" loading="lazy" />
+                    {FIELD_SCREENS.map((s, i) => (
+                      <img key={s.src} src={s.src} alt={s.alt} loading="lazy" className={fieldScreen === i ? 'on' : ''} />
+                    ))}
                   </div>
                 </div>
-                <div className="ecs-field__device ecs-field__side ecs-field__side--r" aria-hidden="true">
-                  <div className="ecs-field__screen">
-                    <img src="/screens/mobile-portfolio.png" alt="" loading="lazy" />
-                  </div>
-                </div>
-                <div className="ecs-field__device ecs-field__main">
-                  <div className="ecs-field__screen">
-                    <img src="/screens/mobile-dashboard.png" alt="EstateMatch AI — mobil kontrol paneli" loading="lazy" />
-                  </div>
+                <div className="ecs-field__dots" aria-hidden="true">
+                  {FIELD_SCREENS.map((s, i) => (
+                    <span key={s.src} className={`ecs-field__dot${fieldScreen === i ? ' ecs-field__dot--on' : ''}`} />
+                  ))}
                 </div>
               </div>
             </Rev>
@@ -507,51 +616,81 @@ export default function EstateMatchPage({ goBack, onDemo }) {
             <p className="ecs__p">Performans, hedefler ve gelir tek ekranda şeffaflaşır.</p>
           </Rev>
           <Rev delay={100}>
-            <div className="ecs-kpi">
-              {KPI.map(k => (
-                <div className="ecs-kpi__card" key={k.l}>
-                  <span className="ecs-kpi__l">{k.l}</span>
-                  <strong className="ecs-kpi__v">{k.v}</strong>
-                  <span className="ecs-kpi__d">{k.d}</span>
-                </div>
-              ))}
-            </div>
-          </Rev>
-          <Rev delay={160}>
-            <div className="ecs-mgmt">
-              <div className="ecs-mgmt__card ecs-mgmt__card--wide">
-                <span className="ecs-mgmt__h">Gelir Trendi</span>
-                <svg viewBox="0 0 300 70" className="ecs-linechart" preserveAspectRatio="none">
-                  <polyline points="0,55 30,53 60,50 90,45 120,40 150,36 180,27 210,23 240,16 270,11 300,5" fill="none" stroke="var(--green)" strokeWidth="2.5" />
-                </svg>
-              </div>
-              <div className="ecs-mgmt__card">
-                <span className="ecs-mgmt__h">Ekip Performansı</span>
-                {TEAM_PERF.map(t => (
-                  <div className="ecs-teambar" key={t.name}>
-                    <span>{t.name}</span>
-                    <div className="ecs-teambar__track"><span style={{ width: `${t.v}%` }} /></div>
+            <div className="ecs-dash" ref={dashRef}>
+              <aside className="ecs-dash__side" aria-hidden="true">
+                <span className="ecs-dash__logo">EM</span>
+                <nav className="ecs-dash__nav">
+                  <button className="ecs-dash__navic" aria-label="Kontrol paneli">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></svg>
+                  </button>
+                  <button className="ecs-dash__navic" aria-label="Müşteriler">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3.4" /><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5" /></svg>
+                  </button>
+                  <button className="ecs-dash__navic" aria-label="Portföy">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" /></svg>
+                  </button>
+                  <button className="ecs-dash__navic ecs-dash__navic--active" aria-label="Raporlar">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20V10m6 10V4m6 16v-7" /></svg>
+                  </button>
+                </nav>
+              </aside>
+              <div className="ecs-dash__main">
+                <div className="ecs-dash__top">
+                  <span className="ecs-dash__title">Raporlar</span>
+                  <div className="ecs-dash__topright">
+                    <div className="ecs-dash__range">
+                      <span className="ecs-dash__rangebtn">Bu Hafta</span>
+                      <span className="ecs-dash__rangebtn ecs-dash__rangebtn--active">Bu Ay</span>
+                      <span className="ecs-dash__rangebtn">Bu Yıl</span>
+                    </div>
+                    <span className="ecs-dash__profile">EA</span>
                   </div>
-                ))}
-              </div>
-              <div className="ecs-mgmt__card">
-                <span className="ecs-mgmt__h">En iyi portföyler</span>
-                <ol className="ecs-toplist">
-                  {TOP_PORTFOLIO.map((p, i) => (
-                    <li key={p.name}><span>{i + 1}</span><strong>{p.name}</strong><em>{p.v}</em></li>
+                </div>
+                <div className="ecs-kpi">
+                  {KPI.map((k, i) => (
+                    <div className="ecs-kpi__card" key={k.l}>
+                      <span className="ecs-kpi__l">{k.l}</span>
+                      <strong className="ecs-kpi__v">{k.prefix}{kpiValues[i]}{k.suffix}</strong>
+                      <span className="ecs-kpi__d">{k.d}</span>
+                    </div>
                   ))}
-                </ol>
-              </div>
-              <div className="ecs-mgmt__card">
-                <span className="ecs-mgmt__h">Taleplerin Kaynağı</span>
-                <div className="ecs-donut-wrap">
-                  <div
-                    className="ecs-donut"
-                    style={{ '--g': `conic-gradient(var(--green) 0 ${LEAD_SOURCE[0].v}%, var(--sage) ${LEAD_SOURCE[0].v}% ${LEAD_SOURCE[0].v + LEAD_SOURCE[1].v}%, var(--line) ${LEAD_SOURCE[0].v + LEAD_SOURCE[1].v}% 100%)` }}
-                  />
-                  <ul className="ecs-donut__legend">
-                    {LEAD_SOURCE.map(s => <li key={s.l}><span style={{ background: s.c }} />{s.l} · %{s.v}</li>)}
-                  </ul>
+                </div>
+                <div className="ecs-mgmt">
+                  <div className="ecs-mgmt__card ecs-mgmt__card--wide">
+                    <span className="ecs-mgmt__h">Gelir Trendi</span>
+                    <svg viewBox="0 0 300 70" className={`ecs-linechart${dashInView ? ' on' : ''}`} preserveAspectRatio="none">
+                      <polyline points="0,55 30,53 60,50 90,45 120,40 150,36 180,27 210,23 240,16 270,11 300,5" fill="none" stroke="var(--green)" strokeWidth="2.5" />
+                    </svg>
+                  </div>
+                  <div className="ecs-mgmt__card">
+                    <span className="ecs-mgmt__h">Ekip Performansı</span>
+                    {TEAM_PERF.map(t => (
+                      <div className="ecs-teambar" key={t.name}>
+                        <span>{t.name}</span>
+                        <div className="ecs-teambar__track"><span style={{ width: dashInView ? `${t.v}%` : '0%' }} /></div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="ecs-mgmt__card">
+                    <span className="ecs-mgmt__h">En iyi portföyler</span>
+                    <ol className="ecs-toplist">
+                      {TOP_PORTFOLIO.map((p, i) => (
+                        <li key={p.name}><span>{i + 1}</span><strong>{p.name}</strong><em>{p.v}</em></li>
+                      ))}
+                    </ol>
+                  </div>
+                  <div className="ecs-mgmt__card">
+                    <span className="ecs-mgmt__h">Taleplerin Kaynağı</span>
+                    <div className="ecs-donut-wrap">
+                      <div
+                        className="ecs-donut"
+                        style={{ '--g': `conic-gradient(var(--green) 0 ${LEAD_SOURCE[0].v}%, var(--sage) ${LEAD_SOURCE[0].v}% ${LEAD_SOURCE[0].v + LEAD_SOURCE[1].v}%, var(--line) ${LEAD_SOURCE[0].v + LEAD_SOURCE[1].v}% 100%)` }}
+                      />
+                      <ul className="ecs-donut__legend">
+                        {LEAD_SOURCE.map(s => <li key={s.l}><span style={{ background: s.c }} />{s.l} · %{s.v}</li>)}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

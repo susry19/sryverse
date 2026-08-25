@@ -13,7 +13,7 @@
 }
 
 /* Urun renk kimlikleri */
-.epage--estate { --ec: 23, 92, 73; }     /* forest-green — .ecs paletiyle birebir uyumlu */
+.epage--estate { --ec: 11, 107, 87; }    /* ana yeşil #0B6B57 — .ecs paletiyle birebir uyumlu */
 .epage--skill  { --ec: 52, 211, 153; }   /* zumrut */
 
 /* Okuma ilerleme cubugu */
