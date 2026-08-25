@@ -11,20 +11,6 @@ const PILOT_WEEKS = [
   { w: '4. hafta', h: 'Sonuç ve kazanım raporu', icon: 'M4 20V10m6 10V4m6 16v-7' },
 ]
 
-/* ── Akıllı Prospect: öncelik listesi + sinyal rozetleri ── */
-const PROSPECTS = [
-  { name: 'Mert Yılmaz',    niyet: 88, eslesme: 91, tag: 'Bugün ara' },
-  { name: 'Zeynep Kaya',    niyet: 76, eslesme: 84, tag: 'Bugün ara' },
-  { name: 'Ahmet Öztürk',   niyet: 69, eslesme: 79, tag: 'Bugün ara' },
-  { name: 'Selin Aydın',    niyet: 62, eslesme: 72, tag: 'Bugün ara' },
-]
-const SIGNALS = [
-  { l: 'Web davranışı', v: 'Son 7 günde 5 kez portföy inceledi' },
-  { l: 'Bölge ilgisi', v: 'Fulya / Nişantaşı bölgesine odaklı' },
-  { l: 'Finansal uygunluk', v: 'Kredi uygunluğu olumlu' },
-  { l: 'Yaşam evresi', v: 'Taşınma ihtimali yüksek' },
-]
-
 /* ── Akıllı Eşleştirme: talep + sıralı portföy önerileri ── */
 const MATCH_REQUEST = { rooms: '3+1 daire', area: 'Fulya, Nişantaşı', budget: '₺22-28M', notes: 'Otopark, güvenlik, manzara' }
 const PROPERTIES = [
@@ -33,35 +19,12 @@ const PROPERTIES = [
   { name: 'Maçka\'da Manzaralı Daire',     rooms: '3+1', area: 170, floor: '6. Kat', price: '₺22.900.000', score: 76, img: '/screens/property-macka.png' },
 ]
 
-/* ── Satış Operasyon Merkezi: 3 panel ── */
-const PIPELINE_COLS = [
-  { l: 'Yeni', items: ['Mert Yılmaz', 'Selin Aydın'] },
-  { l: 'Teklif', items: ['Zeynep Kaya'] },
-  { l: 'Kapanış', items: ['Ahmet Öztürk'] },
-]
-
 /* ── Yönetim Kontrolü ── */
 const KPI = [
   { l: 'Toplam Gelir', value: 124.8, decimals: 1, prefix: '₺', suffix: 'M', d: '+%18,6' },
   { l: 'Aktif Talepler', value: 238, decimals: 0, prefix: '', suffix: '', d: '+%24,2' },
   { l: 'Kapanan Anlaşmalar', value: 42, decimals: 0, prefix: '', suffix: '', d: '+%13,3' },
   { l: 'Dönüşüm Oranı', value: 24.6, decimals: 1, prefix: '%', suffix: '', d: '+%6,7' },
-]
-const TEAM_PERF = [
-  { name: 'Ece Aydın', v: 92 },
-  { name: 'Bora Demir', v: 78 },
-  { name: 'Selin Kaya', v: 65 },
-  { name: 'Mert Aydın', v: 54 },
-]
-const TOP_PORTFOLIO = [
-  { name: 'Fulya\'da Lüks Residence', v: '₺27,5M' },
-  { name: 'Nişantaşı\'nda Modern Daire', v: '₺24,7M' },
-  { name: 'Maçka\'da Manzaralı Daire', v: '₺22,9M' },
-]
-const LEAD_SOURCE = [
-  { l: 'Web', v: 44, c: 'var(--green)' },
-  { l: 'Referans', v: 31, c: 'var(--sage)' },
-  { l: 'Diğer', v: 25, c: 'var(--line)' },
 ]
 
 /* ── Güvenlik ve şeffaflık ── */
@@ -254,7 +217,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
     title: SEO_TITLE,
     description: SEO_DESC,
     path: '/estatematch',
-    ogImage: 'https://sryverse.com/screens/wide-dashboard.png',
+    ogImage: 'https://sryverse.com/screens/dashboard-main.png',
   })
 
   const schema = useMemo(() => ({
@@ -383,7 +346,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
                 <div className="ecs-laptop__unit" ref={laptopUnitRef}>
                   <div className="ecs-laptop__lid">
                     <div className="ecs-laptop__screen">
-                      <img src="/screens/wide-dashboard.png" alt="EstateMatch AI panel — masaüstü görünümü" />
+                      <img src="/screens/dashboard-main.png" alt="EstateMatch AI panel — masaüstü görünümü" />
                     </div>
                   </div>
                   <div className="ecs-laptop__base" />
@@ -409,69 +372,13 @@ export default function EstateMatchPage({ goBack, onDemo }) {
         </div>
       </section>
 
-      {/* ── KURUCU PİLOT PROGRAMI — 4 haftalık görsel yolculuk ── */}
-      <section className="ecs ecs-pilot">
-        <div className="wrap">
-          <Rev>
-            <SectionHead eyebrow="Kurucu pilot programı" note="İlk 5 emlak ekibiyle, 30 gün.">
-              Birlikte <em>kuralım.</em>
-            </SectionHead>
-          </Rev>
-          <Rev delay={100}>
-            <div className="ecs-pilot__timeline">
-              {PILOT_WEEKS.map((w, i) => (
-                <div className="ecs-pilot__step" key={w.w}>
-                  <div className="ecs-pilot__card">
-                    <span className="ecs-pilot__ic">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={w.icon} /></svg>
-                    </span>
-                    <span className="ecs-pilot__w">{w.w}</span>
-                    <h3 className="ecs-pilot__h">{w.h}</h3>
-                  </div>
-                  {i < PILOT_WEEKS.length - 1 && <span className="ecs-pilot__link" aria-hidden="true" />}
-                </div>
-              ))}
-            </div>
-          </Rev>
-          <Rev delay={160}>
-            <div className="ecs-pilot__foot">
-              <button className="ecs-btn ecs-btn--solid" onClick={demo}>Kurucu pilot programına başvur <span>→</span></button>
-              <p className="ecs-hero__trust" style={{ textAlign: 'left', margin: 0 }}>Kendi verinizi paylaşmadan örnek veriyle başlayabilirsiniz.</p>
-            </div>
-          </Rev>
-        </div>
-      </section>
-
       {/* ── AKILLI PROSPECT ── */}
       <section id="prospect" className="ecs-dark ecs-prospect">
         <div className="wrap ecs-scene ecs-scene--rev">
           <div className="ecs-scene__stage" ref={boardStageRef}>
             <Rev>
-              <div className="ecs-prospect__board" ref={boardRef}>
-                <svg className="ecs-prospect__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                  <path d="M14,18 Q 0,0 -6,-12" />
-                  <path d="M86,30 Q 100,14 108,4" />
-                  <path d="M14,82 Q 0,100 -6,108" />
-                  <path d="M86,70 Q 100,86 108,96" />
-                </svg>
-                <div className="ecs-prospect__list">
-                  <span className="ecs-prospect__tag">Prospekt Önerileri</span>
-                  {PROSPECTS.map(p => (
-                    <div className="ecs-prospect__row" key={p.name}>
-                      <span className="ecs-prospect__av">{p.name.split(' ').map(w => w[0]).join('')}</span>
-                      <div className="ecs-prospect__body">
-                        <strong>{p.name}</strong>
-                        <div className="ecs-prospect__bar"><span style={{ width: `${p.niyet}%` }} /></div>
-                      </div>
-                      <span className="ecs-prospect__score">%{p.eslesme}</span>
-                      <span className="ecs-prospect__cta">{p.tag}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="ecs-signal ecs-signal--a"><span>{SIGNALS[0].l}</span><em>{SIGNALS[0].v}</em></div>
-                <div className="ecs-signal ecs-signal--b"><span>{SIGNALS[1].l}</span><em>{SIGNALS[1].v}</em></div>
-                <div className="ecs-signal ecs-signal--c"><span>{SIGNALS[2].l}</span><em>{SIGNALS[2].v}</em></div>
-                <div className="ecs-signal ecs-signal--d"><span>{SIGNALS[3].l}</span><em>{SIGNALS[3].v}</em></div>
+              <div className="ecs-shot" ref={boardRef}>
+                <img src="/screens/clients-list.png" alt="EstateMatch AI — müşteri önceliklendirme ve dönüşüm skoru" loading="lazy" />
               </div>
             </Rev>
           </div>
@@ -531,43 +438,8 @@ export default function EstateMatchPage({ goBack, onDemo }) {
         <div className="wrap ecs-scene ecs-scene--rev">
           <div className="ecs-scene__stage">
             <Rev>
-              <div className="ecs-fan">
-                <div className="ecs-fanpanel ecs-fanpanel--1">
-                  <div className="ecs-fanpanel__bar">Pipeline</div>
-                  <div className="ecs-fanpanel__cols">
-                    {PIPELINE_COLS.map(c => (
-                      <div className="ecs-fanpanel__col" key={c.l}>
-                        <span>{c.l}</span>
-                        {c.items.map(it => <div className="ecs-fanpanel__chip" key={it}>{it}</div>)}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="ecs-fanpanel ecs-fanpanel--2">
-                  <div className="ecs-fanpanel__bar">Portföy</div>
-                  <div className="ecs-fanpanel__list">
-                    {PROPERTIES.map(p => (
-                      <div className="ecs-fanpanel__row" key={p.name}>
-                        <div className="ecs-fanpanel__thumb" aria-hidden="true" />
-                        <div>
-                          <strong>{p.name}</strong>
-                          <span>{p.price}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="ecs-fanpanel ecs-fanpanel--3">
-                  <div className="ecs-fanpanel__bar">AI Asistan</div>
-                  <div className="ecs-fanpanel__chat">
-                    <p>Merhaba, Ece 👋 Bugün senin için 12 aksiyon hazırladım.</p>
-                    <div className="ecs-fanpanel__action">
-                      <span>Öncelikli aksiyon</span>
-                      <strong>Mert Yılmaz — eşleşme %91</strong>
-                    </div>
-                    <span className="ecs-fanpanel__link">Raporu görüntüle <span>→</span></span>
-                  </div>
-                </div>
+              <div className="ecs-shot">
+                <img src="/screens/pipeline-board.png" alt="EstateMatch AI — satış iş süreçleri panosu" loading="lazy" />
               </div>
             </Rev>
           </div>
@@ -609,90 +481,58 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       </section>
 
       {/* ── YÖNETİM KONTROLÜ ── */}
-      <section id="management" className="ecs">
+      <section id="management" className="ecs ecs-mgmt-section">
         <div className="wrap">
           <Rev>
             <SectionHead eyebrow="Yönetim Kontrolü">Ekibin tamamı. <em>Tek bakışta.</em></SectionHead>
             <p className="ecs__p">Performans, hedefler ve gelir tek ekranda şeffaflaşır.</p>
           </Rev>
           <Rev delay={100}>
-            <div className="ecs-dash" ref={dashRef}>
-              <aside className="ecs-dash__side" aria-hidden="true">
-                <span className="ecs-dash__logo">EM</span>
-                <nav className="ecs-dash__nav">
-                  <button className="ecs-dash__navic" aria-label="Kontrol paneli">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></svg>
-                  </button>
-                  <button className="ecs-dash__navic" aria-label="Müşteriler">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3.4" /><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5" /></svg>
-                  </button>
-                  <button className="ecs-dash__navic" aria-label="Portföy">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" /></svg>
-                  </button>
-                  <button className="ecs-dash__navic ecs-dash__navic--active" aria-label="Raporlar">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20V10m6 10V4m6 16v-7" /></svg>
-                  </button>
-                </nav>
-              </aside>
-              <div className="ecs-dash__main">
-                <div className="ecs-dash__top">
-                  <span className="ecs-dash__title">Raporlar</span>
-                  <div className="ecs-dash__topright">
-                    <div className="ecs-dash__range">
-                      <span className="ecs-dash__rangebtn">Bu Hafta</span>
-                      <span className="ecs-dash__rangebtn ecs-dash__rangebtn--active">Bu Ay</span>
-                      <span className="ecs-dash__rangebtn">Bu Yıl</span>
-                    </div>
-                    <span className="ecs-dash__profile">EA</span>
-                  </div>
+            <div className="ecs-stats" ref={dashRef}>
+              {KPI.map((k, i) => (
+                <div className="ecs-stats__item" key={k.l}>
+                  <strong>{k.prefix}{kpiValues[i]}{k.suffix}</strong>
+                  <span>{k.l} <em>{k.d}</em></span>
                 </div>
-                <div className="ecs-kpi">
-                  {KPI.map((k, i) => (
-                    <div className="ecs-kpi__card" key={k.l}>
-                      <span className="ecs-kpi__l">{k.l}</span>
-                      <strong className="ecs-kpi__v">{k.prefix}{kpiValues[i]}{k.suffix}</strong>
-                      <span className="ecs-kpi__d">{k.d}</span>
-                    </div>
-                  ))}
+              ))}
+            </div>
+          </Rev>
+          <Rev delay={180}>
+            <div className="ecs-shot ecs-mgmt-shot">
+              <img src="/screens/reports-dashboard.png" alt="EstateMatch AI — satış ve ekip performans raporu" loading="lazy" />
+            </div>
+          </Rev>
+        </div>
+      </section>
+
+      {/* ── KURUCU PİLOT PROGRAMI — 4 haftalık görsel yolculuk ── */}
+      <section className="ecs ecs-pilot">
+        <div className="wrap">
+          <Rev>
+            <SectionHead eyebrow="Kurucu pilot programı" note="İlk 5 emlak ekibiyle, 30 gün.">
+              Birlikte <em>kuralım.</em>
+            </SectionHead>
+          </Rev>
+          <Rev delay={100}>
+            <div className="ecs-pilot__timeline">
+              {PILOT_WEEKS.map((w, i) => (
+                <div className="ecs-pilot__step" key={w.w}>
+                  <div className="ecs-pilot__card">
+                    <span className="ecs-pilot__ic">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={w.icon} /></svg>
+                    </span>
+                    <span className="ecs-pilot__w">{w.w}</span>
+                    <h3 className="ecs-pilot__h">{w.h}</h3>
+                  </div>
+                  {i < PILOT_WEEKS.length - 1 && <span className="ecs-pilot__link" aria-hidden="true" />}
                 </div>
-                <div className="ecs-mgmt">
-                  <div className="ecs-mgmt__card ecs-mgmt__card--wide">
-                    <span className="ecs-mgmt__h">Gelir Trendi</span>
-                    <svg viewBox="0 0 300 70" className={`ecs-linechart${dashInView ? ' on' : ''}`} preserveAspectRatio="none">
-                      <polyline points="0,55 30,53 60,50 90,45 120,40 150,36 180,27 210,23 240,16 270,11 300,5" fill="none" stroke="var(--green)" strokeWidth="2.5" />
-                    </svg>
-                  </div>
-                  <div className="ecs-mgmt__card">
-                    <span className="ecs-mgmt__h">Ekip Performansı</span>
-                    {TEAM_PERF.map(t => (
-                      <div className="ecs-teambar" key={t.name}>
-                        <span>{t.name}</span>
-                        <div className="ecs-teambar__track"><span style={{ width: dashInView ? `${t.v}%` : '0%' }} /></div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="ecs-mgmt__card">
-                    <span className="ecs-mgmt__h">En iyi portföyler</span>
-                    <ol className="ecs-toplist">
-                      {TOP_PORTFOLIO.map((p, i) => (
-                        <li key={p.name}><span>{i + 1}</span><strong>{p.name}</strong><em>{p.v}</em></li>
-                      ))}
-                    </ol>
-                  </div>
-                  <div className="ecs-mgmt__card">
-                    <span className="ecs-mgmt__h">Taleplerin Kaynağı</span>
-                    <div className="ecs-donut-wrap">
-                      <div
-                        className="ecs-donut"
-                        style={{ '--g': `conic-gradient(var(--green) 0 ${LEAD_SOURCE[0].v}%, var(--sage) ${LEAD_SOURCE[0].v}% ${LEAD_SOURCE[0].v + LEAD_SOURCE[1].v}%, var(--line) ${LEAD_SOURCE[0].v + LEAD_SOURCE[1].v}% 100%)` }}
-                      />
-                      <ul className="ecs-donut__legend">
-                        {LEAD_SOURCE.map(s => <li key={s.l}><span style={{ background: s.c }} />{s.l} · %{s.v}</li>)}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              ))}
+            </div>
+          </Rev>
+          <Rev delay={160}>
+            <div className="ecs-pilot__foot">
+              <button className="ecs-btn ecs-btn--solid" onClick={demo}>Kurucu pilot programına başvur <span>→</span></button>
+              <p className="ecs-hero__trust" style={{ textAlign: 'left', margin: 0 }}>Kendi verinizi paylaşmadan örnek veriyle başlayabilirsiniz.</p>
             </div>
           </Rev>
         </div>
