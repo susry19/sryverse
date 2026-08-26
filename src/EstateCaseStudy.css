@@ -432,7 +432,8 @@
   content: ''; position: absolute; left: 0; top: .5em; width: 6px; height: 6px; border-radius: 50%; background: var(--green);
 }
 .ecs-field-stage {
-  position: relative; width: 100%; height: clamp(460px, 56vh, 660px);
+  position: relative; width: 100%; max-width: 620px; margin-inline: auto;
+  height: clamp(460px, 56vh, 660px);
   --mx: 0; --my: 0;
 }
 .ecs-phone {

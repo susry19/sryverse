@@ -357,13 +357,13 @@ export default function EstateMatchPage({ goBack, onDemo }) {
             </Rev>
             <Rev delay={250}>
               <div className="ecs-glass ecs-glass--a">
-                <span className="ecs-glass__l">Bugün ara</span>
+                <span className="ecs-glass__l">{'Bugün ara'.toLocaleUpperCase('tr-TR')}</span>
                 <strong>12 <small>önerilen kişi</small></strong>
               </div>
             </Rev>
             <Rev delay={450}>
               <div className="ecs-glass ecs-glass--b">
-                <span className="ecs-glass__l">Eşleşme</span>
+                <span className="ecs-glass__l">{'Eşleşme'.toLocaleUpperCase('tr-TR')}</span>
                 <strong>%91</strong>
                 <svg className="ecs-glass__spark" width="72" height="26" viewBox="0 0 72 26" fill="none">
                   <polyline points="0,21 12,17 24,19 36,10 48,13 60,4 72,7" stroke="var(--sage)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -385,7 +385,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
             </Rev>
           </div>
           <div className="ecs-scene__text">
-            <span className="ecs__eye">Akıllı Prospect</span>
+            <span className="ecs__eye">{'Akıllı Prospect'.toLocaleUpperCase('tr-TR')}</span>
             <h2 className="ecs__h2">Kimi arayacağınızı <em>sistem söylesin.</em></h2>
             <p className="ecs__p">Veri, niyet ve zamanlama birleşir; en yüksek dönüşüm potansiyeline sahip kişiler her gün güncellenir.</p>
           </div>
@@ -397,14 +397,14 @@ export default function EstateMatchPage({ goBack, onDemo }) {
         <div className="wrap" style={{ textAlign: 'center' }}>
           <Rev>
             <div style={{ maxWidth: 560, margin: '0 auto' }}>
-              <span className="ecs__eye">Akıllı Eşleştirme</span>
+              <span className="ecs__eye">{'Akıllı Eşleştirme'.toLocaleUpperCase('tr-TR')}</span>
               <h2 className="ecs__h2">Doğru portföy <em>kendini göstersin.</em></h2>
               <p className="ecs__p">Her talep, yüzlerce kritere göre anında eşleştirilir.</p>
             </div>
           </Rev>
           <Rev delay={120}>
             <div className="ecs-req2">
-              <span className="ecs-req2__tag">Müşteri Talebi</span>
+              <span className="ecs-req2__tag">{'Müşteri Talebi'.toLocaleUpperCase('tr-TR')}</span>
               <strong>{MATCH_REQUEST.rooms}</strong>
               <span>{MATCH_REQUEST.area} · {MATCH_REQUEST.budget}</span>
               <span>{MATCH_REQUEST.notes}</span>
@@ -441,7 +441,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
             </Rev>
           </div>
           <div className="ecs-scene__text">
-            <span className="ecs__eye">Satış Operasyon Merkezi</span>
+            <span className="ecs__eye">{'Satış Operasyon Merkezi'.toLocaleUpperCase('tr-TR')}</span>
             <h2 className="ecs__h2">Tüm satış operasyonu. <em>Tek yerde.</em></h2>
             <p className="ecs__p">Pipeline, portföy, talepler ve yapay zekâ asistanı tek akışta birleşir.</p>
           </div>
@@ -452,7 +452,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
       <section id="field" className="ecs ecs-field-section">
         <div className="wrap ecs-field-grid">
           <div className="ecs-field-text">
-            <span className="ecs__eye">Sahada da aynı güç</span>
+            <span className="ecs__eye">{'Sahada da aynı güç'.toLocaleUpperCase('tr-TR')}</span>
             <h2 className="ecs__h2">Sahada da <em>aynı güç.</em></h2>
             <p className="ecs__p">Müşteri, portföy ve görevlerinize her yerden anında erişin.</p>
             <ul className="ecs-field-benefits">
@@ -596,7 +596,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
             {PLANS.map((p, i) => (
               <Rev key={p.n} delay={i * 90}>
                 <div className={`eplan${p.best ? ' eplan--best' : ''}`}>
-                  {p.best && <span className="eplan__tag">En çok tercih edilen — 10-25 danışmanlı ekipler için</span>}
+                  {p.best && <span className="eplan__tag">{'En çok tercih edilen — 10-25 danışmanlı ekipler için'.toLocaleUpperCase('tr-TR')}</span>}
                   <span className="eplan__n">{p.n}</span>
                   <h3 className="eplan__h">{p.h}</h3>
                   <p className="eplan__p">{p.p}</p>
@@ -616,7 +616,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
         <div className="wrap">
           <Rev>
             <div className="esec__head esec__head--mid">
-              <span className="eeye">Sık sorulanlar</span>
+              <span className="eeye">{'Sık sorulanlar'.toLocaleUpperCase('tr-TR')}</span>
               <h2 className="eh2">Merak edilenler.</h2>
             </div>
           </Rev>

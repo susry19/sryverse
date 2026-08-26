@@ -59,7 +59,7 @@ export function usePageSchema(schema) {
 export function SectionHead({ eyebrow, children, note }) {
   return (
     <>
-      <span className="ecs__eye">{eyebrow}</span>
+      <span className="ecs__eye">{typeof eyebrow === 'string' ? eyebrow.toLocaleUpperCase('tr-TR') : eyebrow}</span>
       <h2 className="ecs__h2">{children}</h2>
       {note && <p className="ecs__p" style={{ marginTop: '.6rem', fontSize: '.85rem' }}>{note}</p>}
     </>
@@ -385,7 +385,7 @@ export function RoiCalc({ fields, initial, compute, note }) {
         {fields.map(f => (
           <div className="eroi__f" key={f.key}>
             <label>
-              {f.label} <b>{f.prefix || ''}{TRY.format(v[f.key])}{f.unit || ''}</b>
+              {f.label.toLocaleUpperCase('tr-TR')} <b>{f.prefix || ''}{TRY.format(v[f.key])}{f.unit || ''}</b>
             </label>
             <input
               type="range"
