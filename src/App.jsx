@@ -295,11 +295,11 @@ export default function App() {
   ]
 
   const estateNav = [
-    {label:'Ürün',             target:'#matching'},
-    {label:'Yöneticiler için', target:'#management'},
-    {label:'Güvenlik',         target:'#security'},
-    {label:'Paketler',         target:'#pricing'},
-    {label:'SSS',              target:'#faq'},
+    {label:'Ürün',          target:'#prospect'},
+    {label:'Çözümler',      target:'#operations'},
+    {label:'Fiyatlandırma', target:'#pricing'},
+    {label:'Kaynaklar',     target:'#faq'},
+    {label:'Güvenlik',      target:'#security'},
   ]
 
   const goDemo = useCallback(() => {
@@ -340,7 +340,7 @@ export default function App() {
           </nav>
           <div className="hdr__act">
             {page === 'estatematch' ? (
-              <a href="#contact" className="hbtn hbtn--s" onClick={e=>{e.preventDefault(); goDemo()}}>Ücretsiz Demo →</a>
+              <a href="#contact" className="hbtn hbtn--s" onClick={e=>{e.preventDefault(); goDemo()}}>Ücretsiz demo planla →</a>
             ) : (
               <>
                 <a href="#products" className="hbtn hbtn--g" onClick={e=>{e.preventDefault(); go('#products')}}>Ürünleri Keşfet</a>
@@ -485,6 +485,17 @@ export default function App() {
         <div className="wrap footer__bot">
           <span>© 2026 SRYVERSE. Tüm hakları saklıdır.</span>
           <span className="footer__mono">Geleceğin işletim sistemi.</span>
+          <div className="footer__social">
+            <a href="https://www.linkedin.com/company/sryverse" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.2 8h4.6v14.8H.2V8zm7.6 0h4.4v2h.06c.62-1.16 2.12-2.4 4.36-2.4 4.66 0 5.52 3.06 5.52 7.04v8.16h-4.6v-7.24c0-1.72-.04-3.94-2.4-3.94-2.4 0-2.78 1.88-2.78 3.82v7.36H7.8V8z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/sryverse" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.youtube.com/@sryverse" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12c0 1.9.2 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.3-1.9.5-3.9.5-5.8s-.2-3.9-.5-5.8zM9.6 15.6V8.4L15.8 12l-6.2 3.6z"/></svg>
+            </a>
+          </div>
         </div>
       </footer>
 

@@ -303,8 +303,11 @@
 .fcol h5{font-family:var(--fm);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(120,210,170,.65);margin-bottom:.3rem}
 .fcol a{text-decoration:none;font-size:.92rem;color:rgba(255,255,255,.68);transition:color .2s}
 .fcol a:hover{color:#fff}
-.footer__bot{display:flex;justify-content:space-between;font-size:.8rem;color:rgba(255,255,255,.45);font-family:var(--fm)}
+.footer__bot{display:flex;justify-content:space-between;align-items:center;gap:1rem;font-size:.8rem;color:rgba(255,255,255,.45);font-family:var(--fm)}
 .footer__mono{font-style:italic}
+.footer__social{display:flex;align-items:center;gap:.6rem}
+.footer__social a{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.7);transition:color .2s,border-color .2s,transform .2s}
+.footer__social a:hover{color:#fff;border-color:rgba(255,255,255,.5);transform:translateY(-2px)}
 
 /* ══ ANIMATIONS ══ */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
