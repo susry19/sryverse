@@ -194,18 +194,23 @@ function useInView(threshold = 0.35) {
   return [ref, inView]
 }
 
-/* ── inView olunca 0'dan hedefe sayan sayaç; Türkçe ondalık biçimlendirme destekler ── */
+/* ── inView olunca mevcut değerden hedefe sayan sayaç; hedef değişince
+     sıfırlamadan yeni hedefe yumuşakça akar (canlı rapor için). ── */
 function useCountUp(target, inView, duration = 1200, decimals = 0) {
   const [value, setValue] = useState(0)
+  const curRef = useRef(0)
   useEffect(() => {
     if (!inView) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setValue(target); return }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { curRef.current = target; setValue(target); return }
     let raf = 0
+    const from = curRef.current
     const start = performance.now()
     const tick = (now) => {
       const t = Math.min(1, (now - start) / duration)
       const eased = 1 - Math.pow(1 - t, 3)
-      setValue(target * eased)
+      const v = from + (target - from) * eased
+      curRef.current = v
+      setValue(v)
       if (t < 1) raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
@@ -226,13 +231,18 @@ function AuroraField() {
     let raf = 0
     let running = false
     let w = 0, h = 0
-    const dots = Array.from({ length: 150 }, () => ({
+    const dots = Array.from({ length: 230 }, () => ({
       x: Math.random(), y: Math.random(),
-      r: Math.random() * 1.7 + 0.4,
+      r: Math.random() * 1.8 + 0.4,
       vx: (Math.random() - 0.5) * 0.00022,
       vy: -(Math.random() * 0.00025 + 0.00006),
       tw: Math.random() * Math.PI * 2,
     }))
+    const blobs = [
+      { x: 0.24, y: 0.5, r: 0.34, sp: 0.055, ph: 0 },
+      { x: 0.7, y: 0.4, r: 0.3, sp: -0.045, ph: 2.1 },
+      { x: 0.48, y: 0.62, r: 0.4, sp: 0.038, ph: 4.2 },
+    ]
     const resize = () => {
       const rect = canvas.getBoundingClientRect()
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -243,17 +253,31 @@ function AuroraField() {
     const draw = (t) => {
       raf = 0
       ctx.clearRect(0, 0, w, h)
-      // yumuşak dalga bantları
       ctx.globalCompositeOperation = 'lighter'
-      for (let b = 0; b < 3; b++) {
+      // sürüklenen büyük ışık kütleleri — referanstaki sisli parlama
+      for (const bl of blobs) {
+        const cx = (bl.x + Math.sin(t * 0.0001 * bl.sp * 10 + bl.ph) * 0.09) * w
+        const cy = (bl.y + Math.cos(t * 0.00008 * bl.sp * 10 + bl.ph) * 0.05) * h
+        const rr = bl.r * Math.min(w, h)
+        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rr)
+        g.addColorStop(0, 'rgba(168, 232, 198, 0.16)')
+        g.addColorStop(0.55, 'rgba(168, 232, 198, 0.06)')
+        g.addColorStop(1, 'rgba(168, 232, 198, 0)')
+        ctx.fillStyle = g
         ctx.beginPath()
-        const baseY = h * (0.42 + b * 0.14)
+        ctx.arc(cx, cy, rr, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      // yumuşak dalga bantları
+      for (let b = 0; b < 4; b++) {
+        ctx.beginPath()
+        const baseY = h * (0.36 + b * 0.13)
         for (let x = 0; x <= w; x += 14) {
-          const y = baseY + Math.sin(x * 0.004 + t * 0.00035 + b * 1.9) * 26 + Math.sin(x * 0.011 - t * 0.00022 + b) * 12
+          const y = baseY + Math.sin(x * 0.004 + t * 0.00035 + b * 1.9) * 28 + Math.sin(x * 0.011 - t * 0.00022 + b) * 13
           x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
         }
-        ctx.strokeStyle = `rgba(159, 214, 183, ${0.10 - b * 0.02})`
-        ctx.lineWidth = 34 - b * 8
+        ctx.strokeStyle = `rgba(159, 214, 183, ${0.13 - b * 0.025})`
+        ctx.lineWidth = 36 - b * 7
         ctx.stroke()
       }
       // ışıltılı parçacıklar
@@ -262,10 +286,10 @@ function AuroraField() {
         if (d.y < -0.02) { d.y = 1.02; d.x = Math.random() }
         if (d.x < -0.02) d.x = 1.02
         if (d.x > 1.02) d.x = -0.02
-        const a = (0.24 + Math.sin(d.tw) * 0.18) * (0.35 + d.y * 0.65)
+        const a = (0.3 + Math.sin(d.tw) * 0.22) * (0.35 + d.y * 0.65)
         ctx.beginPath()
         ctx.arc(d.x * w, d.y * h, d.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(199, 235, 214, ${a})`
+        ctx.fillStyle = `rgba(205, 240, 219, ${a})`
         ctx.fill()
       }
       ctx.globalCompositeOperation = 'source-over'
@@ -441,33 +465,83 @@ export default function EstateMatchPage({ goBack, onDemo }) {
     }
   }, [])
 
-  // Yönetim Kontrolü: bölüm görünür olunca sayaçlar ve grafikler canlanır
+  // Yönetim Kontrolü: bölüm görünür olunca sayaçlar ve grafikler canlanır,
+  // ardından rapor "canlı" akmaya devam eder (KPI, trend, barlar, donut).
   const [dashRef, dashInView] = useInView(0.2)
+  const [kpiTargets, setKpiTargets] = useState(KPI.map(k => k.value))
+  const [teamW, setTeamW] = useState(TEAM.map(m => m.w))
+  const [srcPcts, setSrcPcts] = useState(SOURCES.map(s => s.pct))
+  const [trendVals, setTrendVals] = useState(TREND)
+  const trendRef = useRef(TREND)
   const kpiValues = [
-    useCountUp(KPI[0].value, dashInView, 1300, KPI[0].decimals),
-    useCountUp(KPI[1].value, dashInView, 1300, KPI[1].decimals),
-    useCountUp(KPI[2].value, dashInView, 1300, KPI[2].decimals),
-    useCountUp(KPI[3].value, dashInView, 1300, KPI[3].decimals),
+    useCountUp(kpiTargets[0], dashInView, 1300, KPI[0].decimals),
+    useCountUp(kpiTargets[1], dashInView, 1300, KPI[1].decimals),
+    useCountUp(kpiTargets[2], dashInView, 1300, KPI[2].decimals),
+    useCountUp(kpiTargets[3], dashInView, 1300, KPI[3].decimals),
   ]
 
-  // Gelir trendi çizgisi — noktalar sabit veriden türetilir
+  // Canlı rapor kalbi: 3 sn'de bir küçük gerçekçi oynamalar üretir;
+  // trend çizgisi rAF ile yumuşakça yeni değerlere akar.
+  useEffect(() => {
+    if (!dashInView) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let raf = 0
+    const morphTrend = (to) => {
+      const from = [...trendRef.current]
+      const start = performance.now()
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / 1100)
+        const e = 1 - Math.pow(1 - t, 3)
+        const next = from.map((v, i) => v + (to[i] - v) * e)
+        trendRef.current = next
+        setTrendVals(next)
+        if (t < 1) raf = requestAnimationFrame(step)
+      }
+      if (raf) cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(step)
+    }
+    const jitter = () => {
+      setKpiTargets(([g, ta, ka, d]) => [
+        +(g + Math.random() * 0.08).toFixed(2),
+        ta + (Math.random() < 0.65 ? 1 : 0),
+        ka + (Math.random() < 0.1 ? 1 : 0),
+        +Math.max(23.8, Math.min(25.6, d + (Math.random() - 0.5) * 0.3)).toFixed(1),
+      ])
+      setTeamW(ws => ws.map(w => Math.max(36, Math.min(96, w + (Math.random() - 0.5) * 9))))
+      setSrcPcts(() => {
+        const web = 37 + Math.random() * 6
+        const ref = 27 + Math.random() * 5
+        const ilan = 17 + Math.random() * 5
+        return [web, ref, ilan, 100 - web - ref - ilan]
+      })
+      morphTrend(TREND.map((v, i) => {
+        const drift = (Math.random() - 0.45) * 2.4
+        return Math.max(5, Math.min(27, v + drift + (i === TREND.length - 1 ? Math.random() * 0.8 : 0)))
+      }))
+    }
+    const t = setInterval(jitter, 3000)
+    return () => { clearInterval(t); if (raf) cancelAnimationFrame(raf) }
+  }, [dashInView])
+
+  // Gelir trendi çizgisi — canlı değerlerden türetilir
   const trendPath = useMemo(() => {
     const W = 320, H = 130, max = 28
-    const pts = TREND.map((v, i) => [14 + (i * (W - 28)) / (TREND.length - 1), H - 16 - (v / max) * (H - 34)])
+    const pts = trendVals.map((v, i) => [14 + (i * (W - 28)) / (trendVals.length - 1), H - 16 - (v / max) * (H - 34)])
     const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ')
     return { pts, line, area: `${line} L${pts[pts.length - 1][0].toFixed(1)},${H - 6} L${pts[0][0].toFixed(1)},${H - 6} Z` }
-  }, [])
+  }, [trendVals])
 
-  // Donut dilimleri
+  // Donut dilimleri — canlı yüzdelerden
   const donut = useMemo(() => {
     const C = 2 * Math.PI * 34
     let off = 0
-    return SOURCES.map(s => {
-      const seg = { ...s, dash: `${(s.pct / 100) * C} ${C}`, off: -off }
-      off += (s.pct / 100) * C
+    return SOURCES.map((s, i) => {
+      const pct = srcPcts[i]
+      const seg = { ...s, pct, dash: `${(pct / 100) * C} ${C}`, off: -off }
+      off += (pct / 100) * C
       return seg
     })
-  }, [])
+  }, [srcPcts])
 
   return (
     <main className="epage epage--estate">
@@ -815,8 +889,8 @@ export default function EstateMatchPage({ goBack, onDemo }) {
 
               <Rev delay={100}>
                 <div className="ecs-chart ecs-chart--trend">
-                  <header>Gelir Trendi</header>
-                  <div className="ecs-chart__tip">Mayıs 2026<br /><b>₺24,6M</b></div>
+                  <header>Gelir Trendi <span className="ecs-live"><i />{'Canlı'.toLocaleUpperCase('tr-TR')}</span></header>
+                  <div className="ecs-chart__tip">Ağustos 2026<br /><b>₺{trendVals[trendVals.length - 1].toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}M</b></div>
                   <svg viewBox="0 0 320 130" preserveAspectRatio="none">
                     <defs>
                       <linearGradient id="ecsTrendFill" x1="0" y1="0" x2="0" y2="1">
@@ -842,7 +916,7 @@ export default function EstateMatchPage({ goBack, onDemo }) {
                       <Avatar name={m.n} tone={i} />
                       <div className="ecs-team__mid">
                         <strong>{m.n}</strong>
-                        <i><b style={{ '--w': `${m.w}%`, transitionDelay: `${0.3 + i * 0.12}s` }} /></i>
+                        <i><b style={{ '--w': `${teamW[i]}%`, transitionDelay: `${0.3 + i * 0.12}s` }} /></i>
                       </div>
                       <em>{m.v}</em>
                     </div>
@@ -874,8 +948,8 @@ export default function EstateMatchPage({ goBack, onDemo }) {
                       ))}
                     </svg>
                     <div className="ecs-src__legend">
-                      {SOURCES.map(s => (
-                        <div key={s.n}><i style={{ background: s.c }} /><span>{s.n}</span><em>%{s.pct}</em></div>
+                      {donut.map(s => (
+                        <div key={s.n}><i style={{ background: s.c }} /><span>{s.n}</span><em>%{Math.round(s.pct)}</em></div>
                       ))}
                     </div>
                   </div>
