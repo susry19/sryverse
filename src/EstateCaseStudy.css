@@ -142,8 +142,8 @@
    sol altta kaya silüeti, önde cam bilgi kartları.
    ══════════════════════════════════════════════════════ */
 .ecs-hero2 {
-  padding-top: clamp(120px, 15vh, 170px);
-  padding-bottom: clamp(48px, 7vh, 88px);
+  padding-top: clamp(130px, 16vh, 180px);
+  padding-bottom: clamp(56px, 8vh, 96px);
   position: relative;
   background:
     radial-gradient(58% 52% at 82% 0%, rgba(11, 107, 87, .38) 0%, transparent 62%),
@@ -192,7 +192,7 @@
 .ecs-hero2__sub { font-size: 1.06rem; color: var(--cs-mut); margin: 1.2rem 0 0; }
 .ecs-hero2__ctas { margin-top: 2rem; }
 
-.ecs-hero2__stage { position: relative; }
+.ecs-hero2__stage { position: relative; margin-top: 2.4rem; }
 .ecs-laptop { position: relative; width: 100%; perspective: 2200px; }
 .ecs-laptop__unit {
   transform-style: preserve-3d;
@@ -240,19 +240,22 @@
   display: inline-flex; align-items: center; justify-content: center;
 }
 .ecs-glass__spark2 { margin-top: .4rem; }
-.ecs-glass--a { left: -17%; bottom: 26%; z-index: 3; }
-.ecs-glass--b { left: 1%; bottom: -7%; z-index: 3; animation-delay: 1.4s; }
+.ecs-glass--a { left: -3%; bottom: 20%; z-index: 3; }
+.ecs-glass--b { left: 6%; bottom: -8%; z-index: 3; animation-delay: 1.4s; }
 
 @media (max-width: 1024px) {
   .ecs-hero2__grid { grid-template-columns: 1fr; }
   .ecs-hero2__stage { margin-top: 2.6rem; max-width: 680px; }
   .ecs-glass--a { left: 0; bottom: 20%; }
-  .ecs-glass--b { left: 12%; bottom: -9%; }
+  .ecs-glass--b { left: auto; right: 4%; bottom: -9%; }
 }
 @media (max-width: 700px) {
   .ecs-glass { padding: .7rem .9rem; }
-  .ecs-glass--a { left: -2%; bottom: 24%; }
-  .ecs-glass--b { left: 4%; bottom: -10%; }
+  .ecs-glass strong { font-size: 1.1rem; }
+  .ecs-glass__big { font-size: 1.5rem !important; }
+  .ecs-glass__spark2 { width: 62px; }
+  .ecs-glass--a { left: 0; right: auto; top: -12%; bottom: auto; }
+  .ecs-glass--b { left: auto; right: 0; bottom: -9%; }
   .ecs-laptop__unit { transform: rotateX(3deg) rotateY(-6deg); }
   .ecs-hero2__rock { width: 80%; height: 30%; }
 }
@@ -275,8 +278,8 @@
 }
 .ecs-prospect__stage { position: relative; padding: 3.4rem 2.4rem 4rem; }
 .ecs-prospect__wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.ecs-prospect__wires path { fill: none; stroke: rgba(175, 200, 190, .32); stroke-width: 1; }
-.ecs-prospect__wires circle { fill: rgba(175, 200, 190, .55); }
+.ecs-prospect__wires path { fill: none; stroke: rgba(175, 200, 190, .45); stroke-width: 1.2; }
+.ecs-prospect__wires circle { fill: rgba(175, 200, 190, .7); }
 
 .ecs-board {
   position: relative;
@@ -292,10 +295,17 @@
   transition: transform .5s cubic-bezier(.2, .7, .3, 1);
   will-change: transform;
 }
-.ecs-board__head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-bottom: 1rem; }
+/* başlık, satırlarla birebir aynı kolon şablonunu kullanır — etiketler veriyle hizalı */
+.ecs-board__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) .4fr minmax(0, .95fr) auto;
+  align-items: end;
+  gap: 1rem;
+  padding-bottom: 1rem;
+}
 .ecs-board__head strong { font-family: var(--fs); font-weight: 500; font-size: 1.15rem; color: var(--white); }
-.ecs-board__cols { display: flex; gap: 1.6rem; }
-.ecs-board__cols span { font-family: var(--fm); font-size: .56rem; letter-spacing: .08em; text-transform: uppercase; color: rgba(250, 250, 247, .45); }
+.ecs-board__cols { display: contents; }
+.ecs-board__cols span { font-family: var(--fm); font-size: .56rem; letter-spacing: .08em; text-transform: uppercase; color: rgba(250, 250, 247, .45); white-space: nowrap; }
 .ecs-board__row {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) .4fr minmax(0, .95fr) auto;
@@ -350,22 +360,36 @@
 .ecs-signal strong { font-family: var(--fn); font-weight: 600; font-size: .72rem; color: var(--white); }
 .ecs-signal span { font-family: var(--fn); font-size: .64rem; line-height: 1.45; color: rgba(250, 250, 247, .6); }
 .ecs-signal--a { top: 0; right: 0; animation-delay: .6s; }
-.ecs-signal--b { left: 0; top: 34%; animation-delay: 1.8s; }
+.ecs-signal--b { left: 0; top: 42%; max-width: 190px; animation-delay: 1.8s; }
 .ecs-signal--c { left: 4%; bottom: 0; animation-delay: 1s; }
 .ecs-signal--d { right: 2%; bottom: .4rem; animation-delay: 2.4s; }
 
 @media (max-width: 1024px) {
   .ecs-prospect__grid { grid-template-columns: 1fr; }
-  .ecs-prospect__stage { padding: 2.4rem 0 2rem; }
-  .ecs-signal--b { left: 0; }
+  /* dar ekranda sinyaller pano ALTINDA 2 sütunlu ızgaraya iner — üst üste binme olmaz */
+  .ecs-prospect__stage {
+    padding: 2rem 0 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .9rem;
+  }
+  .ecs-prospect__stage > * { min-width: 0; }
+  .ecs-prospect__wires { display: none; }
+  .ecs-prospect__stage > :nth-child(2) { grid-column: 1 / -1; }
+  .ecs-board { margin: 0; max-width: none; }
+  .ecs-signal { position: static; max-width: none; height: 100%; animation: none; }
+  .ecs-signal--b { max-width: none; }
 }
 @media (max-width: 760px) {
   .ecs-board { transform: none; padding: 1.1rem 1rem .8rem; }
   .ecs-board__cols { display: none; }
+  .ecs-board__head { grid-template-columns: 1fr; }
   .ecs-board__row { grid-template-columns: minmax(0, 1.4fr) auto; }
   .ecs-board__score, .ecs-board__match { display: none; }
-  .ecs-signal { position: static; max-width: none; margin-top: .8rem; animation: none; }
-  .ecs-prospect__wires { display: none; }
+}
+@media (max-width: 560px) {
+  .ecs-prospect__stage { grid-template-columns: 1fr; }
+  .ecs-signal { height: auto; }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -411,7 +435,7 @@
 .ecs-eslesme__in { position: relative; z-index: 1; }
 .ecs-eslesme__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, .55fr);
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 2rem;
 }
@@ -536,6 +560,9 @@
   display: flex; flex-direction: column; gap: .5rem;
   overflow: hidden;
 }
+/* komşu tabletin altında kalan kenarlarda içerik bırakma */
+.ecs-tab--l .ecs-tab__screen { padding-right: clamp(2.2rem, 3.4vw, 3rem); }
+.ecs-tab--m .ecs-tab__screen { padding-right: clamp(2rem, 3.2vw, 2.8rem); }
 .ecs-tab__screen header { font-family: var(--fn); font-weight: 700; font-size: .82rem; color: #07110E; }
 .ecs-tab__chips { display: flex; flex-wrap: wrap; gap: .3rem; }
 .ecs-tab__chips i {
@@ -604,10 +631,15 @@
   .ecs-ops__grid { grid-template-columns: 1fr; }
   .ecs-ops__stage { height: clamp(400px, 62vw, 560px); max-width: 760px; margin: 0 auto; width: 100%; }
   .ecs-tab { width: clamp(190px, 30vw, 300px); }
+  /* dar ekranda tabletler neredeyse hiç örtüşmez — iç kenar payı gerekmez */
+  .ecs-tab--l .ecs-tab__screen, .ecs-tab--m .ecs-tab__screen { padding-right: clamp(.7rem, 1.2vw, 1rem); }
+  .ecs-tab__chips i:nth-child(n+4) { display: none; }
 }
 @media (max-width: 640px) {
   .ecs-ops__stage { height: auto; perspective: none; display: flex; flex-direction: column; gap: 1rem; align-items: center; }
-  .ecs-tab { position: static; width: min(100%, 340px); transform: none !important; }
+  .ecs-tab { position: static; width: min(100%, 340px); aspect-ratio: auto; transform: none !important; }
+  .ecs-tab--l .ecs-tab__screen, .ecs-tab--m .ecs-tab__screen { padding-right: 1rem; }
+  .ecs-tab__chips i:nth-child(n+4) { display: inline-flex; }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1053,7 +1085,13 @@
 }
 .epage--estate #faq .wrap { position: relative; z-index: 1; }
 .epage--estate .ecta__trust { color: rgba(250, 250, 247, .78); }
-.epage--estate .ebtn--solid { color: #07110E; }
+/* kapanış CTA'sı referanstaki gibi açık (ivory) pill */
+.epage--estate .ebtn--solid {
+  background: #F4F1EA;
+  color: #07110E;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+.epage--estate .ebtn--solid:hover { filter: none; box-shadow: 0 18px 42px rgba(0, 0, 0, .5); }
 .epage--estate .ecta { position: relative; overflow: hidden; }
 .ecta__beams { position: absolute; left: -4%; bottom: 8%; width: 60%; height: 40%; pointer-events: none; }
 .ecta__beams i {

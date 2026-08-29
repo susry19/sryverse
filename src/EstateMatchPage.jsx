@@ -682,12 +682,13 @@ export default function EstateMatchPage({ goBack, onDemo }) {
                 </span>
               </div>
             </Rev>
+            <div aria-hidden="true" />
           </div>
 
           <svg className="ecs-eslesme__branch" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M780,0 C 780,55 200,30 200,90" />
-            <path d="M790,0 C 790,60 600,40 600,90" />
-            <path d="M800,0 C 800,55 1000,30 1000,90" />
+            <path d="M592,0 C 592,55 200,30 200,90" />
+            <path d="M600,0 C 600,55 600,45 600,90" />
+            <path d="M608,0 C 608,55 1000,30 1000,90" />
           </svg>
 
           <div className="ecs-props2">
