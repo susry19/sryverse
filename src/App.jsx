@@ -295,11 +295,11 @@ export default function App() {
   ]
 
   const estateNav = [
-    {label:'Ürün',          target:'#prospect'},
-    {label:'Çözümler',      target:'#operations'},
-    {label:'Fiyatlandırma', target:'#pricing'},
-    {label:'Kaynaklar',     target:'#faq'},
-    {label:'Güvenlik',      target:'#security'},
+    {label:'Ürün',           target:'#tour'},
+    {label:'AI',             target:'#assistant'},
+    {label:'Çözümler',       target:'#explore'},
+    {label:'Nasıl çalışır?', target:'#story'},
+    {label:'Güvenlik',       target:'#security'},
   ]
 
   const goDemo = useCallback(() => {
@@ -340,7 +340,7 @@ export default function App() {
           </nav>
           <div className="hdr__act">
             {page === 'estatematch' ? (
-              <a href="#contact" className="hbtn hbtn--s" onClick={e=>{e.preventDefault(); goDemo()}}>Ücretsiz demo planla →</a>
+              <a href="#contact" className="hbtn hbtn--s" onClick={e=>{e.preventDefault(); goDemo()}}>Demo Planla →</a>
             ) : (
               <>
                 <a href="#products" className="hbtn hbtn--g" onClick={e=>{e.preventDefault(); go('#products')}}>Ürünleri Keşfet</a>
