@@ -10,29 +10,20 @@ import './EstateCaseStudy.css'
    Değer → Kimler için + Güvenlik → Final CTA.
    ════════════════════════════════════════════════════════════ */
 
-/* ── Hero: yüzen AI sonuç kartları ── */
-const HERO_FLOATS = [
-  { k: 'm1', pct: 94, t: 'Fulya Residence' },
-  { k: 'm2', pct: 89, t: 'Nişantaşı Loft' },
-]
+/* ── Hero: 3 katman — arka dashboard, orta ürün kartları, ön AI sonuçları ── */
 const HERO_FLOW = ['Müşteri', 'AI Analizi', 'Akıllı Eşleşme', 'Takip', 'Satış']
+const HERO_PROOF = ['Çok kullanıcılı', 'Rol bazlı erişim', 'Güvenli', 'Bulut tabanlı', 'AI destekli', 'Ölçeklenebilir']
 
 /* ── "Bir müşteri geldi." hikâyesi ── */
-const REQ_LINES = ['“Nişantaşı veya Fulya olabilir.', '2+1.', 'Modern bina.', 'Metroya yakın.', 'Maksimum 18 milyon.”']
+const REQ_TEXT = 'Nişantaşı veya Fulya düşünüyorum. 2+1 olsun. Yeni bina tercih ederim. 20 milyonu geçmesin.'
 const REQ_TAGS = [
   { k: 'LOCATION', v: 'Nişantaşı · Fulya' },
-  { k: 'TYPE', v: '2+1' },
-  { k: 'BUDGET', v: '≤ ₺18M' },
-  { k: 'PRIORITY', v: 'Metro yakınlığı' },
+  { k: 'PROPERTY', v: '2+1' },
+  { k: 'BUDGET', v: '≤ ₺20M' },
+  { k: 'PREFERENCE', v: 'Yeni bina' },
 ]
-const MATCH_REASONS = [
-  { ok: true, t: 'Bütçe uyumu' },
-  { ok: true, t: 'Bölge uyumu' },
-  { ok: true, t: '2+1' },
-  { ok: true, t: 'Metro 420 m' },
-  { ok: true, t: 'Modern yapı' },
-  { ok: false, t: 'Balkon tercihi karşılanmıyor' },
-]
+const SCAN_SEQ = [247, 182, 61, 12, 3]
+const MATCH_CHECKS = ['Bütçe', 'Konum', 'Oda tipi', 'Bina yaşı', 'Ulaşım']
 
 /* ── CRM değil — karar motoru ── */
 const VS_ROWS = [
@@ -41,52 +32,76 @@ const VS_ROWS = [
   { crm: 'aktivite kaydeder.', em: 'sonraki aksiyonu önerir.' },
 ]
 
-/* ── Ürün turu — her ekranda tek mesaj ── */
+/* ── Ürün turu — PROBLEM → AKSİYON → SONUÇ; her ekranda tek mesaj ── */
 const TOUR = [
-  { key: 'panel',     tag: 'Panel',       img: '/screens/dashboard.png',         h: 'Günün fotoğrafı. Tek ekranda.',            p: 'Metrikler, aktivite ve AI öngörüleri — güne nereden başlayacağınız belli.' },
-  { key: 'clients',   tag: 'Müşteriler',  img: '/screens/clients-list.png',      h: 'Kimi arayacağınızı AI önceliklendirir.',   p: 'Dönüşüm skoru ve niyet sinyalleri her gün yeniden hesaplanır.' },
-  { key: 'matching',  tag: 'AI Matching', img: '/screens/ai-matches.png',        h: 'Talep girin. Eşleşmeler saniyeler içinde.', p: 'Her öneri gerekçesiyle gelir; karar danışmanda kalır.' },
-  { key: 'portfolio', tag: 'Portföy',     img: '/screens/portfolio-grid.png',    h: 'Portföyünüz, AI skorlarıyla.',             p: 'Hangi ilan hangi müşteriye gider — bakışta görünür.' },
-  { key: 'pipeline',  tag: 'Takip',       img: '/screens/pipeline-board.png',    h: "Lead'den satışa tek akış.",                p: 'Görüşme, teklif, kapanış — hiçbir fırsat arada kaybolmaz.' },
-  { key: 'analytics', tag: 'Analytics',   img: '/screens/reports-dashboard.png', h: 'Yönetim, tek bakışta.',                    p: 'Ciro, huni ve danışman performansı şeffaflaşır.' },
+  { key: 'panel',     tag: 'Panel',       img: '/screens/dashboard.png',         h: 'Güne "bugün ne yapsam?" diye başlamayın.',  p: 'Metrikler, aktivite ve AI öngörüleri tek ekranda — öncelikleriniz hazır.' },
+  { key: 'clients',   tag: 'Müşteriler',  img: '/screens/clients-list.png',      h: 'Kimi arayacağınızı tahmin etmeyin.',        p: 'AI, dönüşüm ihtimaline göre arama listenizi her sabah yeniler.' },
+  { key: 'matching',  tag: 'AI Matching', img: '/screens/ai-matches.png',        h: '200 portföyü elle taramayın.',              p: 'Talebi girin — en güçlü adaylar gerekçeleriyle saniyeler içinde önünüzde.' },
+  { key: 'portfolio', tag: 'Portföy',     img: '/screens/portfolio-grid.png',    h: 'Hangi ilan kime gider — tahmin işi değil.', p: 'Portföyünüz AI skorlarıyla sürekli analizde; talep görmeyen ilan uyarır.' },
+  { key: 'pipeline',  tag: 'Takip',       img: '/screens/pipeline-board.png',    h: 'Fırsatlar arada kaybolmasın.',              p: "Lead'den satışa her adım tek akışta; AI bekleyen adımı hatırlatır." },
+  { key: 'analytics', tag: 'Analytics',   img: '/screens/reports-dashboard.png', h: 'Ay sonu raporunu beklemeyin.',              p: 'Ciro, huni ve danışman performansı gerçek zamanlı şeffaf.' },
 ]
 
-/* ── AI Asistan demo senaryoları ── */
-const CHATS = [
-  {
-    q: "Fulya'da 20 milyon altındaki yatırım müşterilerime uygun portföyleri göster.",
-    a: '14 müşteri ve 8 uygun portföy buldum. En yüksek eşleşme: Fulya Residence — %94.',
-    cards: [
-      { pct: 94, t: 'Fulya Residence', s: '3+1 · ₺18,4M' },
-      { pct: 87, t: 'Fulya Park Evleri', s: '2+1 · ₺16,9M' },
-    ],
-  },
-  { q: 'Bu hafta takip etmem gereken müşteriler', a: '6 müşteri takip bekliyor. En kritik: Mert Yılmaz — teklif aşamasında, 3 gündür yanıtsız.' },
-  { q: 'En iyi performans gösteren danışman', a: 'Bu ay: Ece Aydın — ₺41,2M ciro, %28 dönüşüm oranı.' },
-  { q: '30 gündür işlem görmeyen portföyler', a: '11 portföy 30+ gündür hareketsiz. Üçü için fiyat güncellemesi önerdim.' },
-  { q: 'Satış ihtimali yüksek müşteriler', a: '9 müşteri %80 üzeri satış ihtimalinde. İlk üçünü bugünkü arama listenize ekledim.' },
+/* ── Ekosistem: tek zekâ katmanı ── */
+const LAYER_NODES = [
+  { k: 'client',    t: 'CLIENT',    x: 120, y: 70 },
+  { k: 'match',     t: 'MATCH',     x: 300, y: 42 },
+  { k: 'portfolio', t: 'PORTFOLIO', x: 480, y: 70 },
+  { k: 'pipeline',  t: 'PIPELINE',  x: 300, y: 306 },
+  { k: 'analytics', t: 'ANALYTICS', x: 300, y: 384 },
 ]
 
-/* ── Explore modülleri ── */
+/* ── AI Asistan: 3 perdelik canlı demo — sorgu → liste → sırala → eşleştir ── */
+const ASK_CLIENTS = [
+  { id: 'mert',  n: 'Mert Yılmaz',  s: 'Teklif aşaması',      prob: 86, match: '%94 · Fulya Residence' },
+  { id: 'zey',   n: 'Zeynep Kaya',  s: '2. görüşme planlandı', prob: 74, match: '%88 · Nişantaşı Loft' },
+  { id: 'ahmet', n: 'Ahmet Özgen',  s: '5 portföy inceledi',   prob: 91, match: '%90 · Maçka Panorama' },
+  { id: 'seval', n: 'Seval Öztürk', s: 'Kredi onayı aldı',     prob: 68, match: '%82 · Fulya Park' },
+]
+const ASK_ACTS = [
+  { q: 'Bu hafta takip etmem gereken müşterileri göster.', a: '12 müşteri buldum. En kritik dördü:' },
+  { q: 'Satış ihtimali en yüksek olanları sırala.',        a: 'Satış ihtimaline göre sıralandı.' },
+  { q: 'Uygun portföylerini getir.',                       a: 'Her müşteri için en güçlü eşleşme:' },
+]
+
+/* ── Explore modülleri — bento düzeni: 2 büyük sahne + 4 kompakt kart ── */
 const MODULES = [
-  { k: 'AI Matching',          tr: 'Müşteri–portföy eşleştirme',      img: '/screens/ai-matches.png',
+  { k: 'AI Matching', size: 'big', area: 'm0', tr: '200 portföy arasında manuel arama yapmayın.', img: '/screens/ai-matches.png',
     how: 'Talep kriterleri yüzlerce portföyle karşılaştırılır; her eşleşme gerekçesiyle puanlanır.',
-    who: 'Danışmanlar ve satış ekipleri', gain: 'Portföy arama dakikalardan saniyelere iner.' },
-  { k: 'Portfolio Intelligence', tr: 'Portföy yönetimi ve analiz',    img: '/screens/portfolio.png',
-    how: 'İlanlar AI skorları, hareketsizlik ve fiyat sinyalleriyle sürekli analiz edilir.',
-    who: 'Danışmanlar ve broker’lar', gain: 'Hangi ilanın ilgi göreceğini önceden görürsünüz.' },
-  { k: 'Client 360°',          tr: 'Tek ekranda müşteri geçmişi',     img: '/screens/match.png',
+    who: 'Danışmanlar ve satış ekipleri', gain: 'Portföy arama dakikalardan saniyelere iner.',
+    steps: ['Müşteri profili', 'Tercih analizi', 'Portföy filtreleme', 'AI skorlama', 'Açıklanabilir eşleşme', 'Öneri'] },
+  { k: 'Client 360°', area: 'm1', tr: 'Tek ekranda müşteri geçmişi', img: '/screens/match.png',
     how: 'Görüşmeler, tercihler, bütçe ve davranış sinyalleri tek profilde birleşir.',
     who: 'Tüm satış ekibi', gain: 'Müşteriyi aramadan önce her şeyi bilirsiniz.' },
-  { k: 'AI Assistant',         tr: 'Doğal dille veri sorgulama',      img: '/screens/mobile-chatbot.png',
-    how: 'Sorunuzu yazarsınız; asistan veriyi tarar, listeler ve aksiyon önerir.',
-    who: 'Danışmanlar ve yöneticiler', gain: 'Rapor beklemek yerine sorup öğrenirsiniz.' },
-  { k: 'Sales Pipeline',       tr: 'Lead → görüşme → satış',          img: '/screens/pipeline.png',
-    how: 'Her fırsat aşamasıyla izlenir; AI bekleyen adımları hatırlatır.',
-    who: 'Satış ekipleri', gain: 'Takipsiz kalan fırsat kalmaz.' },
-  { k: 'Management Analytics', tr: 'Danışman ve ekip performansı',    img: '/screens/reports.png',
+  { k: 'Management Analytics', area: 'm2', tr: 'Danışman ve ekip performansı', img: '/screens/reports.png',
     how: 'Ciro, dönüşüm ve aktivite metrikleri gerçek zamanlı toplanır.',
     who: 'Yöneticiler ve acente sahipleri', gain: 'Ekibi veriye dayanarak yönetirsiniz.' },
+  { k: 'AI Assistant', size: 'big', area: 'm3', tr: 'Rapor beklemeyin; doğal dille sorun.', img: '/screens/mobile-chatbot.png',
+    how: 'Sorunuzu yazarsınız; asistan veriyi tarar, listeler ve aksiyon önerir.',
+    who: 'Danışmanlar ve yöneticiler', gain: 'Rapor beklemek yerine sorup öğrenirsiniz.' },
+  { k: 'Portfolio Intelligence', area: 'm4', tr: 'Portföy yönetimi ve analiz', img: '/screens/portfolio.png',
+    how: 'İlanlar AI skorları, hareketsizlik ve fiyat sinyalleriyle sürekli analiz edilir.',
+    who: 'Danışmanlar ve broker’lar', gain: 'Hangi ilanın ilgi göreceğini önceden görürsünüz.' },
+  { k: 'Sales Pipeline', area: 'm5', tr: 'Lead → görüşme → satış', img: '/screens/pipeline.png',
+    how: 'Her fırsat aşamasıyla izlenir; AI bekleyen adımları hatırlatır.',
+    who: 'Satış ekipleri', gain: 'Takipsiz kalan fırsat kalmaz.' },
+]
+
+/* ── Derine inmek isteyenler için teknik başlıklar ── */
+const TECH = [
+  { h: 'Eşleştirme metodolojisi', p: 'Kriter ağırlıklama + davranış sinyalleri; her skorun gerekçesi görülebilir.' },
+  { h: 'Rol bazlı erişim (RBAC)', p: 'Danışman, yönetici ve acente rolleri; görünürlük yöneticinin elinde.' },
+  { h: 'Multi-tenant mimari', p: 'Her acentenin verisi ayrı; izolasyon altyapı seviyesinde.' },
+  { h: 'Veri yapısı', p: 'Müşteri, portföy ve aktivite tek modelde ilişkilendirilir; dışa aktarılabilir.' },
+  { h: 'Güvenlik', p: 'Maskeleme, işlem kayıtları ve düzenli yedekleme standarttır.' },
+  { h: 'Entegrasyonlar', p: 'İlan platformlarından içe aktarım; CRM ile birlikte veya yerine çalışır.' },
+]
+
+/* ── Kişiye göre değer önerisi ── */
+const WHO = [
+  { h: 'Danışmanlar', big: 'Daha az arayın.\nDaha çok satın.', lines: ['Müşterinizi girin.', 'EstateMatch uygun portföyleri bulsun.', 'Takiplerinizi yönetsin.'] },
+  { h: 'Yöneticiler', big: 'Tüm operasyonu\ngörün.', lines: ['Hangi danışman aktif?', 'Hangi müşteri bekliyor?', 'Hangi portföy hareketsiz?', 'Fırsatlar nerede?'] },
+  { h: 'Acenteler', big: 'Tek işletim\nsistemi.', lines: ['Müşteri. Portföy. Danışman.', 'Satış. AI.', 'Tek platform.'] },
 ]
 
 /* ── Değer şeridi — rakam uydurmadan ── */
@@ -95,12 +110,6 @@ const VALUES = [
   { big: 'DAHA HIZLI', t: 'müşteri dönüşü' },
   { big: 'DAHA AKILLI', t: 'portföy önerileri' },
   { big: 'DAHA FAZLA', t: 'satış fırsatı' },
-]
-
-const BUILT_FOR = [
-  { h: 'Danışmanlar',  p: 'Her sabah kimi arayacağınız ve hangi portföyü sunacağınız hazır.' },
-  { h: 'Yöneticiler',  p: 'Ekip, huni ve ciro tek ekranda; kararlar veriyle alınır.' },
-  { h: 'Acenteler',    p: 'Tüm ofis tek sistemde — bilgi danışmanla birlikte kaybolmaz.' },
 ]
 
 /* ── Güvenlik ── */
@@ -193,27 +202,36 @@ function useCountUp(target, inView, duration = 1200, decimals = 0) {
   return value.toLocaleString('tr-TR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
 }
 
-/* Fare paralaksı — hover yok / hareket azaltılmışsa devre dışı */
-function useMouseTilt(computeTransform, restTransform) {
+/* ════════════════ HERO ════════════════ */
+function Hero({ goBack, onSeeStory, demo }) {
   const stageRef = useRef(null)
-  const targetRef = useRef(null)
+  const [flowStep, setFlowStep] = useState(0)
+  useEffect(() => {
+    const t = setInterval(() => setFlowStep(s => (s + 1) % HERO_FLOW.length), 1800)
+    return () => clearInterval(t)
+  }, [])
+
+  /* 3 katmanlı paralaks: --px/--py değişkenleri katmanlara farklı hızda uygulanır */
   useEffect(() => {
     const stage = stageRef.current
-    const target = targetRef.current
-    if (!stage || !target) return
+    if (!stage) return
     if (window.matchMedia('(hover: none), (prefers-reduced-motion: reduce)').matches) return
     let raf = 0
     let next = null
-    const flush = () => { raf = 0; if (next) target.style.transform = next }
+    const flush = () => {
+      raf = 0
+      if (!next) return
+      stage.style.setProperty('--px', next.x)
+      stage.style.setProperty('--py', next.y)
+    }
     const onMove = (e) => {
       const r = stage.getBoundingClientRect()
-      const px = (e.clientX - r.left) / r.width - 0.5
-      const py = (e.clientY - r.top) / r.height - 0.5
-      next = computeTransform(px, py)
+      next = { x: (e.clientX - r.left) / r.width - 0.5, y: (e.clientY - r.top) / r.height - 0.5 }
       if (!raf) raf = requestAnimationFrame(flush)
     }
-    const onLeave = () => { next = restTransform; if (!raf) raf = requestAnimationFrame(flush) }
-    target.style.transform = restTransform
+    const onLeave = () => { next = { x: 0, y: 0 }; if (!raf) raf = requestAnimationFrame(flush) }
+    stage.style.setProperty('--px', 0)
+    stage.style.setProperty('--py', 0)
     stage.addEventListener('mousemove', onMove)
     stage.addEventListener('mouseleave', onLeave)
     return () => {
@@ -221,18 +239,6 @@ function useMouseTilt(computeTransform, restTransform) {
       stage.removeEventListener('mouseleave', onLeave)
       if (raf) cancelAnimationFrame(raf)
     }
-  }, [computeTransform, restTransform])
-  return { stageRef, targetRef }
-}
-
-/* ════════════════ HERO ════════════════ */
-function Hero({ goBack, onSeeMatch, onExplore }) {
-  const compute = useCallback((px, py) => `perspective(2000px) rotateX(${8 - py * 5}deg) rotateY(${px * 6}deg)`, [])
-  const { stageRef, targetRef } = useMouseTilt(compute, 'perspective(2000px) rotateX(8deg) rotateY(0deg)')
-  const [flowStep, setFlowStep] = useState(0)
-  useEffect(() => {
-    const t = setInterval(() => setFlowStep(s => (s + 1) % HERO_FLOW.length), 1800)
-    return () => clearInterval(t)
   }, [])
 
   return (
@@ -242,14 +248,14 @@ function Hero({ goBack, onSeeMatch, onExplore }) {
         <button className="em-crumb" onClick={goBack}>← Ana Sayfa</button>
         <div className="em-hero__center">
           <span className="em-eyebrow"><i aria-hidden="true">✦</i>EstateMatch <em>by SRYVERSE</em></span>
-          <h1 className="em-hero__h1">Portföyünüzü değil,<br />doğru eşleşmeyi yönetin.</h1>
+          <h1 className="em-hero__h1">Gayrimenkulde doğru eşleşme,<br />artık tesadüf değil.</h1>
           <p className="em-hero__sub">
-            Yapay zekâ müşterinizin beklentilerini analiz eder, yüzlerce portföy arasından
-            en uygun seçenekleri saniyeler içinde bulur.
+            Müşteriyi anlayan, portföyü tarayan ve satış ekibine
+            sonraki en doğru adımı gösteren yapay zekâ.
           </p>
           <div className="em-hero__ctas">
-            <button className="em-btn em-btn--mint" onClick={onSeeMatch}>AI ile Eşleşmeyi Gör <span>→</span></button>
-            <button className="em-btn em-btn--ghost" onClick={onExplore}>Ürünü Keşfet</button>
+            <button className="em-btn em-btn--mint" onClick={demo}>Demo İste <span>→</span></button>
+            <button className="em-btn em-btn--ghost" onClick={onSeeStory}>Ürünü Keşfet <span>↓</span></button>
           </div>
           <div className="em-hero__flow" aria-label="Müşteriden satışa akış">
             {HERO_FLOW.map((s, i) => (
@@ -261,41 +267,67 @@ function Hero({ goBack, onSeeMatch, onExplore }) {
         </div>
 
         <div className="em-hero__stage" ref={stageRef}>
+          {/* katman 1 — dashboard */}
           <Rev>
-            <div className="em-shot" ref={targetRef}>
+            <div className="em-shot em-hero__back">
               <div className="em-shot__bar" aria-hidden="true"><i /><i /><i /></div>
               <img src="/screens/dashboard-main.png" alt="EstateMatch AI panel" />
             </div>
           </Rev>
-          {HERO_FLOATS.map((f, i) => (
-            <Rev key={f.k} delay={300 + i * 160}>
-              <div className={`em-float em-float--${f.k}`}>
-                <span className="em-float__pct">%{f.pct} MATCH</span>
-                <strong>{f.t}</strong>
+          {/* katman 2 — ürün kartları (müşteri + portföy) */}
+          <Rev delay={220}>
+            <div className="em-mini em-mini--client em-hero__mid">
+              <span className="em-mini__lbl">Müşteri</span>
+              <div className="em-mini__row">
+                <i className="em-mini__ava" aria-hidden="true">MY</i>
+                <div><strong>Mert Yılmaz</strong><span>Niyet skoru · 91</span></div>
               </div>
-            </Rev>
-          ))}
-          <Rev delay={640}>
-            <div className="em-float em-float--insight">
+            </div>
+          </Rev>
+          <Rev delay={340}>
+            <div className="em-mini em-mini--prop em-hero__mid">
+              <span className="em-mini__lbl">Portföy</span>
+              <img src="/screens/property-fulya.png" alt="" loading="lazy" />
+              <div><strong>Fulya Residence</strong><span>2+1 · ₺18,4M</span></div>
+            </div>
+          </Rev>
+          {/* katman 3 — AI sonuçları */}
+          <Rev delay={480}>
+            <div className="em-float em-float--m1 em-hero__front">
+              <span className="em-float__pct">%94 MATCH</span>
+              <strong>Fulya Residence</strong>
+            </div>
+          </Rev>
+          <Rev delay={620}>
+            <div className="em-float em-float--insight em-hero__front">
               <span className="em-float__lbl">AI Insight</span>
               <p>Bu müşteri yatırım amaçlı portföylere <b>%31</b> daha fazla ilgi gösteriyor.</p>
             </div>
           </Rev>
         </div>
+
+        <Rev delay={300}>
+          <div className="em-proof">
+            <span className="em-proof__t">Gerçek emlak operasyonu için kuruldu</span>
+            <div className="em-proof__chips">
+              {HERO_PROOF.map(c => <span key={c}>{c}</span>)}
+            </div>
+          </div>
+        </Rev>
       </div>
     </section>
   )
 }
 
 /* ════════════════ "BİR MÜŞTERİ GELDİ." ════════════════ */
-function Story() {
+function Story({ demo }) {
   const wrapRef = useRef(null)
   const p = useScrollProgress(wrapRef)
   const reduced = useReducedMotion()
-  const [why, setWhy] = useState(false)
 
-  const scanN = Math.round(247 * seg(p, 0.58, 0.72))
-  const pct = Math.round(32 + 62 * seg(p, 0.76, 0.94))
+  const scanIdx = Math.min(SCAN_SEQ.length - 1, Math.floor(seg(p, 0.56, 0.72) * SCAN_SEQ.length))
+  const pct = Math.round(32 + 62 * seg(p, 0.75, 0.92))
+  const resultOn = p > 0.75
 
   const layer = (a1, a2, b1, b2) => {
     const o = reduced ? 1 : Math.min(seg(p, a1, a2), 1 - seg(p, b1, b2))
@@ -308,10 +340,10 @@ function Story() {
       <section id="story" className="em-story em-story--static">
         <div className="em-wrap">
           <h2 className="em-story__title">Bir müşteri geldi.</h2>
-          <div className="em-story__quote">{REQ_LINES.map(l => <p key={l}>{l}</p>)}</div>
+          <div className="em-bubble"><i aria-hidden="true">M</i><p>{REQ_TEXT}</p></div>
           <div className="em-tags">{REQ_TAGS.map(t => <div key={t.k}><span>{t.k}</span><strong>{t.v}</strong></div>)}</div>
-          <p className="em-scan__t">EstateMatch <b>247</b> portföyü taradı.</p>
-          <StoryResult pct={94} why={why} setWhy={setWhy} />
+          <p className="em-scan__t"><b>247</b> portföy tarandı → <b>3</b> eşleşme.</p>
+          <StoryResult pct={94} on demo={demo} />
         </div>
       </section>
     )
@@ -320,45 +352,51 @@ function Story() {
   return (
     <section id="story" className="em-story" ref={wrapRef}>
       <div className="em-story__sticky">
-        <div className="em-story__layer" style={layer(0, 0.05, 0.1, 0.16)}>
+        <div className="em-story__layer" style={layer(0, 0.05, 0.1, 0.15)}>
           <h2 className="em-story__title">Bir müşteri geldi.</h2>
         </div>
 
-        <div className="em-story__layer" style={layer(0.13, 0.2, 0.38, 0.44)}>
-          <div className="em-story__quote">
-            {REQ_LINES.map((l, i) => (
-              <p key={l} style={{ opacity: seg(p, 0.14 + i * 0.035, 0.18 + i * 0.035), transform: `translateY(${(1 - seg(p, 0.14 + i * 0.035, 0.18 + i * 0.035)) * 14}px)` }}>{l}</p>
-            ))}
+        {/* müşteri mesaj balonu + AI pulse */}
+        <div className="em-story__layer" style={layer(0.13, 0.19, 0.4, 0.45)}>
+          <div className="em-bubble" style={{ transform: `translateY(${(1 - seg(p, 0.13, 0.19)) * 18}px)` }}>
+            <i aria-hidden="true">M</i>
+            <p>{REQ_TEXT}</p>
+          </div>
+          <div className="em-analyzing" style={{ opacity: seg(p, 0.28, 0.34) }}>
+            <span className="em-analyzing__pulse" aria-hidden="true" />
+            Analyzing request<span className="em-scan__dots" aria-hidden="true" />
           </div>
         </div>
 
-        <div className="em-story__layer" style={layer(0.42, 0.48, 0.55, 0.6)}>
-          <span className="em-story__lbl">AI talebi ayrıştırıyor</span>
+        {/* ayrıştırılmış etiketler */}
+        <div className="em-story__layer" style={layer(0.44, 0.5, 0.53, 0.57)}>
           <div className="em-tags">
             {REQ_TAGS.map((t, i) => (
-              <div key={t.k} style={{ opacity: seg(p, 0.43 + i * 0.025, 0.47 + i * 0.025), transform: `translateY(${(1 - seg(p, 0.43 + i * 0.025, 0.47 + i * 0.025)) * 12}px)` }}>
+              <div key={t.k} style={{ opacity: seg(p, 0.445 + i * 0.02, 0.48 + i * 0.02), transform: `translateY(${(1 - seg(p, 0.445 + i * 0.02, 0.48 + i * 0.02)) * 12}px)` }}>
                 <span>{t.k}</span><strong>{t.v}</strong>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="em-story__layer" style={layer(0.57, 0.62, 0.7, 0.74)}>
-          <div className="em-scan">
+        {/* dev tipografili geri sayım: 247 → 182 → 61 → 12 → 3 */}
+        <div className="em-story__layer" style={layer(0.555, 0.6, 0.7, 0.735)}>
+          <div className="em-scanbig">
+            <span className="em-scanbig__lbl">Portföy taranıyor</span>
+            <strong key={scanIdx}>{SCAN_SEQ[scanIdx]}</strong>
             <div className="em-scan__line" aria-hidden="true" />
-            <p className="em-scan__t">EstateMatch <b>{scanN}</b> portföyü tarıyor<span className="em-scan__dots" aria-hidden="true" /></p>
           </div>
         </div>
 
-        <div className="em-story__layer em-story__layer--result" style={{ ...layer(0.76, 0.84, 2, 3), pointerEvents: p > 0.76 ? 'auto' : 'none' }}>
-          <StoryResult pct={pct} why={why} setWhy={setWhy} />
+        <div className="em-story__layer em-story__layer--result" style={{ ...layer(0.75, 0.83, 2, 3), pointerEvents: resultOn ? 'auto' : 'none' }}>
+          <StoryResult pct={pct} on={resultOn} demo={demo} />
         </div>
       </div>
     </section>
   )
 }
 
-function StoryResult({ pct, why, setWhy }) {
+function StoryResult({ pct, on, demo }) {
   return (
     <div className="em-result">
       <div className="em-result__card">
@@ -367,16 +405,14 @@ function StoryResult({ pct, why, setWhy }) {
           <span className="em-result__pct">%{pct}<em>MATCH</em></span>
           <strong>Fulya Residence</strong>
           <span className="em-result__s">2+1 · 146 m² · Metro 420 m</span>
-          <button className="em-result__why" onClick={() => setWhy(w => !w)} aria-expanded={why}>
-            Neden eşleşti? <b style={{ transform: why ? 'rotate(180deg)' : 'none' }}>▾</b>
-          </button>
         </div>
       </div>
-      <div className={`em-result__reasons${why ? ' on' : ''}`}>
-        {MATCH_REASONS.map(r => (
-          <span key={r.t} className={r.ok ? 'ok' : 'warn'}>{r.ok ? '✓' : '△'} {r.t}</span>
+      <div className={`em-result__checks${on ? ' on' : ''}`}>
+        {MATCH_CHECKS.map((c, i) => (
+          <span key={c} style={{ transitionDelay: `${0.15 + i * 0.12}s` }}>✓ {c}</span>
         ))}
       </div>
+      <button className={`em-result__cta${on ? ' on' : ''}`} onClick={demo}>EstateMatch'i canlı görün →</button>
     </div>
   )
 }
@@ -420,10 +456,11 @@ function Counts() {
         <Rev delay={280}>
           <div className="em-count em-count--hot">
             <i className="em-count__pulse" aria-hidden="true" />
-            <strong>{n3}</strong><span>doğru eşleşme</span><em>saniyeler içinde</em>
+            <strong>{n3}</strong><span>doğru eşleşme</span>
           </div>
         </Rev>
-        <Rev delay={420}><p className="em-counts__note">Portföy aramak yerine müşterinizle ilgilenin.</p></Rev>
+        <Rev delay={380}><p className="em-counts__final">Saniyeler içinde.</p></Rev>
+        <Rev delay={480}><p className="em-counts__note">Portföy aramak yerine müşterinizle ilgilenin.</p></Rev>
       </div>
     </section>
   )
@@ -486,76 +523,99 @@ function TourHead() {
   )
 }
 
-/* ════════════════ JUST ASK ESTATEMATCH ════════════════ */
+/* ════════════════ DON'T SEARCH. JUST ASK. ════════════════ */
 function Ask() {
   const [ref, on] = useInView(0.35)
-  const [sel, setSel] = useState(0)
-  const [run, setRun] = useState(0)      // her seçimde animasyonu baştan oynat
-  const [qLen, setQLen] = useState(0)
-  const [phase, setPhase] = useState('idle') // idle → q → think → a → done
-  const [aLen, setALen] = useState(0)
-  const chat = CHATS[sel]
   const reduced = useReducedMotion()
+  const [run, setRun] = useState(0)
+  const [act, setAct] = useState(0)          // 0..2
+  const [phase, setPhase] = useState('idle') // idle → q → think → a → dwell → done
+  const [qLen, setQLen] = useState(0)
+  const [sorted, setSorted] = useState(false)   // 2. perde: sıralama
+  const [matched, setMatched] = useState(false) // 3. perde: eşleşmeler
 
   useEffect(() => {
     if (!on) return
-    if (reduced) { setQLen(chat.q.length); setALen(chat.a.length); setPhase('done'); return }
-    setQLen(0); setALen(0); setPhase('q')
+    if (reduced) { setAct(2); setPhase('done'); setSorted(true); setMatched(true); setQLen(ASK_ACTS[2].q.length); return }
+    let cancelled = false
     const timers = []
-    const qT = setInterval(() => {
-      setQLen(v => {
-        if (v >= chat.q.length) { clearInterval(qT); setPhase('think'); timers.push(setTimeout(() => setPhase('a'), 700)); return v }
-        return v + 1
-      })
-    }, 24)
-    timers.push(qT)
-    return () => timers.forEach(t => { clearInterval(t); clearTimeout(t) })
-  }, [on, sel, run, chat.q, reduced])
+    const wait = (ms) => new Promise(r => timers.push(setTimeout(r, ms)))
+    const type = (text) => new Promise(resolve => {
+      let i = 0
+      const t = setInterval(() => {
+        if (cancelled) { clearInterval(t); return }
+        i++
+        setQLen(i)
+        if (i >= text.length) { clearInterval(t); resolve() }
+      }, 26)
+      timers.push(t)
+    })
+    const play = async () => {
+      setSorted(false); setMatched(false)
+      for (let a = 0; a < ASK_ACTS.length; a++) {
+        if (cancelled) return
+        setAct(a); setQLen(0); setPhase('q')
+        await type(ASK_ACTS[a].q)
+        if (cancelled) return
+        setPhase('think'); await wait(650)
+        if (cancelled) return
+        setPhase('a')
+        if (a === 1) setSorted(true)
+        if (a === 2) setMatched(true)
+        await wait(a < ASK_ACTS.length - 1 ? 2100 : 400)
+      }
+      if (!cancelled) setPhase('done')
+    }
+    play()
+    return () => { cancelled = true; timers.forEach(t => { clearTimeout(t); clearInterval(t) }) }
+  }, [on, run, reduced])
 
-  useEffect(() => {
-    if (phase !== 'a' || reduced) return
-    const aT = setInterval(() => {
-      setALen(v => {
-        if (v >= chat.a.length) { clearInterval(aT); setPhase('done'); return v }
-        return v + 1
-      })
-    }, 14)
-    return () => clearInterval(aT)
-  }, [phase, chat.a, reduced])
+  const order = useMemo(() => {
+    const idx = ASK_CLIENTS.map((c, i) => i)
+    if (!sorted) return idx
+    return idx.sort((a, b) => ASK_CLIENTS[b].prob - ASK_CLIENTS[a].prob)
+  }, [sorted])
+  const posOf = (i) => order.indexOf(i)
 
-  const pick = (i) => { setSel(i); setRun(r => r + 1) }
-
+  const chat = ASK_ACTS[act]
   return (
     <section id="assistant" className="em-ask" ref={ref}>
       <div className="em-wrap">
         <Rev>
           <span className="em-eyebrow"><i aria-hidden="true">✦</i>AI Assistant</span>
-          <h2 className="em-h2 em-h2--ivory">Just ask EstateMatch.</h2>
-          <p className="em-sub em-sub--ivory">Rapor beklemeyin. Sorun, saniyeler içinde yanıt alın.</p>
+          <h2 className="em-h2 em-h2--ivory" lang="en">Don't search.<br /><em>Just ask.</em></h2>
+          <p className="em-sub em-sub--ivory">Aramayın; sorun. EstateMatch veriyi tarar, sıralar ve eşleştirir — siz izlerken.</p>
         </Rev>
         <Rev delay={120}>
           <div className="em-chat">
-            <div className="em-chat__head"><i aria-hidden="true" />EstateMatch AI Asistan</div>
+            <div className="em-chat__head">
+              <i aria-hidden="true" />EstateMatch AI Asistan
+              <span className="em-chat__acts" aria-hidden="true">{ASK_ACTS.map((_, i) => <b key={i} className={i <= act ? 'on' : ''} />)}</span>
+            </div>
             <div className="em-chat__body">
               <div className="em-chat__q">{chat.q.slice(0, qLen)}{phase === 'q' && <b className="em-caret" aria-hidden="true" />}</div>
               {phase === 'think' && <div className="em-chat__think" aria-label="yanıt hazırlanıyor"><i /><i /><i /></div>}
-              {(phase === 'a' || phase === 'done') && (
-                <div className="em-chat__a">
-                  {chat.a.slice(0, aLen)}{phase === 'a' && <b className="em-caret" aria-hidden="true" />}
-                  {phase === 'done' && chat.cards && (
-                    <div className="em-chat__cards">
-                      {chat.cards.map(c => (
-                        <div key={c.t}><span>%{c.pct} MATCH</span><strong>{c.t}</strong><em>{c.s}</em></div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+              {(phase === 'a' || phase === 'dwell' || phase === 'done') && (
+                <div className="em-chat__a">{chat.a}</div>
               )}
+              <div className={`em-clients${phase === 'q' && act === 0 ? ' em-clients--hide' : ''}`} style={{ '--rows': ASK_CLIENTS.length }}>
+                {ASK_CLIENTS.map((c, i) => (
+                  <div key={c.id} className="em-client" style={{ '--pos': posOf(i) }}>
+                    <i className="em-mini__ava" aria-hidden="true">{c.n.split(' ').map(w => w[0]).join('')}</i>
+                    <div className="em-client__mid">
+                      <strong>{c.n}</strong>
+                      <span>{c.s}</span>
+                    </div>
+                    <em className={`em-client__prob${sorted ? ' on' : ''}`}>%{c.prob}</em>
+                    <b className={`em-client__match${matched ? ' on' : ''}`}>{c.match}</b>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="em-chat__prompts">
-              {CHATS.map((c, i) => (
-                <button key={c.q} className={i === sel ? 'on' : ''} onClick={() => pick(i)}>{c.q}</button>
-              ))}
+            <div className="em-chat__foot">
+              {phase === 'done'
+                ? <button className="em-chat__replay" onClick={() => setRun(r => r + 1)}>↺ Yeniden oynat</button>
+                : <span className="em-chat__hint">Canlı demo oynuyor…</span>}
             </div>
           </div>
         </Rev>
@@ -564,25 +624,65 @@ function Ask() {
   )
 }
 
-/* ════════════════ EXPLORE THE PLATFORM ════════════════ */
+/* ════════════════ TEK ZEKÂ KATMANI — ekosistem diyagramı ════════════════ */
+function Layer() {
+  const [ref, on] = useInView(0.35)
+  return (
+    <section className="em-layer" ref={ref}>
+      <div className="em-wrap em-layer__in">
+        <Rev>
+          <span className="em-eyebrow"><i aria-hidden="true">✦</i>Platform</span>
+          <h2 className="em-h2 em-h2--ivory" lang="en">One intelligence layer.</h2>
+          <p className="em-sub em-sub--ivory">Tüm satış operasyonunuz — müşteri, eşleşme, portföy, takip ve analitik — tek zekâ katmanının üzerinde çalışır.</p>
+        </Rev>
+        <Rev delay={140}>
+          <svg className={`em-layer__svg${on ? ' on' : ''}`} viewBox="0 0 600 430" aria-hidden="true">
+            {LAYER_NODES.slice(0, 3).map(n => (
+              <line key={n.k} x1={n.x} y1={n.y + 16} x2="300" y2="186" className="em-layer__wire" />
+            ))}
+            <line x1="300" y1="216" x2="300" y2="290" className="em-layer__wire" />
+            <line x1="300" y1="322" x2="300" y2="368" className="em-layer__wire" />
+            <circle cx="300" cy="200" r="15" className="em-layer__core" />
+            <circle cx="300" cy="200" r="26" className="em-layer__ring" />
+            <text x="300" y="243" className="em-layer__coreLbl">ESTATEMATCH AI</text>
+            {LAYER_NODES.map(n => (
+              <g key={n.k}>
+                <circle cx={n.x} cy={n.y} r="5" className="em-layer__dot" />
+                <text x={n.x} y={n.y - 14} className="em-layer__lbl">{n.t}</text>
+              </g>
+            ))}
+          </svg>
+        </Rev>
+      </div>
+    </section>
+  )
+}
+
+/* ════════════════ EXPLORE — bento product explorer ════════════════ */
 function Explore() {
   const [open, setOpen] = useState(-1)
+  const [tech, setTech] = useState(false)
   const mod = open >= 0 ? MODULES[open] : null
   return (
     <section id="explore" className="em-explore em-light">
       <div className="em-wrap">
         <Rev>
-          <span className="em-eyebrow em-eyebrow--dark"><i aria-hidden="true">✦</i>Explore</span>
+          <span className="em-eyebrow em-eyebrow--dark"><i aria-hidden="true">✦</i>Explore EstateMatch</span>
           <h2 className="em-h2">Platformu keşfedin.</h2>
-          <p className="em-sub">Altı modül, tek sistem. Detayı merak eden tıklasın — sayfadan çıkmadan.</p>
+          <p className="em-sub">Herkes ürünü anlasın; isteyen derine insin. Tıklayın — sayfadan çıkmadan.</p>
         </Rev>
         <div className="em-mods">
           {MODULES.map((m, i) => (
-            <Rev key={m.k} delay={i * 70}>
-              <button className={`em-mod${open === i ? ' em-mod--open' : ''}`} onClick={() => setOpen(open === i ? -1 : i)} aria-expanded={open === i}>
+            <Rev key={m.k} delay={i * 60}>
+              <button
+                className={`em-mod${m.size === 'big' ? ' em-mod--big' : ''}${open === i ? ' em-mod--open' : ''}`}
+                style={{ gridArea: m.area }}
+                onClick={() => setOpen(open === i ? -1 : i)} aria-expanded={open === i}
+              >
                 <div className="em-mod__prev" aria-hidden="true"><img src={m.img} alt="" loading="lazy" /></div>
                 <strong lang="en">{m.k}</strong>
                 <span>{m.tr}</span>
+                <em className="em-mod__cta">Nasıl çalışır →</em>
                 <b aria-hidden="true">{open === i ? '−' : '+'}</b>
               </button>
             </Rev>
@@ -598,32 +698,55 @@ function Explore() {
                 <dt>Kim kullanır?</dt><dd>{mod.who}</dd>
                 <dt>Ne kazandırır?</dt><dd>{mod.gain}</dd>
               </dl>
+              {mod.steps && (
+                <ol className="em-mod__steps">
+                  {mod.steps.map((s, j) => <li key={s}><i>{String(j + 1).padStart(2, '0')}</i>{s}</li>)}
+                </ol>
+              )}
               <button className="em-mod__close" onClick={() => setOpen(-1)}>Kapat ✕</button>
             </div>
           </div>
         )}
+        <div className="em-tech">
+          <button className="em-tech__toggle" onClick={() => setTech(t => !t)} aria-expanded={tech}>
+            Teknik detayları görüntüle <b style={{ transform: tech ? 'rotate(180deg)' : 'none' }}>▾</b>
+          </button>
+          {tech && (
+            <div className="em-tech__grid">
+              {TECH.map(t => (
+                <div key={t.h} className="em-tech__c"><h4>{t.h}</h4><p>{t.p}</p></div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   )
 }
 
-/* ════════════════ EDITORIAL — lüks konut + minimal UI ════════════════ */
+/* ════════════════ EDITORIAL — konut fotoğrafı + dijital zekâ katmanı ════════════════ */
 function Editorial() {
   const [ref, on] = useInView(0.35)
   const pct = useCountUp(94, on, 1400)
   return (
     <section className="em-edit" ref={ref}>
-      <img className="em-edit__photo" src="/screens/property-nisantasi.png" alt="Nişantaşı'nda modern bina — temsili görsel" loading="lazy" />
+      <img className="em-edit__photo" src="/screens/property-fulya.png" alt="Fulya'da modern konut — temsili görsel" loading="lazy" />
       <div className="em-edit__veil" aria-hidden="true" />
       <div className="em-wrap em-edit__in">
         <div className="em-edit__meta">
-          <span className="em-edit__loc">Nişantaşı</span>
-          <strong className="em-edit__price">₺17.850.000</strong>
-          <span className="em-edit__spec">2+1 · 146 m²</span>
+          <span className="em-edit__loc">İstanbul / Fulya</span>
+          <strong className="em-edit__price">₺18.450.000</strong>
+          <span className="em-edit__spec">2+1 · 142 m² · 7 yaşında</span>
           <span className="em-edit__note">Temsili görsel</span>
         </div>
-        <div className={`em-edit__match${on ? ' on' : ''}`}>
-          <span>%{pct}</span> MATCH
+        <div className="em-edit__intel">
+          <div className={`em-edit__match${on ? ' on' : ''}`}>
+            <span>%{pct}</span> MATCH
+          </div>
+          <div className={`em-edit__signal${on ? ' on' : ''}`}>
+            <span>AI Signal</span>
+            Yatırım uyumluluğu yüksek
+          </div>
         </div>
       </div>
     </section>
@@ -650,21 +773,42 @@ function Value() {
   )
 }
 
+/* ════════════════ KİŞİYE GÖRE DEĞER ÖNERİSİ ════════════════ */
+function WhoFor({ demo }) {
+  return (
+    <section className="em-who">
+      <div className="em-wrap">
+        <Rev>
+          <span className="em-eyebrow"><i aria-hidden="true">✦</i>Kimler için</span>
+          <h2 className="em-h2 em-h2--ivory">Sayfada kendinizi görün.</h2>
+        </Rev>
+        <div className="em-who__grid">
+          {WHO.map((w, i) => (
+            <Rev key={w.h} delay={i * 110}>
+              <div className="em-who__c">
+                <span className="em-who__role">{w.h}</span>
+                <h3>{w.big.split('\n').map(l => <span key={l}>{l}<br /></span>)}</h3>
+                <ul>{w.lines.map(l => <li key={l}>{l}</li>)}</ul>
+              </div>
+            </Rev>
+          ))}
+        </div>
+        <Rev delay={340}>
+          <button className="em-who__cta" onClick={demo}>EstateMatch'i canlı görün →</button>
+        </Rev>
+      </div>
+    </section>
+  )
+}
+
 function Secure() {
   return (
     <section id="security" className="em-secure">
       <div className="em-wrap">
         <Rev>
-          <span className="em-eyebrow"><i aria-hidden="true">✦</i>Kimler için · Güvenlik</span>
-          <h2 className="em-h2 em-h2--ivory">Ekip için kuruldu.<br />Kurum için güvenli.</h2>
+          <span className="em-eyebrow"><i aria-hidden="true">✦</i>Güvenlik</span>
+          <h2 className="em-h2 em-h2--ivory">Kurum için güvenli.</h2>
         </Rev>
-        <div className="em-built">
-          {BUILT_FOR.map((b, i) => (
-            <Rev key={b.h} delay={i * 100}>
-              <div className="em-built__c"><h3>{b.h}</h3><p>{b.p}</p></div>
-            </Rev>
-          ))}
-        </div>
         <div className="em-trust">
           {TRUST.map((t, i) => (
             <Rev key={t.h} delay={i * 60}>
@@ -681,8 +825,8 @@ function Secure() {
   )
 }
 
-/* ════════════════ FİNAL — eşleşme ağı ════════════════ */
-function NetworkBg() {
+/* ════════════════ FİNAL — eşleşme ağı; CTA hover'ında noktalar birleşir ════════════════ */
+function NetworkBg({ boostRef }) {
   const canvasRef = useRef(null)
   useEffect(() => {
     const canvas = canvasRef.current
@@ -690,6 +834,7 @@ function NetworkBg() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = canvas.getContext('2d')
     let raf = 0, running = false, w = 0, h = 0
+    let boost = 0 // 0..1 — CTA hover'ında yumuşakça 1'e gider
     const nodes = Array.from({ length: 26 }, () => ({
       x: Math.random(), y: Math.random(),
       vx: (Math.random() - 0.5) * 0.00035, vy: (Math.random() - 0.5) * 0.00035,
@@ -704,6 +849,9 @@ function NetworkBg() {
     }
     const draw = () => {
       raf = 0
+      boost += (((boostRef?.current) ? 1 : 0) - boost) * 0.06
+      const reach = 170 + boost * 110
+      const glow = 1 + boost * 1.6
       ctx.clearRect(0, 0, w, h)
       for (const n of nodes) {
         n.x += n.vx; n.y += n.vy
@@ -715,11 +863,11 @@ function NetworkBg() {
           const dx = (nodes[i].x - nodes[j].x) * w
           const dy = (nodes[i].y - nodes[j].y) * h
           const d = Math.hypot(dx, dy)
-          if (d < 170) {
+          if (d < reach) {
             ctx.beginPath()
             ctx.moveTo(nodes[i].x * w, nodes[i].y * h)
             ctx.lineTo(nodes[j].x * w, nodes[j].y * h)
-            ctx.strokeStyle = `rgba(159, 214, 183, ${0.14 * (1 - d / 170)})`
+            ctx.strokeStyle = `rgba(159, 214, 183, ${0.14 * glow * (1 - d / reach)})`
             ctx.lineWidth = 1
             ctx.stroke()
           }
@@ -727,8 +875,8 @@ function NetworkBg() {
       }
       for (const n of nodes) {
         ctx.beginPath()
-        ctx.arc(n.x * w, n.y * h, n.r, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(159, 214, 183, .35)'
+        ctx.arc(n.x * w, n.y * h, n.r * (1 + boost * 0.4), 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(159, 214, 183, ${0.35 * glow})`
         ctx.fill()
       }
       if (running) raf = requestAnimationFrame(draw)
@@ -746,32 +894,38 @@ function NetworkBg() {
       window.removeEventListener('resize', resize)
       if (raf) cancelAnimationFrame(raf)
     }
-  }, [])
+  }, [boostRef])
   return <canvas ref={canvasRef} className="em-final__net" aria-hidden="true" />
 }
 
 function Final({ demo }) {
+  const boostRef = useRef(false)
   return (
     <section className="em-final">
-      <NetworkBg />
+      <NetworkBg boostRef={boostRef} />
       <div className="em-wrap em-final__in">
         <Rev>
           <h2 className="em-final__h">
-            Sıradaki eşleşme,<br />belki de çoktan<br /><em>portföyünüzde.</em>
+            Sıradaki satışınız,<br />belki de çoktan<br /><em>portföyünüzde.</em>
           </h2>
         </Rev>
-        <Rev delay={140}>
-          <p className="em-final__sub">EstateMatch onu bulsun.</p>
+        <Rev delay={900}>
+          <p className="em-final__sub">EstateMatch bağlantıyı bulur.</p>
         </Rev>
-        <Rev delay={220}>
+        <Rev delay={1200}>
           <div className="em-final__row">
-            <button className="em-btn em-btn--ivory" onClick={demo}>Demo Planla <span>→</span></button>
-            <a className="em-btn em-btn--ghost" href="https://wa.me/905315178170?text=Merhaba%2C%20EstateMatch%20AI%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer">
-              WhatsApp'tan yazın <span>→</span>
-            </a>
+            <button
+              className="em-btn em-btn--ivory em-final__btn" onClick={demo}
+              onMouseEnter={() => { boostRef.current = true }}
+              onMouseLeave={() => { boostRef.current = false }}
+              onFocus={() => { boostRef.current = true }}
+              onBlur={() => { boostRef.current = false }}
+            >
+              Demo Talep Et <span>→</span>
+            </button>
           </div>
         </Rev>
-        <Rev delay={300}>
+        <Rev delay={1400}>
           <p className="em-final__trust">Kendi verinizi paylaşmanız gerekmez · Kurulum ve ekip eğitimi dahildir</p>
         </Rev>
       </div>
@@ -830,15 +984,17 @@ export default function EstateMatchPage({ goBack, onDemo }) {
   return (
     <main className="epage epage--estate em-page">
       <div className="epage__progress" style={{ width: `${progress}%` }} />
-      <Hero goBack={goBack} onSeeMatch={() => goTo('#story')} onExplore={() => goTo('#tour')} />
-      <Story />
+      <Hero goBack={goBack} onSeeStory={() => goTo('#story')} demo={demo} />
+      <Story demo={demo} />
       <Vs />
       <Counts />
       <Tour />
+      <Layer />
       <Ask />
       <Explore />
       <Editorial />
       <Value />
+      <WhoFor demo={demo} />
       <Secure />
       <Final demo={demo} />
     </main>
