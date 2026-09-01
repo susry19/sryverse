@@ -392,3 +392,9 @@
   }
 }
 
+
+/* EstateMatch sayfalari: ince, sabit yukseklikli header — hero'nun
+   100svh hesabiyla uyumlu (--header: 68px) ve ikinci navigasyon satiri yok. */
+.hdr--em{padding:1.1rem 2.5rem}
+.hdr--em.hdr--solid{padding:1.1rem 2.5rem}
+@media(max-width:900px){.hdr--em,.hdr--em.hdr--solid{padding:.9rem 1.25rem}}

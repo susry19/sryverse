@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useCallback } from 'react'
 import { usePageSeo, usePageSchema } from './pageParts.jsx'
-import './ProductPage.css'
-import './EstateCaseStudy.css'
+import './EstateMatch.css'
 
 /* ════════════════════════════════════════════════════════════
    /estatematch/features — detay isteyen kullanıcı için.
@@ -77,12 +76,12 @@ export default function EstateFeaturesPage({ goBack, onDemo }) {
   const demo = useCallback(() => { onDemo ? onDemo() : goBack?.() }, [onDemo, goBack])
 
   return (
-    <main className="mx-page mx-feat">
-      <section className="mx-feat__hero">
-        <div className="mx-wrap">
-          <button className="mx-crumb" onClick={goBack}>← EstateMatch</button>
-          <h1 className="mx-feat__h1">Tüm özellikler.</h1>
-          <p className="mx-feat__sub">
+    <main className="em em-feat">
+      <section className="em-feat__hero">
+        <div className="em-shell">
+          <button className="em-back" onClick={goBack}>← EstateMatch</button>
+          <h1 className="em-feat__h1">Tüm özellikler.</h1>
+          <p className="em-lede">
             EstateMatch yalnızca eşleştirme yapmaz; müşteri, portföy, satış süreci,
             performans ve raporlamayı tek platformda birleştirir.
           </p>
@@ -90,12 +89,12 @@ export default function EstateFeaturesPage({ goBack, onDemo }) {
       </section>
 
       {GROUPS.map(g => (
-        <section className="mx-feat__group" key={g.k}>
-          <div className="mx-wrap">
-            <h2 className="mx-feat__gh">{g.k}</h2>
-            <div className="mx-feat__list">
+        <section className="em-feat__group" key={g.k}>
+          <div className="em-shell">
+            <h2 className="em-kicker em-feat__gh">{g.k}</h2>
+            <div className="em-feat__list">
               {g.items.map(it => (
-                <article className="mx-feat__item" key={it.h}>
+                <article className="em-feat__item" key={it.h}>
                   <h3>{it.h}</h3>
                   <p>{it.p}</p>
                   <ul>{it.d.map(d => <li key={d}>{d}</li>)}</ul>
@@ -106,10 +105,10 @@ export default function EstateFeaturesPage({ goBack, onDemo }) {
         </section>
       ))}
 
-      <section className="mx-feat__group mx-feat__group--tech">
-        <div className="mx-wrap">
-          <h2 className="mx-feat__gh">Teknik ve güvenlik</h2>
-          <div className="mx-feat__tech">
+      <section className="em-feat__group">
+        <div className="em-shell">
+          <h2 className="em-kicker em-feat__gh">Teknik ve güvenlik</h2>
+          <div className="em-feat__tech">
             {TECH.map(t => (
               <div key={t.h}><h3>{t.h}</h3><p>{t.p}</p></div>
             ))}
@@ -117,10 +116,10 @@ export default function EstateFeaturesPage({ goBack, onDemo }) {
         </div>
       </section>
 
-      <section className="mx-feat__cta">
-        <div className="mx-wrap">
-          <h2 className="mx-h2">EstateMatch’i kendi portföyünüzle görün.</h2>
-          <button className="mx-btn mx-btn--big" onClick={demo}>Demo Talep Et →</button>
+      <section className="em-feat__cta">
+        <div className="em-shell">
+          <h2 className="em-h2">EstateMatch’i kendi portföyünüzle görün.</h2>
+          <button className="em-btn em-btn--primary" onClick={demo}>Demo Talep Et →</button>
         </div>
       </section>
     </main>

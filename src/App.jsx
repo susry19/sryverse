@@ -296,11 +296,10 @@ export default function App() {
   ]
 
   const estateNav = [
-    {label:'Nasıl çalışır?', target:'#problem'},
+    {label:'Nasıl çalışır',  target:'#chapters'},
     {label:'Eşleştirme',     target:'#match'},
-    {label:'Ürün',           target:'#product'},
-    {label:'AI Asistan',     target:'#assistant'},
-    {label:'Raporlar',       target:'#reports'},
+    {label:'AI Intelligence',target:'#intelligence'},
+    {label:'Platform',       target:'#platform'},
   ]
 
   const goDemo = useCallback(() => {
@@ -325,7 +324,7 @@ export default function App() {
       )}
 
       {/* HEADER */}
-      <header className={`hdr${scrollY>30?' hdr--solid':''}${page==='vision' || page==='skillmatch' ? ' hdr--dark' : ''}`}>
+      <header className={`hdr${scrollY>30?' hdr--solid':''}${page==='vision' || page==='skillmatch' ? ' hdr--dark' : ''}${page==='estatematch' || page==='estatematchFeatures' ? ' hdr--em' : ''}`}>
         <div className="hdr__in">
           <a href="/" className="hdr__logo" onClick={e=>{e.preventDefault(); setPage('home'); window.scrollTo({top:0,behavior:'smooth'})}}>
             <img src={page==='vision' || page==='skillmatch' ? '/sryverse-badge-white.png' : '/sryverse-badge.png'} alt="SRYVERSE" className="hdr__badge" />

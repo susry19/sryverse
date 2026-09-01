@@ -1,97 +1,114 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { usePageSeo, usePageSchema } from './pageParts.jsx'
-import './ProductPage.css'
-import './EstateCaseStudy.css'
+import './EstateMatch.css'
 
-/* ════════════════════════════════════════════════════════════
-   ESTATEMATCH — 8 signature sahne.
-   Premium Real Estate × Clean Technology × Intelligent Matching.
-   Palet: %70 kırık beyaz · %20 siyah · %10 SRYVERSE yeşili.
-   Hareket kuralı: yalnızca ürün davranışı animasyona değer —
-   match skoru, AI sorgusu, grafik çizimi, sonuç kartı, durum geçişi.
-   ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   ESTATEMATCH — İnsan ↔ Yer
+   "EstateMatch mülk aramaz; insanlarla yerler arasındaki ilişkiyi anlar."
 
-/* ── Fotoğraf altyapısı: WebP + srcset. Yeni görseller aynı adla
-     public/screens/<ad>-<genişlik>.webp olarak bırakılınca devreye girer. ── */
-const PHOTO_WIDTHS = {
+   Anlatı: kişi ve yer ayrı başlar → veri belirir → bağlam oluşur →
+   ilişkiler görünür olur → karmaşıklık azalır → motor açığa çıkar →
+   eylem mümkün olur → kişi ve yer bağlanır.
+
+   Hareket sözlüğü: CONNECT · REVEAL · FLOW · RESOLVE · FOCUS ·
+   FILTER · CONVERGE. Dekoratif hareket yok.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Görsel altyapısı (WebP + srcset) ── */
+const PHOTO_W = {
   'property-fulya': [640, 1024, 1600],
   'property-nisantasi': [640, 1024],
   'property-macka': [640, 1024, 1600],
 }
-function photoSrcSet(name) {
-  const ws = PHOTO_WIDTHS[name] || [1024]
-  return {
-    src: `/screens/${name}-${ws[ws.length - 1]}.webp`,
-    srcSet: ws.map(w => `/screens/${name}-${w}.webp ${w}w`).join(', '),
-  }
+const photoSrc = name => {
+  const ws = PHOTO_W[name] || [1024]
+  return { src: `/screens/${name}-${ws.at(-1)}.webp`, srcSet: ws.map(w => `/screens/${name}-${w}.webp ${w}w`).join(', ') }
 }
-function Photo({ name, alt, sizes = '100vw', className, eager = false }) {
-  const { src, srcSet } = photoSrcSet(name)
+function Photo({ name, alt, sizes = '100vw', className, ratio = '16 / 10', eager = false }) {
+  const { src, srcSet } = photoSrc(name)
   return (
     <img className={className} src={src} srcSet={srcSet} sizes={sizes} alt={alt}
-      loading={eager ? 'eager' : 'lazy'} decoding={eager ? 'sync' : 'async'} />
+      style={{ aspectRatio: ratio }} loading={eager ? 'eager' : 'lazy'} decoding={eager ? 'sync' : 'async'} />
   )
 }
-/* LCP görselini erkenden indir */
-function usePreloadPhoto(name) {
-  useEffect(() => {
-    const { src, srcSet } = photoSrcSet(name)
-    const l = document.createElement('link')
-    l.rel = 'preload'; l.as = 'image'; l.href = src
-    l.setAttribute('imagesrcset', srcSet)
-    l.setAttribute('imagesizes', '(max-width: 900px) 90vw, 560px')
-    l.setAttribute('fetchpriority', 'high')
-    document.head.appendChild(l)
-    return () => l.remove()
-  }, [name])
+
+/* ── Veri: gerçek EstateMatch yeteneklerinden türetilmiş temsili senaryo ── */
+const PERSON = {
+  name: 'Fulya',
+  context: ['İstanbul', 'Aile', 'Yatırım', 'Okula yakınlık', 'Yürünebilirlik', '≤ ₺18M'],
 }
-
-/* ── Veri ── */
-const HERO_MATCH = {
-  client: { area: 'Fulya, İstanbul', rooms: '2+1', budget: '≤ ₺20M' },
-  prop: { photo: 'property-fulya', name: 'Fulya Residence', price: '₺18.450.000' },
+const PLACE = {
+  name: 'Maçka Residence',
+  photo: 'property-macka',
+  meta: [
+    ['41.0471° K', '28.9948° D'],
+    ['142 m²', '2+1'],
+    ['Okul', '7 dk'],
+    ['Metro', '4 dk'],
+  ],
+  price: '₺17,8M',
 }
-const REQUEST = 'Fulya veya Nişantaşı\'nda, 20 milyon altında, yeni binada 2+1 arıyorum.'
-const REQ_TAGS = ['FULYA', 'NİŞANTAŞI', '2+1', 'YENİ BİNA', '≤ ₺20M']
-const SCAN_SEQ = [247, 83, 24, 7]
-const WHY = ['Bütçesine uygun', 'İstediği lokasyonda', 'Oda tercihi uygun', 'Yatırım beklentisi yüksek']
-
-const TRY_RESULTS = [
-  { pct: 94, photo: 'property-fulya', t: 'Fulya Residence', s: '2+1 · 142 m² · Yeni bina', p: '₺18,4M' },
-  { pct: 89, photo: 'property-nisantasi', t: 'Nişantaşı Modern', s: '2+1 · 128 m² · 3 yaşında', p: '₺17,2M' },
-  { pct: 83, photo: 'property-macka', t: 'Bomonti Residence', s: '2+1 · 118 m² · Yeni bina', p: '₺15,9M' },
+const MATCH = '94,2'
+const DIMENSIONS = [
+  { k: 'Lokasyon', v: 98 },
+  { k: 'Bütçe', v: 96 },
+  { k: 'Yaşam biçimi', v: 91 },
+  { k: 'Ulaşılabilirlik', v: 94 },
+  { k: 'Yatırım potansiyeli', v: 89 },
 ]
-
-const FLOW = ['Müşteri', 'Eşleştirme', 'Portföy', 'Takip', 'Satış', 'Analiz']
-
-const ASK_PEOPLE = [
-  { n: 'Tolga Şen', pct: 92 },
-  { n: 'Gül Ekinci', pct: 88 },
-  { n: 'Volkan Erdem', pct: 83 },
+const CONTEXT_LINKS = ['Lokasyon', 'Yaşam biçimi', 'Bütçe', 'Hareketlilik', 'Davranış', 'Niyet']
+/* Geometri sahnesinin küçük ekran karşılığı: aynı ilişkiler, okunabilir satırlar */
+const PAIRS = [
+  ['İstanbul', 'Konum', 1], ['Aile', '2+1', .75], ['Yatırım', '₺17,8M', .95],
+  ['Okula yakınlık', 'Okul 7 dk', .9], ['Yürünebilirlik', 'Metro 4 dk', .8], ['≤ ₺18M', '₺17,8M', 1],
 ]
+const FUNNEL = ['106.722', '4.281', '326', '42', '3']
 
-const REPORT_BARS = [
-  { n: 'Selin Kaya', v: 56 },
-  { n: 'Burak Aydın', v: 42 },
-  { n: 'Deniz Aksoy', v: 38 },
+const ENGINE_IN = ['Müşteri bağlamı', 'Portföy verisi', 'Lokasyon', 'Davranış', 'Etkileşim geçmişi', 'Tercihler', 'Niyet']
+const ENGINE_OUT = ['Eşleştirme', 'Sıralama', 'Öneri', 'Sonraki en iyi adım']
+
+const FRAGMENTS = [
+  'WhatsApp mesajı', 'İncelenen portföy', 'Bütçe değişikliği',
+  'Bölge tercihi', 'Görüşme notu', 'Reddedilen ilan', 'Aile durumu',
 ]
-const REPORT_TREND = [42, 51, 47, 63, 58, 76, 71, 92]
-
-const BEFORE_STEPS = ['Müşteri geldi.', 'CRM açıldı.', 'Filtre uygulandı.', 'Portföy arandı.',
-  'Danışmana soruldu.', 'WhatsApp kontrol edildi.', 'Excel kontrol edildi.', 'Müşteriye dönüldü.']
+const PORTFOLIO_UNITS = [
+  { n: 'Maçka Residence', s: 94 }, { n: 'Nişantaşı Loft', s: 88 }, { n: 'Fulya Park', s: 81 },
+  { n: 'Teşvikiye Apart', s: 64 }, { n: 'Bomonti Rezidans', s: 52 }, { n: 'Şişli Ofis', s: 31 },
+]
+const ACTIONS = [
+  { a: 'Fulya’yı ara', w: 'Teklif aşamasında, 3 gündür yanıt yok' },
+  { a: 'Maçka Residence’ı paylaş', w: '%94,2 eşleşme — henüz gönderilmedi' },
+  { a: 'Yarın takip et', w: 'Zeynep K. ikinci görüşmeyi bekliyor' },
+]
+const CONVO = [
+  { q: 'Son 30 gündür iletişim kurmadığım, satın alma ihtimali yüksek müşterileri göster.', a: '12 müşteri', d: 'Niyet skoru ≥ 80 · son temas > 30 gün' },
+  { q: 'Maçka’daki yeni portföye uygun olanlar?', a: '3 müşteri', d: 'Bütçe, bölge ve yaşam biçimi uyumu' },
+  { q: 'En güçlü eşleşmeyi göster.', a: 'Fulya · %94,2', d: 'Maçka Residence' },
+  { q: 'İletişim önerisi hazırla.', a: 'Taslak hazır', d: 'Danışman onayına açık' },
+]
+const BEFORE_TOOLS = ['WhatsApp', 'Excel', 'CRM', 'Notlar', 'Aramalar', 'Hafıza', 'PDF’ler']
+const AFTER_LAYERS = ['Müşteri', 'Portföy', 'Bağlam', 'Zekâ', 'Eylem']
+const ENTERPRISE = [
+  { h: 'Rol bazlı erişim', p: 'Danışman, yönetici ve acente rolleri; görünürlüğü yönetici belirler.' },
+  { h: 'Veri sahipliği', p: 'Veriniz sizindir; istediğiniz an dışa aktarabilirsiniz.' },
+  { h: 'İzlenebilirlik', p: 'Kritik aksiyonlar kim, ne zaman bilgisiyle kayıt altına alınır.' },
+  { h: 'Veri izolasyonu', p: 'Her acentenin verisi diğerlerinden ayrı tutulur.' },
+  { h: 'Entegrasyon', p: 'İlan platformlarından içe aktarım; mevcut CRM ile birlikte çalışabilir.' },
+  { h: 'Ölçeklenebilir mimari', p: 'Ekip ve portföy büyüdükçe aynı sistem üzerinde ölçeklenir.' },
+]
 
 /* ── Yardımcılar ── */
-const clamp01 = v => Math.min(1, Math.max(0, v))
+const clamp01 = v => (v < 0 ? 0 : v > 1 ? 1 : v)
 const seg = (p, a, b) => clamp01((p - a) / (b - a))
-const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+const isReduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-function useInView(threshold = 0.3) {
+function useInView(threshold = 0.28) {
   const ref = useRef(null)
   const [on, setOn] = useState(false)
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    if (reduced()) { setOn(true); return }
+    if (isReduced()) { setOn(true); return }
     const io = new IntersectionObserver(e => { if (e[0].isIntersecting) { setOn(true); io.disconnect() } }, { threshold })
     io.observe(el)
     return () => io.disconnect()
@@ -99,6 +116,7 @@ function useInView(threshold = 0.3) {
   return [ref, on]
 }
 
+/* Uzun sahnelerde geçilen mesafeyi 0..1 verir (rAF ile, layout thrash yok) */
 function useScrollProgress(ref) {
   const [p, setP] = useState(0)
   useEffect(() => {
@@ -110,24 +128,24 @@ function useScrollProgress(ref) {
       const r = el.getBoundingClientRect()
       setP(clamp01(-r.top / Math.max(1, el.offsetHeight - window.innerHeight)))
     }
-    const on = () => { if (!raf) raf = requestAnimationFrame(measure) }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(measure) }
     measure()
-    window.addEventListener('scroll', on, { passive: true })
-    window.addEventListener('resize', on, { passive: true })
-    return () => { window.removeEventListener('scroll', on); window.removeEventListener('resize', on); if (raf) cancelAnimationFrame(raf) }
+    addEventListener('scroll', onScroll, { passive: true })
+    addEventListener('resize', onScroll, { passive: true })
+    return () => { removeEventListener('scroll', onScroll); removeEventListener('resize', onScroll); if (raf) cancelAnimationFrame(raf) }
   }, [ref])
   return p
 }
 
-function useCountUp(target, run, duration = 1100) {
+function useCountUp(target, run, duration = 1200) {
   const [v, setV] = useState(0)
   useEffect(() => {
     if (!run) return
-    if (reduced()) { setV(target); return }
+    if (isReduced()) { setV(target); return }
     let raf = 0
-    const start = performance.now()
+    const t0 = performance.now()
     const tick = now => {
-      const t = Math.min(1, (now - start) / duration)
+      const t = Math.min(1, (now - t0) / duration)
       setV(target * (1 - Math.pow(1 - t, 3)))
       if (t < 1) raf = requestAnimationFrame(tick)
     }
@@ -137,404 +155,346 @@ function useCountUp(target, run, duration = 1100) {
   return v
 }
 
-function Fade({ children, delay = 0, threshold = 0.25, as: Tag = 'div', className = '' }) {
+/* Yalnızca opacity ile beliren sarmalayıcı — CLS yok */
+function Reveal({ children, delay = 0, threshold = 0.2, className = '' }) {
   const [ref, on] = useInView(threshold)
   return (
-    <Tag ref={ref} className={`mx-fade${on ? ' on' : ''} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+    <div ref={ref} className={`em-rv${on ? ' is-on' : ''} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
       {children}
-    </Tag>
+    </div>
   )
 }
 
-/* ════════════════ 01 · HERO ════════════════ */
-function Hero({ goBack, demo, onExplore }) {
-  const [ref, on] = useInView(0.15)
-  const [scoreGo, setScoreGo] = useState(false)
+/* ═══ ORTAM ALANI — "sistemin içinden geçen zekâ"
+   Tek sabit katman; scroll ile çok yavaş ilerler, zekâ anlarında
+   yoğunlaşır. Yalnızca transform + opacity. ═══ */
+function AmbientField() {
+  const ref = useRef(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || isReduced()) return
+    let raf = 0
+    const zones = ['#geometry', '#complexity', '#match', '#engineering', '#intelligence']
+    const measure = () => {
+      raf = 0
+      const vh = innerHeight
+      const y = scrollY
+      const doc = Math.max(1, document.body.scrollHeight - vh)
+      // yoğunluk: zekâ sahnelerine yaklaştıkça artar
+      let intensity = 0.28
+      for (const s of zones) {
+        const n = document.querySelector(s)
+        if (!n) continue
+        const r = n.getBoundingClientRect()
+        const centre = r.top + r.height / 2 - vh / 2
+        const near = 1 - clamp01(Math.abs(centre) / (vh * 1.15))
+        if (near > intensity) intensity = near
+      }
+      el.style.setProperty('--amb-shift', `${(y / doc) * 46 - 23}%`)
+      el.style.setProperty('--amb-i', (0.24 + intensity * 0.76).toFixed(3))
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(measure) }
+    measure()
+    addEventListener('scroll', onScroll, { passive: true })
+    addEventListener('resize', onScroll, { passive: true })
+    return () => { removeEventListener('scroll', onScroll); removeEventListener('resize', onScroll); if (raf) cancelAnimationFrame(raf) }
+  }, [])
+  return <div className="em-ambient" ref={ref} aria-hidden="true" />
+}
+
+/* ═══ 01 · HERO — kişi → zekâ → yer, tek kompozisyon ═══ */
+function HeroScene({ onDemo, onExplore }) {
+  const [ref, on] = useInView(0.1)
+  const [phase, setPhase] = useState(0) // 0 kişi · 1 tercihler · 2 yer · 3 nitelikler · 4 bağlantı · 5 skor
   useEffect(() => {
     if (!on) return
-    const t = setTimeout(() => setScoreGo(true), 900)
-    return () => clearTimeout(t)
-  }, [on])
-  const score = Math.round(useCountUp(94, scoreGo, 900))
-
-  return (
-    <section className="mx-hero" ref={ref}>
-      <div className="mx-wrap">
-        <div className="mx-hero__top">
-          <button className="mx-crumb" onClick={goBack}>← Ana Sayfa</button>
-          <span className="mx-lockup">estatematch <em>by SRYVERSE</em></span>
-        </div>
-
-        <div className="mx-hero__grid">
-          <div className="mx-hero__copy">
-            <h1 className="mx-hero__h1">Gayrimenkulde<br />doğru eşleşme.</h1>
-            <p className="mx-hero__sub">
-              Müşterinizi anlayan, portföyünüzü tarayan ve en doğru eşleşmeleri
-              saniyeler içinde bulan AI destekli gayrimenkul satış platformu.
-            </p>
-            <div className="mx-hero__ctas">
-              <button className="mx-btn" onClick={demo}>Demo İste →</button>
-              <button className="mx-btn mx-btn--ghost" onClick={onExplore}>Ürünü Keşfet</button>
-            </div>
-          </div>
-
-          {/* imza kompozisyon: müşteri ─ %94 MATCH ─ portföy */}
-          <div className={`mx-hm${on ? ' go' : ''}`}>
-            <div className="mx-hm__side">
-              <span className="mx-hm__lbl">Müşteri</span>
-              <div className="mx-hm__client">
-                <span>{HERO_MATCH.client.area}</span>
-                <span>{HERO_MATCH.client.rooms}</span>
-                <span>{HERO_MATCH.client.budget}</span>
-              </div>
-            </div>
-
-            <div className="mx-hm__mid">
-              <i className="mx-hm__wire mx-hm__wire--l" aria-hidden="true" />
-              <div className="mx-hm__score">
-                <strong>{score}<em>%</em></strong>
-                <span>MATCH</span>
-              </div>
-              <i className="mx-hm__wire mx-hm__wire--r" aria-hidden="true" />
-            </div>
-
-            <div className="mx-hm__side mx-hm__side--prop">
-              <span className="mx-hm__lbl">Portföy</span>
-              <figure className="mx-hm__prop">
-                <Photo name={HERO_MATCH.prop.photo} alt="Fulya Residence — temsili görsel"
-                  sizes="(max-width: 900px) 90vw, 460px" eager />
-                <figcaption>
-                  <strong>{HERO_MATCH.prop.name}</strong>
-                  <span>{HERO_MATCH.prop.price}</span>
-                </figcaption>
-              </figure>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ════════════════ 02 · PROBLEM → MATCH ════════════════ */
-function parseQuery(t) {
-  const l = t.toLocaleLowerCase('tr-TR')
-  const found = ['Fulya', 'Nişantaşı', 'Bomonti', 'Maçka', 'Beşiktaş', 'Levent', 'Kadıköy', 'Antalya']
-    .filter(a => l.includes(a.toLocaleLowerCase('tr-TR')))
-  const rooms = (t.match(/(\d)\s*\+\s*(\d)/) || [])[0]
-  const b = t.match(/(\d+)\s*milyon/i)
-  const tags = [...found.map(f => f.toLocaleUpperCase('tr-TR'))]
-  if (rooms) tags.push(rooms)
-  if (/yeni\s*bina/i.test(t)) tags.push('YENİ BİNA')
-  if (/havuz/i.test(t)) tags.push('HAVUZLU')
-  if (/villa/i.test(t)) tags.push('VİLLA')
-  if (b) tags.push(`≤ ₺${b[1]}M`)
-  return tags.length ? tags : ['TÜM BÖLGELER', 'TÜM TİPLER']
-}
-
-function Problem() {
-  const wrapRef = useRef(null)
-  const p = useScrollProgress(wrapRef)
-  const isReduced = useMemo(reduced, [])
-
-  const [text, setText] = useState('')
-  const [touched, setTouched] = useState(false)
-  const [state, setState] = useState('idle')
-  const [tags, setTags] = useState(null)
-
-  useEffect(() => {
-    if (touched) return
-    if (isReduced) { setText(REQUEST); return }
-    if (p < 0.06) return
-    let i = 0
-    const t = setInterval(() => {
-      i++
-      setText(REQUEST.slice(0, i))
-      if (i >= REQUEST.length) clearInterval(t)
-    }, 22)
-    return () => clearInterval(t)
-  }, [p >= 0.06, touched, isReduced]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const run = useCallback(() => {
-    setTags(parseQuery(text.trim() || REQUEST))
-    setState('scan')
-    const t = setTimeout(() => setState('done'), isReduced ? 0 : 1200)
-    return () => clearTimeout(t)
-  }, [text, isReduced])
-
-  const scanIdx = Math.min(SCAN_SEQ.length - 1, Math.floor(seg(p, 0.34, 0.72) * SCAN_SEQ.length))
-  const showTags = p > 0.2
-  const showScan = p > 0.33 && p < 0.74
-  const showThree = p >= 0.74
-
-  return (
-    <section id="problem" className="mx-problem" ref={wrapRef}>
-      <div className="mx-problem__sticky">
-        <div className="mx-wrap mx-problem__in">
-          <p className="mx-problem__t" style={{ opacity: isReduced ? 1 : Math.min(seg(p, 0, 0.05), 1 - seg(p, 0.78, 0.86)) }}>
-            Bir müşteri geldi.
-          </p>
-
-          <div className="mx-bubble" style={{ opacity: isReduced ? 1 : Math.min(seg(p, 0.05, 0.1), 1 - seg(p, 0.78, 0.86)) }}>
-            <i aria-hidden="true">M</i>
-            <p>{text || REQUEST}</p>
-          </div>
-
-          <div className="mx-ptags" style={{ opacity: isReduced ? 1 : Math.min(seg(p, 0.2, 0.26), 1 - seg(p, 0.78, 0.86)) }}>
-            {REQ_TAGS.map((t, i) => (
-              <span key={t} style={{ opacity: isReduced || !showTags ? (isReduced ? 1 : 0) : seg(p, 0.2 + i * 0.018, 0.24 + i * 0.018) }}>{t}</span>
-            ))}
-          </div>
-
-          <div className="mx-count" aria-live="polite">
-            {isReduced ? (
-              <><strong className="mx-count__n">247</strong><span>portföy tarandı → <b>3</b> eşleşme</span></>
-            ) : showThree ? (
-              <><strong className="mx-count__n mx-count__n--hit">3</strong><span>en güçlü eşleşme.</span></>
-            ) : showScan ? (
-              <><strong key={scanIdx} className="mx-count__n">{SCAN_SEQ[scanIdx]}</strong><span>portföy taranıyor…</span></>
-            ) : <span className="mx-count__ph" aria-hidden="true" />}
-          </div>
-        </div>
-      </div>
-
-      {/* kendi cümlenizi deneyin */}
-      <div className="mx-wrap mx-try">
-        <Fade>
-          <div className="mx-try__box">
-            <label className="mx-lbl" htmlFor="mx-q">Siz deneyin — müşteriniz ne arıyor?</label>
-            <div className="mx-try__row">
-              <input id="mx-q" type="text" value={text} placeholder={REQUEST} autoComplete="off"
-                onFocus={() => setTouched(true)}
-                onChange={e => { setTouched(true); setText(e.target.value) }}
-                onKeyDown={e => { if (e.key === 'Enter') run() }} />
-              <button className="mx-btn" onClick={run}>Eşleştir →</button>
-            </div>
-
-            {tags && (
-              <div className="mx-try__tags">{tags.map(t => <span key={t}>{t}</span>)}</div>
-            )}
-            {state === 'scan' && <div className="mx-try__scan"><i aria-hidden="true" />247 portföy taranıyor…</div>}
-            {state === 'done' && (
-              <div className="mx-try__res">
-                {TRY_RESULTS.map((r, i) => (
-                  <article className="mx-card" key={r.t} style={{ animationDelay: `${i * 0.1}s` }}>
-                    <Photo name={r.photo} alt={`${r.t} — temsili görsel`} sizes="(max-width: 900px) 90vw, 300px" />
-                    <div className="mx-card__b">
-                      <em>%{r.pct}</em>
-                      <strong>{r.t}</strong>
-                      <span>{r.s}</span>
-                      <span className="mx-card__p">{r.p}</span>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-            <p className="mx-tiny">Örnek portföy verisiyle çalışan demo.</p>
-          </div>
-        </Fade>
-      </div>
-    </section>
-  )
-}
-
-/* ════════════════ 03 · 94% MATCH — star sahne ════════════════ */
-function Star() {
-  const [ref, on] = useInView(0.35)
-  const pct = Math.round(useCountUp(94, on, 1300))
-  return (
-    <section id="match" className="mx-star" ref={ref}>
-      <Photo name="property-fulya" className="mx-star__bg" alt="Fulya Residence — temsili görsel" sizes="100vw" />
-      <div className="mx-star__veil" aria-hidden="true" />
-      <div className="mx-wrap mx-star__in">
-        <div className="mx-star__score">
-          <strong>{pct}</strong>
-          <span>%</span>
-          <em>MATCH</em>
-        </div>
-        <div className="mx-star__meta">
-          <h2>Fulya Residence</h2>
-          <p className="mx-star__loc">İstanbul / Fulya</p>
-          <div className="mx-star__specs"><span>2+1</span><span>142 m²</span><strong>₺18.450.000</strong></div>
-          <div className={`mx-star__why${on ? ' on' : ''}`}>
-            <b>Neden bu portföy?</b>
-            {WHY.map((w, i) => <span key={w} style={{ transitionDelay: `${400 + i * 130}ms` }}>✓ {w}</span>)}
-          </div>
-          <p className="mx-tiny mx-tiny--light">Temsili görsel</p>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ════════════════ 04 · ÜRÜN ════════════════ */
-function Product({ onFeatures }) {
-  return (
-    <section id="product" className="mx-product">
-      <div className="mx-wrap">
-        <Fade>
-          <h2 className="mx-h2">Tek platform.<br />Tüm satış operasyonunuz.</h2>
-        </Fade>
-        <Fade delay={120}>
-          <div className="mx-frame">
-            <div className="mx-frame__bar" aria-hidden="true"><i /><i /><i /><span>EstateMatch — AI Eşleştirme</span></div>
-            <div className="mx-frame__shot">
-              <img src="/screens/ai-matches.webp" alt="EstateMatch AI eşleştirme ekranı" loading="lazy" decoding="async" />
-            </div>
-          </div>
-        </Fade>
-        <Fade delay={180}>
-          <ol className="mx-flow">
-            {FLOW.map((f, i) => (
-              <li key={f}><span>{f}</span>{i < FLOW.length - 1 && <i aria-hidden="true">→</i>}</li>
-            ))}
-          </ol>
-        </Fade>
-        <Fade delay={240}>
-          <p className="mx-flow__note"><b>EstateMatch AI</b> hepsini birbirine bağlıyor.</p>
-        </Fade>
-        <Fade delay={300}>
-          <button className="mx-link" onClick={onFeatures}>Tüm özellikleri keşfet →</button>
-        </Fade>
-      </div>
-    </section>
-  )
-}
-
-/* ════════════════ 05 · AI ASSISTANT ════════════════ */
-function Assistant() {
-  const [ref, on] = useInView(0.35)
-  const isReduced = useMemo(reduced, [])
-  const [step, setStep] = useState(0)
-  const [run, setRun] = useState(0)
-
-  useEffect(() => {
-    if (!on) return
-    if (isReduced) { setStep(6); return }
-    setStep(0)
-    const times = [300, 1200, 2200, 3200, 4200, 5200]
-    const ts = times.map((ms, i) => setTimeout(() => setStep(i + 1), ms))
+    if (isReduced()) { setPhase(5); return }
+    const steps = [180, 620, 1120, 1600, 2050, 2500]
+    const ts = steps.map((ms, i) => setTimeout(() => setPhase(i), ms))
     return () => ts.forEach(clearTimeout)
-  }, [on, run, isReduced])
+  }, [on])
+  const score = useCountUp(94.2, phase >= 5, 1100)
 
   return (
-    <section id="assistant" className="mx-ask" ref={ref}>
-      <div className="mx-wrap">
-        <Fade><h2 className="mx-h2">Aramayın. Sorun.</h2></Fade>
-        <Fade delay={100}>
-          <p className="mx-sub">EstateMatch AI yalnızca cevap vermez — sistemde işlem yapar.</p>
-        </Fade>
+    <section className="em-hero" ref={ref} data-phase={phase}>
+      <div className="em-shell em-hero__in">
+        <header className="em-hero__copy">
+          <p className="em-eyebrow">EstateMatch <span>by SRYVERSE</span></p>
+          <h1 className="em-hero__h1">Gayrimenkulde<br />doğru eşleşme.</h1>
+          <p className="em-hero__lede">
+            İnsanlar yer arar. Biz aradaki ilişkiyi arıyoruz.
+          </p>
+          <div className="em-hero__cta">
+            <button className="em-btn em-btn--primary" onClick={onDemo}>Demo İste</button>
+            <button className="em-btn em-btn--quiet" onClick={onExplore}>Ürünü Keşfet</button>
+          </div>
+        </header>
 
-        <div className="mx-ask__grid">
-          <div className="mx-ask__chat">
-            <div className={`mx-q${step >= 1 ? ' on' : ''}`}>Bu hafta ilgilenmem gereken müşteriler kim?</div>
-            <div className={`mx-a${step >= 2 ? ' on' : ''}`}>12 öncelikli müşteri buldum.</div>
-            <div className={`mx-q${step >= 3 ? ' on' : ''}`}>Satış ihtimali en yüksek olanları göster.</div>
-            <div className={`mx-a${step >= 4 ? ' on' : ''}`}>
-              <div className="mx-ask__people">
-                {ASK_PEOPLE.map((pp, i) => (
-                  <div key={pp.n} style={{ transitionDelay: `${i * 120}ms` }}>
-                    <span>{pp.n}</span><em>%{pp.pct}</em>
+        <figure className="em-hero__scene" aria-label={`${PERSON.name} ile ${PLACE.name} arasında %${MATCH} eşleşme`}>
+          {/* kişi */}
+          <div className="em-node em-node--person">
+            <span className="em-node__label">Kişi</span>
+            <strong className="em-node__name">{PERSON.name}</strong>
+            <span className="em-node__sub">İstanbul</span>
+            <ul className="em-node__ctx">
+              {PERSON.context.slice(1, 5).map((c, i) => (
+                <li key={c} style={{ transitionDelay: `${i * 90}ms` }}>{c}</li>
+              ))}
+            </ul>
+          </div>
+
+          {/* zekâ */}
+          <div className="em-link">
+            <i className="em-link__wire em-link__wire--a" />
+            <div className="em-link__score">
+              <strong>{score.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}<em>%</em></strong>
+              <span>eşleşme</span>
+            </div>
+            <i className="em-link__wire em-link__wire--b" />
+          </div>
+
+          {/* yer */}
+          <div className="em-node em-node--place">
+            <span className="em-node__label">Yer</span>
+            <div className="em-node__photo">
+              <Photo name={PLACE.photo} alt={`${PLACE.name} — temsili görsel`} ratio="4 / 3"
+                sizes="(max-width: 900px) 88vw, 34vw" eager />
+            </div>
+            <strong className="em-node__name">{PLACE.name}</strong>
+            <span className="em-node__sub">2+1 · 142 m² · {PLACE.price}</span>
+          </div>
+        </figure>
+      </div>
+    </section>
+  )
+}
+
+/* ═══ 02 · ÜÇ PERDE — insanlar yer arar / yerler de veridir / bağlam ═══ */
+function ChapterScene() {
+  const wrap = useRef(null)
+  const p = useScrollProgress(wrap)
+  const red = useMemo(isReduced, [])
+  const act = red ? 2 : p < 0.33 ? 0 : p < 0.66 ? 1 : 2
+
+  const fade = (a, b, c, d) => red ? 1 : Math.min(seg(p, a, b), 1 - seg(p, c, d))
+
+  return (
+    <section id="chapters" className="em-chapters" ref={wrap}>
+      <div className="em-chapters__stage">
+        <div className="em-shell em-chapters__in">
+
+          {/* perde 1 */}
+          <div className="em-act" style={{ opacity: fade(0, 0.04, 0.28, 0.33) }} aria-hidden={act !== 0}>
+            <h2 className="em-act__h">İnsanlar yer arar.</h2>
+            <div className="em-person">
+              <strong>{PERSON.name}</strong>
+              <ul>
+                {PERSON.context.map((c, i) => (
+                  <li key={c} style={{ opacity: red ? 1 : seg(p, 0.06 + i * 0.026, 0.1 + i * 0.026) }}>{c}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* perde 2 */}
+          <div className="em-act" style={{ opacity: fade(0.34, 0.39, 0.62, 0.67) }} aria-hidden={act !== 1}>
+            <h2 className="em-act__h">Yerler de veridir.</h2>
+            <div className="em-place">
+              <div className="em-place__photo">
+                <Photo name="property-nisantasi" alt="Nişantaşı’nda mimari — temsili görsel" ratio="3 / 2" sizes="(max-width: 900px) 88vw, 46vw" />
+              </div>
+              <dl className="em-place__meta">
+                {PLACE.meta.map(([k, v], i) => (
+                  <div key={k} style={{ opacity: red ? 1 : seg(p, 0.42 + i * 0.03, 0.47 + i * 0.03) }}>
+                    <dt>{k}</dt><dd>{v}</dd>
                   </div>
                 ))}
-              </div>
+                <div style={{ opacity: red ? 1 : seg(p, 0.54, 0.58) }}>
+                  <dt>Yatırım potansiyeli</dt><dd>Yüksek</dd>
+                </div>
+              </dl>
             </div>
-            <div className={`mx-q${step >= 5 ? ' on' : ''}`}>Uygun portföylerini getir.</div>
-            {step >= 6 && !isReduced && (
-              <button className="mx-replay" onClick={() => setRun(r => r + 1)}>↺ Yeniden oynat</button>
-            )}
           </div>
 
-          <div className="mx-ask__res" aria-live="polite">
-            {TRY_RESULTS.map((r, i) => (
-              <article key={r.t} className={`mx-card mx-card--row${step >= 6 ? ' on' : ''}`} style={{ transitionDelay: `${i * 140}ms` }}>
-                <Photo name={r.photo} alt={`${r.t} — temsili görsel`} sizes="140px" />
-                <div className="mx-card__b">
-                  <em>%{r.pct}</em>
-                  <strong>{r.t}</strong>
-                  <span>{r.p}</span>
-                </div>
-              </article>
-            ))}
+          {/* perde 3 */}
+          <div className="em-act em-act--ctx" style={{ opacity: fade(0.68, 0.73, 2, 3) }} aria-hidden={act !== 2}>
+            <h2 className="em-act__h">
+              Ama veri tek başına eşleşme yaratmaz.<br />
+              <em>Bağlam yaratır.</em>
+            </h2>
+            <ul className="em-ctxlist">
+              {CONTEXT_LINKS.map((c, i) => (
+                <li key={c} style={{ opacity: red ? 1 : seg(p, 0.76 + i * 0.028, 0.8 + i * 0.028) }}>{c}</li>
+              ))}
+            </ul>
           </div>
+
         </div>
       </div>
     </section>
   )
 }
 
-/* ════════════════ 06 · RAPORLAR ════════════════ */
-function Reports() {
+/* ═══ 03 · THE GEOMETRY OF FIT ═══ */
+function GeometryScene() {
   const [ref, on] = useInView(0.3)
-  const rev = useCountUp(105.6, on, 1600)
-  const trend = useMemo(() => {
-    const W = 320, H = 120, max = 100
-    const pts = REPORT_TREND.map((v, i) => [10 + i * ((W - 20) / (REPORT_TREND.length - 1)), H - 12 - (v / max) * (H - 26)])
-    return pts.map((pt, i) => `${i ? 'L' : 'M'}${pt[0].toFixed(1)},${pt[1].toFixed(1)}`).join(' ')
+  /* iki yay üzerinde düğümler; aralarında ağırlığı farklı ilişki çizgileri */
+  const { left, right, links } = useMemo(() => {
+    const L = PERSON.context.map((c, i) => {
+      const t = (i / (PERSON.context.length - 1)) * Math.PI - Math.PI / 2
+      return { c, x: 340 + Math.cos(t + Math.PI) * 82, y: 200 + Math.sin(t) * 152 }
+    })
+    const R = ['Konum', '142 m²', '2+1', 'Okul 7 dk', 'Metro 4 dk', '₺17,8M'].map((c, i) => {
+      const t = (i / 5) * Math.PI - Math.PI / 2
+      return { c, x: 660 - Math.cos(t + Math.PI) * 82, y: 200 + Math.sin(t) * 152 }
+    })
+    const pairs = [[0, 0, 1], [0, 3, .55], [1, 2, .75], [2, 5, .95], [3, 3, .9], [3, 4, .7], [4, 4, .8], [5, 5, 1], [1, 1, .5], [4, 0, .45]]
+    return { left: L, right: R, links: pairs.map(([a, b, w]) => ({ a: L[a], b: R[b], w })) }
   }, [])
 
   return (
-    <section id="reports" className="mx-rep" ref={ref}>
-      <div className="mx-wrap">
-        <Fade><h2 className="mx-h2">Yönetici için tek ekran.</h2></Fade>
-        <div className={`mx-rep__card${on ? ' on' : ''}`}>
-          <div className="mx-rep__head">
-            <div>
-              <span className="mx-lbl">Toplam ciro · bu yıl</span>
-              <strong className="mx-rep__big">₺{rev.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}M</strong>
-            </div>
-            <span className="mx-rep__delta">↑ %14</span>
-          </div>
+    <section id="geometry" className="em-geo" ref={ref}>
+      <div className="em-shell">
+        <div className="em-geo__head">
+          <p className="em-kicker">The Geometry of Fit</p>
+          <h2 className="em-h2">Uyum tek bir kriter değildir.</h2>
+          <p className="em-lede">Birbirini anlamlı kılan ilişkilerin geometrisidir.</p>
+        </div>
 
-          <div className="mx-rep__grid">
-            <div className="mx-rep__chart">
-              <span className="mx-lbl">Aylık satış trendi</span>
-              <svg viewBox="0 0 320 120" preserveAspectRatio="none" role="img" aria-label="Aylık satış trendi yükseliyor">
-                <path className="mx-rep__line" d={trend} />
-              </svg>
-            </div>
-            <div className="mx-rep__bars">
-              <span className="mx-lbl">Danışman performansı</span>
-              {REPORT_BARS.map((b, i) => (
-                <div key={b.n} className="mx-bar">
-                  <span>{b.n}</span>
-                  <i><b style={{ width: on ? `${b.v}%` : 0, transitionDelay: `${400 + i * 160}ms` }} /></i>
-                  <em>{b.v}</em>
-                </div>
+        {/* küçük ekran: aynı ilişkiler okunabilir satırlar hâlinde */}
+        <ul className={`em-geo__pairs${on ? ' is-on' : ''}`}>
+          {PAIRS.map((p, i) => (
+            <li key={p[0]} style={{ '--w': p[2], transitionDelay: `${i * 90}ms` }}>
+              <span>{p[0]}</span><i aria-hidden="true" /><span>{p[1]}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className={`em-geo__plot${on ? ' is-on' : ''}`} aria-hidden="true">
+          <svg viewBox="0 0 1000 400" role="img" aria-label="Kişi nitelikleri ile yer nitelikleri arasındaki ilişki geometrisi">
+            <g className="em-geo__links">
+              {links.map((l, i) => (
+                <line key={i} x1={l.a.x} y1={l.a.y} x2={l.b.x} y2={l.b.y}
+                  strokeWidth={0.4 + l.w * 1.1} style={{ '--w': l.w, animationDelay: `${300 + i * 90}ms` }} />
               ))}
-            </div>
-          </div>
-
-          <div className="mx-rep__ai">
-            <i aria-hidden="true">✦</i>
-            <span>Satış dönüşümü geçen aya göre <b>%14 arttı.</b> En güçlü büyüme Fulya bölgesinde.</span>
-          </div>
+            </g>
+            {[...left, ...right].map((n, i) => (
+              <g key={i} className="em-geo__node" style={{ animationDelay: `${i * 70}ms` }}>
+                <circle cx={n.x} cy={n.y} r="3.2" />
+                <text x={n.x < 500 ? n.x - 14 : n.x + 14} y={n.y + 4} textAnchor={n.x < 500 ? 'end' : 'start'}>{n.c}</text>
+              </g>
+            ))}
+            <text className="em-geo__axis" x="340" y="372" textAnchor="middle">KİŞİ</text>
+            <text className="em-geo__axis" x="660" y="372" textAnchor="middle">YER</text>
+          </svg>
         </div>
       </div>
     </section>
   )
 }
 
-/* ════════════════ 07 · BEFORE → AFTER ════════════════ */
-function BeforeAfter() {
+/* ═══ 04 · KARMAŞIKLIK — 106.722 → 3 ═══ */
+function ComplexityScene() {
+  const wrap = useRef(null)
+  const p = useScrollProgress(wrap)
+  const red = useMemo(isReduced, [])
+  const step = red ? FUNNEL.length - 1 : Math.min(FUNNEL.length - 1, Math.floor(seg(p, 0.34, 0.9) * FUNNEL.length))
+
+  return (
+    <section id="complexity" className="em-cx" ref={wrap}>
+      <div className="em-cx__stage">
+        <div className="em-shell em-cx__in">
+          <div className="em-cx__eq" style={{ opacity: red ? 1 : Math.min(seg(p, 0, 0.05), 1 - seg(p, 0.3, 0.36)) }}>
+            <div><strong>126</strong><span>aktif müşteri</span></div>
+            <i aria-hidden="true">×</i>
+            <div><strong>847</strong><span>portföy</span></div>
+            <i aria-hidden="true">=</i>
+            <div><strong>106.722</strong><span>olası ilişki</span></div>
+          </div>
+
+          <div className="em-cx__funnel" style={{ opacity: red ? 1 : seg(p, 0.32, 0.4) }}>
+            <strong key={step} className={step === FUNNEL.length - 1 ? 'is-final' : ''}>{FUNNEL[step]}</strong>
+            <span>{step === FUNNEL.length - 1 ? 'dikkatinize değer ilişki.' : 'ilişki değerlendiriliyor'}</span>
+          </div>
+
+          <p className="em-note" style={{ opacity: red ? 1 : seg(p, 0.9, 0.97) }}>
+            Örnek operasyon senaryosu — gerçek müşteri verisi değildir.
+          </p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ═══ 05 · EŞLEŞME ANI + AÇIKLANABİLİR EŞLEŞTİRME ═══ */
+function MatchScene() {
+  const [ref, on] = useInView(0.3)
+  const score = useCountUp(94.2, on, 1400)
+  return (
+    <section id="match" className="em-match" ref={ref}>
+      <div className="em-shell em-match__in">
+        <div className="em-match__visual">
+          <Photo name={PLACE.photo} alt={`${PLACE.name} — temsili görsel`} ratio="4 / 3"
+            sizes="(max-width: 900px) 88vw, 44vw" className="em-match__photo" />
+          <div className="em-match__badge">
+            <strong>{score.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}<em>%</em></strong>
+            <span>eşleşme</span>
+          </div>
+        </div>
+
+        <div className="em-match__body">
+          <p className="em-kicker">Explainable Matching · Açıklanabilir eşleştirme</p>
+          <h2 className="em-h2">{PLACE.name}</h2>
+          <p className="em-lede">
+            {PERSON.name} için değerlendirilen 847 portföy içinden en güçlü ilişki.
+            Skor bir kutu değil: neyin neden uyduğu görünür.
+          </p>
+
+          <dl className={`em-dims${on ? ' is-on' : ''}`}>
+            {DIMENSIONS.map((d, i) => (
+              <div className="em-dim" key={d.k} style={{ '--v': d.v, '--i': i }}>
+                <dt>{d.k}</dt>
+                <dd>
+                  <span className="em-dim__rail" aria-hidden="true"><i /></span>
+                  <b>{d.v}</b>
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p className="em-note">Temsili görsel ve örnek senaryo.</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ═══ 06 · MÜHENDİSLİK ═══ */
+function EngineeringScene() {
   const [ref, on] = useInView(0.25)
   return (
-    <section className="mx-ba" ref={ref}>
-      <div className="mx-wrap mx-ba__grid">
-        <div className="mx-ba__col">
-          <span className="mx-lbl">EstateMatch'ten önce</span>
-          <div className={`mx-ba__steps${on ? ' on' : ''}`}>
-            {BEFORE_STEPS.map((s, i) => (
-              <span key={s} style={{ transitionDelay: `${i * 130}ms` }}>{s}</span>
-            ))}
-          </div>
+    <section id="engineering" className="em-eng" ref={ref}>
+      <div className="em-shell">
+        <div className="em-eng__head">
+          <p className="em-kicker">Şimdi, mühendislik</p>
+          <h2 className="em-h2 em-h2--light">Veride saklı ilişkileri<br />mühendislikle görünür kılıyoruz.</h2>
         </div>
-        <i className="mx-ba__line" aria-hidden="true" />
-        <div className="mx-ba__col mx-ba__col--after">
-          <span className="mx-lbl">EstateMatch ile</span>
-          <div className={`mx-ba__after${on ? ' on' : ''}`}>
-            <span>Müşteri geldi.</span>
-            <strong>MATCH.</strong>
+
+        <div className={`em-eng__sys${on ? ' is-on' : ''}`}>
+          <div className="em-eng__col em-eng__col--in">
+            <p className="em-lbl">Girdi</p>
+            <ul>{ENGINE_IN.map((x, i) => <li key={x} style={{ transitionDelay: `${i * 70}ms` }}>{x}</li>)}</ul>
+          </div>
+
+          <div className="em-eng__core" aria-hidden="true">
+            <span className="em-eng__ring" />
+            <span className="em-eng__ring em-eng__ring--2" />
+            <p>EstateMatch<br />Intelligence Engine</p>
+          </div>
+
+          <div className="em-eng__col em-eng__col--out">
+            <p className="em-lbl">Çıktı</p>
+            <ul>{ENGINE_OUT.map((x, i) => <li key={x} style={{ transitionDelay: `${400 + i * 90}ms` }}>{x}</li>)}</ul>
+            <p className="em-eng__action">→ Eylem</p>
           </div>
         </div>
       </div>
@@ -542,37 +502,232 @@ function BeforeAfter() {
   )
 }
 
-/* ════════════════ 08 · FİNAL ════════════════ */
-function Final({ demo }) {
-  const [ref, on] = useInView(0.3)
+/* ═══ 07 · YETENEKLER — her biri kendi görsel metaforuyla ═══ */
+function MatchingIntelligence() {
+  const [ref, on] = useInView(0.35)
+  const dots = useMemo(() => Array.from({ length: 42 }, (_, i) => ({
+    x: 8 + ((i * 37) % 92), y: 10 + ((i * 61) % 80), keep: [4, 17, 29].includes(i),
+  })), [])
   return (
-    <section className="mx-final" ref={ref}>
-      <Photo name="property-macka" className="mx-final__bg" alt="" sizes="100vw" />
-      <div className="mx-final__veil" aria-hidden="true" />
-      <div className="mx-wrap mx-final__in">
-        <span className={`mx-final__wire${on ? ' on' : ''}`} aria-hidden="true"><i /></span>
-        <h2 className="mx-final__h">Sıradaki eşleşme,<br />çoktan portföyünüzde.</h2>
-        <p className="mx-final__sub">EstateMatch onu bulur.</p>
-        <button className="mx-btn mx-btn--big" onClick={demo}>Demo Talep Et →</button>
-        <p className="mx-tiny mx-tiny--light">Kendi verinizi paylaşmanız gerekmez · Kurulum ve ekip eğitimi dahildir</p>
+    <article className="em-cap" ref={ref}>
+      <div className="em-cap__text">
+        <p className="em-kicker">Matching Intelligence</p>
+        <h3 className="em-h3">Daha fazlasını değil,<br />önemli olanı gösterir.</h3>
+        <p className="em-body">Bir müşteri, yüzlerce portföy. EstateMatch ilgisiz olanı eler; geriye konuşmaya değer olanlar kalır.</p>
+      </div>
+      <div className={`em-cap__art em-swarm${on ? ' is-on' : ''}`} aria-hidden="true">
+        {dots.map((d, i) => (
+          <i key={i} className={d.keep ? 'is-keep' : ''} style={{ left: `${d.x}%`, top: `${d.y}%`, transitionDelay: `${(i % 12) * 45}ms` }} />
+        ))}
+      </div>
+    </article>
+  )
+}
+
+function CustomerIntelligence() {
+  const [ref, on] = useInView(0.35)
+  return (
+    <article className="em-cap em-cap--rev" ref={ref}>
+      <div className="em-cap__text">
+        <p className="em-kicker">Customer Intelligence</p>
+        <h3 className="em-h3">Dağınık bilgi,<br />tek bağlam olur.</h3>
+        <p className="em-body">Mesaj, not, incelenen ilan, değişen bütçe — hepsi tek müşteri bağlamında birleşir. Sistem, tek tek akışların unuttuğunu hatırlar.</p>
+      </div>
+      <div className={`em-cap__art em-converge${on ? ' is-on' : ''}`} aria-hidden="true">
+        {FRAGMENTS.map((f, i) => (
+          <span key={f} style={{ '--i': i, '--n': FRAGMENTS.length, transitionDelay: `${i * 80}ms` }}>{f}</span>
+        ))}
+        <b>Müşteri bağlamı</b>
+      </div>
+    </article>
+  )
+}
+
+function PortfolioIntelligence() {
+  const [ref, on] = useInView(0.35)
+  return (
+    <article className="em-cap" ref={ref}>
+      <div className="em-cap__text">
+        <p className="em-kicker">Portfolio Intelligence</p>
+        <h3 className="em-h3">Portföy bir depo değil,<br />canlı bir veri alanıdır.</h3>
+        <p className="em-body">İlanlar talebe, uyuma ve hareketliliğe göre kendini düzenler. Hangi portföyün ilgi göreceği önceden görünür.</p>
+      </div>
+      <div className={`em-cap__art em-land${on ? ' is-on' : ''}`} aria-hidden="true">
+        {PORTFOLIO_UNITS.map((u, i) => (
+          <div key={u.n} style={{ '--s': u.s, transitionDelay: `${i * 90}ms` }}>
+            <span>{u.n}</span><b>{u.s}</b>
+          </div>
+        ))}
+      </div>
+    </article>
+  )
+}
+
+function NextBestAction() {
+  const [ref, on] = useInView(0.35)
+  return (
+    <article className="em-cap em-cap--rev" ref={ref}>
+      <div className="em-cap__text">
+        <p className="em-kicker">Next Best Action</p>
+        <h3 className="em-h3">“Ne uyuyor?” değil,<br />“şimdi ne yapmalıyım?”</h3>
+        <p className="em-body">EstateMatch bir veri tabanı değil, karar desteğidir. Gün, yapılacak işle başlar — gerekçesiyle birlikte.</p>
+      </div>
+      <ol className={`em-cap__art em-actions${on ? ' is-on' : ''}`}>
+        {ACTIONS.map((a, i) => (
+          <li key={a.a} style={{ transitionDelay: `${i * 130}ms` }}>
+            <strong>{a.a}</strong>
+            <span>{a.w}</span>
+          </li>
+        ))}
+      </ol>
+    </article>
+  )
+}
+
+/* ═══ 08 · ESTATE INTELLIGENCE (konuşma) ═══ */
+function IntelligenceScene() {
+  const [ref, on] = useInView(0.3)
+  const red = useMemo(isReduced, [])
+  const [turn, setTurn] = useState(red ? CONVO.length : 0)
+  useEffect(() => {
+    if (!on || red) return
+    setTurn(0)
+    const ts = CONVO.map((_, i) => setTimeout(() => setTurn(i + 1), 500 + i * 1150))
+    return () => ts.forEach(clearTimeout)
+  }, [on, red])
+
+  return (
+    <section id="intelligence" className="em-intel" ref={ref}>
+      <div className="em-shell em-intel__in">
+        <div className="em-intel__head">
+          <p className="em-kicker">Estate Intelligence</p>
+          <h2 className="em-h2 em-h2--light">Aramayın. Sorun.</h2>
+          <p className="em-lede em-lede--light">
+            Operasyonunuzu bilen bir sistemle konuşuyorsunuz — genel amaçlı bir sohbet robotuyla değil.
+          </p>
+        </div>
+        <ol className="em-convo">
+          {CONVO.map((c, i) => (
+            <li key={c.q} className={turn > i ? 'is-on' : ''}>
+              <p className="em-convo__q">{c.q}</p>
+              <p className="em-convo__a"><strong>{c.a}</strong><span>{c.d}</span></p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   )
 }
 
-/* ════════════════ SAYFA ════════════════ */
+/* ═══ 09 · İNSAN MOLASI ═══ */
+function HumanInterlude() {
+  return (
+    <section className="em-human">
+      <Photo name="property-fulya" alt="" ratio="16 / 9" sizes="100vw" className="em-human__bg" />
+      <div className="em-human__veil" aria-hidden="true" />
+      <div className="em-shell em-human__in">
+        <Reveal>
+          <h2 className="em-human__h">Çünkü kimse<br />filtrelerle hayal kurmaz.</h2>
+        </Reveal>
+        <Reveal delay={220}>
+          <p className="em-human__p">İnsanlar metrekare aramaz. Orada anlam kazanacak bir hayat arar.</p>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ═══ 10 · DÖNÜŞÜM + KURUMSAL HAFIZA ═══ */
+function TransformationScene() {
+  const wrap = useRef(null)
+  const p = useScrollProgress(wrap)
+  const red = useMemo(isReduced, [])
+  const merge = red ? 1 : seg(p, 0.25, 0.68)
+
+  return (
+    <section id="transformation" className="em-tr" ref={wrap}>
+      <div className="em-tr__stage">
+        <div className="em-shell em-tr__in">
+          <p className="em-kicker" style={{ opacity: red ? 1 : 1 - seg(p, 0.55, 0.7) }}>EstateMatch’ten önce</p>
+
+          <div className="em-tr__field" style={{ '--merge': merge }}>
+            {BEFORE_TOOLS.map((t, i) => (
+              <span key={t} className="em-tr__tool" style={{ '--i': i, '--n': BEFORE_TOOLS.length }}>{t}</span>
+            ))}
+            <div className="em-tr__system" style={{ opacity: red ? 1 : seg(p, 0.6, 0.76) }}>
+              {AFTER_LAYERS.map(l => <span key={l}>{l}</span>)}
+            </div>
+          </div>
+
+          <div className="em-tr__msg" style={{ opacity: red ? 1 : seg(p, 0.74, 0.86) }}>
+            <h2 className="em-h2">Aramaktan anlamaya.</h2>
+            <p className="em-lede">
+              Müşteri bilgisi tek tek danışmanlarda değil, kurumda birikir.
+              Danışman değişir; bağlam kalır.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ═══ 11 · KURUMSAL ═══ */
+function EnterpriseScene() {
+  return (
+    <section id="platform" className="em-ent">
+      <div className="em-shell">
+        <div className="em-ent__head">
+          <p className="em-kicker">Platform</p>
+          <h2 className="em-h2">Ekip için tasarlandı.<br />Kurum için kuruldu.</h2>
+        </div>
+        <div className="em-ent__grid">
+          {ENTERPRISE.map((e, i) => (
+            <Reveal key={e.h} delay={i * 60}>
+              <div className="em-ent__cell">
+                <h3>{e.h}</h3>
+                <p>{e.p}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ═══ 12 · FİNAL — iki nokta birleşir ═══ */
+function FinalScene({ onDemo, onFeatures }) {
+  const [ref, on] = useInView(0.35)
+  return (
+    <section className="em-final" ref={ref}>
+      <div className="em-shell em-final__in">
+        <div className={`em-final__pair${on ? ' is-on' : ''}`} aria-hidden="true">
+          <i className="em-final__dot" />
+          <i className="em-final__line" />
+          <i className="em-final__dot" />
+        </div>
+        <h2 className="em-final__h">Doğru yer,<br />hep oradaydı.</h2>
+        <p className="em-final__p">EstateMatch bağlantıyı görünür kılar.</p>
+        <div className="em-final__cta">
+          <button className="em-btn em-btn--light" onClick={onDemo}>Demo Planla</button>
+          <button className="em-btn em-btn--ghost" onClick={onFeatures}>Tüm özellikler</button>
+        </div>
+        <p className="em-final__sig">EstateMatch <span>by SRYVERSE</span></p>
+      </div>
+    </section>
+  )
+}
+
+/* ═══════════════ SAYFA ═══════════════ */
 const SEO_TITLE = 'EstateMatch AI | Yapay Zekâ Destekli Gayrimenkul CRM ve Eşleştirme Platformu'
 const SEO_DESC = 'EstateMatch AI; emlak şirketlerinin müşterilerini, portföylerini, satış süreçlerini ve danışman performansını tek platformdan yönetmesini sağlayan yapay zekâ destekli gayrimenkul satış platformudur.'
 
 export default function EstateMatchPage({ goBack, onDemo, onFeatures }) {
   usePageSeo({
-    title: SEO_TITLE,
-    description: SEO_DESC,
-    path: '/estatematch',
-    ogImage: 'https://sryverse.com/screens/property-fulya-1600.webp',
+    title: SEO_TITLE, description: SEO_DESC, path: '/estatematch',
+    ogImage: 'https://sryverse.com/screens/property-macka-1600.webp',
   })
-  usePreloadPhoto('property-fulya')
-
   const schema = useMemo(() => ({
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -586,19 +741,44 @@ export default function EstateMatchPage({ goBack, onDemo, onFeatures }) {
   usePageSchema(schema)
 
   useEffect(() => { window.scrollTo(0, 0) }, [])
+
+  /* LCP görselini erkenden çöz */
+  useEffect(() => {
+    const { src, srcSet } = photoSrc(PLACE.photo)
+    const l = document.createElement('link')
+    l.rel = 'preload'; l.as = 'image'; l.href = src
+    l.setAttribute('imagesrcset', srcSet)
+    l.setAttribute('imagesizes', '(max-width: 900px) 88vw, 34vw')
+    l.setAttribute('fetchpriority', 'high')
+    document.head.appendChild(l)
+    return () => l.remove()
+  }, [])
+
   const demo = useCallback(() => { onDemo ? onDemo() : goBack?.() }, [onDemo, goBack])
-  const goProduct = useCallback(() => document.querySelector('#product')?.scrollIntoView({ behavior: 'smooth' }), [])
+  const explore = useCallback(() => {
+    document.querySelector('#geometry')?.scrollIntoView({ behavior: isReduced() ? 'auto' : 'smooth' })
+  }, [])
 
   return (
-    <main className="mx-page">
-      <Hero goBack={goBack} demo={demo} onExplore={goProduct} />
-      <Problem />
-      <Star />
-      <Product onFeatures={onFeatures} />
-      <Assistant />
-      <Reports />
-      <BeforeAfter />
-      <Final demo={demo} />
+    <main className="em">
+      <AmbientField />
+      <HeroScene onDemo={demo} onExplore={explore} />
+      <ChapterScene />
+      <GeometryScene />
+      <ComplexityScene />
+      <MatchScene />
+      <EngineeringScene />
+      <div className="em-caps">
+        <MatchingIntelligence />
+        <CustomerIntelligence />
+        <PortfolioIntelligence />
+        <NextBestAction />
+      </div>
+      <IntelligenceScene />
+      <HumanInterlude />
+      <TransformationScene />
+      <EnterpriseScene />
+      <FinalScene onDemo={demo} onFeatures={onFeatures} />
     </main>
   )
 }
