@@ -48,7 +48,7 @@
   --hdr: 84px;
 
   /* Tipografi */
-  --d1: clamp(2.35rem, 4.4vw, 4.5rem);
+  --d1: clamp(2.1rem, 5vw, 4.6rem);
   --d2: clamp(1.9rem, 3.6vw, 3.4rem);
   --d3: clamp(1.35rem, 2.1vw, 1.85rem);
   --gv: clamp(1rem, .94rem + .3vw, 1.14rem);
@@ -282,9 +282,9 @@
 .ev-oniz__kare {
   position: absolute;
   left: 8%;
-  top: 14%;
-  width: 48%;
-  height: 64%;
+  top: 13%;
+  width: 54%;
+  height: 66%;
   border: 1px solid rgba(11,107,87,.5);
   border-radius: var(--r-k);
   background: rgba(11,107,87,.05);
@@ -801,7 +801,7 @@
     padding-bottom: clamp(2rem, 6vh, 3.5rem);
   }
   .ev-alan__soz { order: 2; }
-  .ev-alan__soz p { max-width: 20ch; align-self: start; }
+  .ev-alan__soz p { max-width: 20ch; align-self: start; font-size: clamp(1.6rem, 4.6vw, 2.5rem); }
   .ev-alan__saha { order: 1; height: 50svh; min-height: 300px; }
   .ev-alan__isik { left: 34%; top: 44%; }
   .ev-alan__vinyet {
