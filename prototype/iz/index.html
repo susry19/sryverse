@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>İZ · EstateMatch</title>
+<meta name="description" content="Binlerce ihtimalin içinden bir iz. EstateMatch'in bir eşleşmeyi nasıl bulduğunu deneyimleyin." />
+<!--FONTS-->
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   İZ · EstateMatch
+   Tek bir dünya. Bölüm yok, kart yok, ekran görüntüsü yok.
+   Scroll kamerayı taşır; renk, ışık ve yoğunluk kesintisiz akar.
+   ══════════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  /* Tek sürekli grad boyunca JS tarafından yazılan canlı zemin */
+  --zemin:#05090A;
+  --sc:5,9,10;          /* perdelerin zeminle akan rengi */
+  --murekkep:#EDE7DA;
+  --murekkep-2:rgba(237,231,218,.56);
+  --yesil:#2FBF95;
+  --altin:#E8B25F;
+  --buz:#8FD8E8;
+  --fs:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --fn:'Inter',system-ui,-apple-system,sans-serif;
+  --fm:'DM Mono','SFMono-Regular',Menlo,monospace;
+  --gut:clamp(1.15rem,4.2vw,4.5rem);
+  --egri:cubic-bezier(.22,.68,.24,1);
+}
+
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--zemin);
+  color:var(--murekkep);
+  font-family:var(--fn);
+  line-height:1.6;
+  overflow-x:clip;
+  -webkit-font-smoothing:antialiased;
+  transition:background .6s linear;
+}
+img,svg,canvas{display:block;max-width:100%}
+::selection{background:rgba(47,191,149,.3)}
+
+/* ─────────── SAHNE: sabit, tam kanama ─────────── */
+#stage{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#gl{width:100%;height:100%;display:block}
+html.live #stage{pointer-events:auto}
+html.live #gl{cursor:crosshair}
+
+/* Kanıt işaretleri: 3B'den izdüşen gerçek HTML metni */
+#marks{position:absolute;inset:0;pointer-events:none}
+.mark{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  font-family:var(--fm);
+  font-size:.66rem;
+  letter-spacing:.055em;
+  line-height:1.45;
+  white-space:nowrap;
+  opacity:0;
+  transition:opacity .5s var(--egri);
+}
+.mark.on{opacity:1}
+.mark b{display:block;font-weight:400;font-size:.56rem;letter-spacing:.2em;opacity:.62}
+.mark b:empty{display:none}
+.mark--bulundu span,.mark--gecti span{letter-spacing:.16em;text-transform:uppercase;font-size:.6rem}
+.mark::before{
+  content:'';position:absolute;left:-13px;top:50%;
+  width:7px;height:7px;margin-top:-3.5px;border-radius:50%;
+  border:1px solid currentColor;
+}
+.mark--gecti{color:var(--buz)}
+.mark--bulundu{color:var(--altin)}
+
+/* Gerekçe telleri (klimaks) */
+#wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+
+/* Film dokusu + kenar sönümü: sabit, asla kaydırılan katmana bağlı değil */
+#grain,#edge{position:absolute;inset:0;pointer-events:none}
+#tops{position:absolute;inset:0 0 auto;height:clamp(110px,17vh,180px);pointer-events:none;
+  background:linear-gradient(180deg,rgba(var(--sc),.78),rgba(var(--sc),.34) 46%,transparent)}
+#grain{opacity:.045;mix-blend-mode:overlay;background-repeat:repeat;background-size:180px 180px}
+#edge{box-shadow:inset 0 0 clamp(90px,16vw,260px) clamp(10px,3vw,60px) rgba(0,0,0,.62)}
+
+/* ─────────── ÜST KİMLİK VE ÖLÇÜ ─────────── */
+#brand,#meter{position:fixed;z-index:6;font-family:var(--fm);pointer-events:none}
+#brand{
+  top:clamp(1.1rem,2.6vw,2rem);left:var(--gut);
+  font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;
+}
+#brand i{font-style:normal;color:var(--yesil)}
+#brand span{opacity:.44}
+#meter{
+  top:clamp(1.1rem,2.6vw,2rem);right:var(--gut);text-align:right;
+}
+#meterN{
+  display:block;font-size:clamp(1.1rem,2.3vw,1.7rem);font-weight:400;
+  letter-spacing:.02em;font-variant-numeric:tabular-nums;line-height:1;
+}
+#meterL{display:block;font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;opacity:.5;margin-top:.4rem}
+html:not(.live) #brand,html:not(.live) #meter{position:absolute}
+
+/* ─────────── SES: perde metinleri ─────────── */
+/* JS yoksa veya hareket azaltılmışsa normal akışta okunur bir belge kalır. */
+#voice{position:relative;z-index:4;max-width:74ch;margin:0 auto;padding:22vh var(--gut) 22vh;display:grid;gap:18vh}
+html.live #voice{
+  position:fixed;inset:0;max-width:none;margin:0;padding:0;display:block;
+  pointer-events:none;
+}
+html.live .say{
+  position:absolute;inset:0;
+  padding:calc(clamp(1.1rem,2.6vw,2rem) + 4.6rem) var(--gut) clamp(2.2rem,7vh,4.5rem);
+  display:grid;opacity:0;
+  will-change:opacity,transform;
+}
+html.live .say>*{max-width:min(100%,54rem);position:relative;z-index:1}
+/* Perde yalnızca metnin oturduğu köşeye serilir; tam kare karartma yok.
+   Rengi zeminle birlikte akar, dolayısıyla dünya kesintisiz kalır. */
+html.live .say::before{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+}
+html.live .an-alt::before{background:linear-gradient(104deg,rgba(var(--sc),.97) 0%,rgba(var(--sc),.92) 30%,rgba(var(--sc),.68) 50%,rgba(var(--sc),.22) 68%,transparent 82%),linear-gradient(0deg,rgba(var(--sc),.85),transparent 62%)}
+html.live .an-sag::before{background:linear-gradient(276deg,rgba(var(--sc),.97) 0%,rgba(var(--sc),.93) 34%,rgba(var(--sc),.70) 54%,rgba(var(--sc),.24) 72%,transparent 86%)}
+html.live .an-ust::before{background:linear-gradient(100deg,rgba(var(--sc),.97) 0%,rgba(var(--sc),.92) 32%,rgba(var(--sc),.66) 52%,rgba(var(--sc),.20) 70%,transparent 84%),linear-gradient(180deg,rgba(var(--sc),.85),transparent 58%)}
+html.live .an-bol::before{background:linear-gradient(96deg,rgba(var(--sc),.97) 0%,rgba(var(--sc),.93) 34%,rgba(var(--sc),.70) 54%,rgba(var(--sc),.24) 72%,transparent 86%)}
+html.live .an-orta::before{background:radial-gradient(72% 64% at 50% 50%,rgba(var(--sc),.94),rgba(var(--sc),.68) 38%,transparent 78%)}
+html.live .an-altorta::before{background:linear-gradient(0deg,rgba(var(--sc),.97) 0%,rgba(var(--sc),.88) 26%,rgba(var(--sc),.48) 48%,transparent 74%)}
+html.live .say[data-act="6"]{padding-bottom:34vh}
+
+/* Yerleşim çapaları: her perde farklı yerden konuşur */
+.an-alt{align-content:end;justify-items:start}
+.an-sag{align-content:center;justify-items:end;text-align:right}
+.an-ust{align-content:start;justify-items:start;padding-top:18vh!important}
+.an-bol{align-content:center;justify-items:start}
+.an-orta{align-content:center;justify-items:center;text-align:center}
+.an-altorta{align-content:end;justify-items:center;text-align:center}
+
+h1,h2{font-family:var(--fs);font-weight:300;line-height:1.02;letter-spacing:-.018em;
+  overflow-wrap:normal;word-break:normal;text-wrap:balance}
+h1{font-size:clamp(2.6rem,8.2vw,7.4rem)}
+h2{font-size:clamp(2rem,5.6vw,4.9rem)}
+.sub{
+  font-size:clamp(.94rem,1.05vw,1.08rem);line-height:1.72;
+  color:var(--murekkep-2);max-width:46ch;margin-top:clamp(1rem,2.4vh,1.7rem);
+}
+.an-sag .sub{margin-left:auto}
+.say[data-act="5"] .axiom{margin-top:.6rem}
+.axiom{
+  font-family:var(--fs);font-style:italic;font-weight:300;
+  font-size:clamp(1.15rem,2.1vw,1.85rem);line-height:1.3;
+  color:var(--yesil);margin-top:clamp(1.2rem,3vh,2.2rem);max-width:30ch;
+}
+.an-sag .axiom{margin-left:auto}
+.tag{
+  font-family:var(--fm);font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--yesil);margin-bottom:clamp(.9rem,2.2vh,1.5rem);
+}
+
+/* Müşterinin cümlesi: kendini yazar */
+.utter{
+  font-family:var(--fs);font-size:clamp(1.35rem,3.1vw,2.6rem);line-height:1.32;
+  font-weight:300;max-width:26ch;margin-top:.3rem;
+}
+.utter::after{content:'';display:inline-block;width:.06em;height:.86em;
+  background:var(--yesil);margin-left:.12em;vertical-align:-.08em;animation:cur 1.05s steps(1) infinite}
+@keyframes cur{50%{opacity:0}}
+.utter.done::after{display:none}
+
+/* ─────────── GEREKÇE: klimaksın okunur yüzü ─────────── */
+#reason{
+  position:fixed;inset:auto 0 0;z-index:5;pointer-events:none;
+  padding:clamp(3rem,9vh,6rem) var(--gut) clamp(1.4rem,4.5vh,3rem);
+  background:linear-gradient(180deg,transparent,rgba(var(--sc),.72) 34%,rgba(var(--sc),.9));
+  opacity:0;transition:opacity .7s var(--egri);
+}
+html.live #reason.on{opacity:1}
+html:not(.live) #reason{position:relative;opacity:1;padding-bottom:0;margin:0 auto;max-width:74ch}
+.rgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1rem,2.6vw,2.6rem);align-items:start}
+.rcol h3{
+  font-family:var(--fm);font-size:.58rem;font-weight:400;letter-spacing:.22em;
+  text-transform:uppercase;padding-bottom:.55rem;margin-bottom:.7rem;
+  border-bottom:1px solid currentColor;
+}
+.rcol--var{color:var(--buz)}
+.rcol--bul{color:var(--altin)}
+.rcol--yok{color:rgba(237,231,218,.42)}
+.rcol li{list-style:none;font-family:var(--fm);font-size:.68rem;line-height:1.5;
+  letter-spacing:.02em;padding:.3rem 0;color:var(--murekkep)}
+.rcol--yok li{color:var(--murekkep-2)}
+.rcol li b{font-weight:400;opacity:.55;display:block;font-size:.55rem;letter-spacing:.18em}
+
+/* ─────────── İNSAN KARARI: gerçek kontrol ─────────── */
+#choice{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:clamp(1.4rem,3.5vh,2.4rem);pointer-events:auto}
+.btn{
+  appearance:none;border:1px solid rgba(237,231,218,.28);background:transparent;
+  color:var(--murekkep);font-family:var(--fn);font-size:.9rem;font-weight:400;
+  padding:.95rem 1.5rem;border-radius:999px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:.75rem;
+  transition:border-color .5s var(--egri),background .5s var(--egri),transform .25s var(--egri);
+}
+.btn:hover{border-color:var(--murekkep);background:rgba(237,231,218,.06)}
+.btn:active{transform:translateY(1px) scale(.985)}
+.btn--go{background:var(--yesil);border-color:var(--yesil);color:#04140F;font-weight:500}
+.btn--go:hover{background:#3ED3A6;border-color:#3ED3A6}
+.btn i{
+  width:1.55rem;height:1.55rem;border-radius:50%;display:grid;place-items:center;
+  background:rgba(0,0,0,.14);font-style:normal;font-size:.8rem;
+  transition:transform .35s var(--egri);
+}
+.btn:hover i{transform:translateX(2px)}
+.btn--go i{background:rgba(4,20,15,.16)}
+html.live .say{pointer-events:none}
+html.live .say.act{pointer-events:auto}
+.say :is(a,button){pointer-events:auto}
+
+.sign{font-family:var(--fm);font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--murekkep-2);margin-top:clamp(2rem,6vh,4rem)}
+.sign i{font-style:normal;color:var(--yesil)}
+
+/* ─────────── SCROLL SÜRÜCÜSÜ ─────────── */
+#story{position:relative;z-index:1;pointer-events:none}
+html:not(.live) #story{display:none}
+.pane{width:100%}
+
+/* ─────────── SÜRÜŞ İPUCU (bir kez, sessiz) ─────────── */
+#hint{
+  position:fixed;left:50%;bottom:clamp(1.2rem,4vh,2.4rem);translate:-50% 0;z-index:7;
+  font-family:var(--fm);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--murekkep-2);opacity:0;transition:opacity 1.1s var(--egri);pointer-events:none;
+}
+#hint.on{opacity:1}
+html:not(.live) #hint{display:none}
+
+/* ─────────── WEBGL YOK / HAREKET AZALTILMIŞ ─────────── */
+#still{display:none}
+html:not(.live) #still{display:block;position:relative;z-index:2}
+html:not(.live) #stage{display:none}
+html:not(.live) body{background:#05090A}
+.stillfig{
+  width:100%;max-width:74ch;margin:0 auto;padding:0 var(--gut);
+}
+.stillfig svg{width:100%;height:auto;overflow:visible}
+
+/* ─────────── DUYARLI ─────────── */
+@media(max-width:900px){
+  html.live .say{padding-top:calc(clamp(1.1rem,2.6vw,2rem) + 4rem)}
+  .an-sag{justify-items:start;text-align:left}
+  .an-sag .sub,.an-sag .axiom{margin-left:0}
+  .rgrid{grid-template-columns:minmax(0,1fr);gap:1.1rem}
+  .rcol li{font-size:.64rem}
+  #meterN{font-size:1.05rem}
+  .sub{max-width:38ch}
+}
+@media(max-width:900px){
+  /* Dikeyde gerekçe alt yarıya yerleşir; üst yarı mülke ayrılır.
+     Üç sütun da korunur: "karşılamıyor" dürüstlüğü mobilde de kalır. */
+  #reason{padding-top:clamp(4rem,12vh,7rem)}
+  .rgrid{gap:.85rem}
+  .rcol h3{padding-bottom:.35rem;margin-bottom:.4rem}
+  .rcol li{padding:.16rem 0;font-size:.63rem;line-height:1.42}
+  .rcol li:nth-child(n+3){display:none}
+}
+@media(max-width:560px){
+  h1{font-size:clamp(2.3rem,10vw,3.2rem)}
+  h2{font-size:clamp(1.8rem,7.6vw,2.6rem)}
+  .utter{font-size:clamp(1.2rem,5.6vw,1.7rem);max-width:22ch}
+  .rcol li{font-size:.6rem}
+  #reason{padding-bottom:clamp(.8rem,2.5vh,1.6rem)}
+  html.live .say[data-act="6"]{padding-bottom:44vh}
+  #choice{gap:.5rem}
+  .btn{font-size:.82rem;padding:.8rem 1.1rem}
+}
+</style>
+</head>
+<body>
+
+<div id="stage" aria-hidden="true">
+  <canvas id="gl"></canvas>
+  <svg id="wires" preserveAspectRatio="none"></svg>
+  <div id="marks"></div>
+  <div id="tops"></div>
+  <div id="grain"></div>
+  <div id="edge"></div>
+</div>
+
+<header id="brand"><i>EstateMatch</i> <span>by SRYVERSE</span></header>
+<div id="meter" aria-live="off"><b id="meterN">0</b><span id="meterL">ihtimal</span></div>
+
+<div id="voice">
+
+  <section class="say an-alt" data-act="0">
+    <h1>Binlerce ihtimal.<br />Hepsi doğru.</h1>
+    <p class="sub">Portföyünüz, müşteri sinyalleriniz, konum verisi ve çevrenin sessiz bilgisi. Hepsi burada duruyor. Hiçbiri henüz bir karar değil.</p>
+  </section>
+
+  <section class="say an-sag" data-act="1">
+    <p class="tag">Bir müşteri konuşur</p>
+    <p class="utter" id="utter"></p>
+    <p class="sub">EstateMatch bu cümleyi filtreye çevirmez. İçindeki niyeti çıkarır: bir bölge değil bir yaşam ritmi, bir metrekare değil bir günün akışı.</p>
+  </section>
+
+  <section class="say an-ust" data-act="2">
+    <h2>Filtre burada durur.</h2>
+    <p class="sub">Yazılan her kelimeyi karşılayan 247 ilan. Hepsi teknik olarak doğru. Bir CRM size bu listeyi verir ve işi biter. Danışman on saatini tam burada harcar.</p>
+    <p class="axiom">Hepsi doğru. Hiçbiri karar değil.</p>
+  </section>
+
+  <section class="say an-bol" data-act="3">
+    <h2>Bazı ihtiyaçlar<br />yazılmaz.</h2>
+    <p class="sub">“Sabah güneşi” bir cephe yönü ve bir saattir. “Çocuk yürüsün” bir mesafe, bir yaya geçidi, bir sokak sesidir. EstateMatch müşterinin sözünü çevrenin verisine bağlar ve kimsenin yazmadığı ilişkileri görünür kılar.</p>
+    <p class="axiom">İnsanlar filtrelerle arar, hisleriyle karar verir.</p>
+  </section>
+
+  <section class="say an-altorta" data-act="4">
+    <h2>Eleme, sıralama değildir.</h2>
+    <p class="sub">Biri bütçeye uyuyor ama sabah güneşi almıyor. Biri ışığı alıyor ama sokak gece 58 dB. Her ihtimal otuz sekiz sinyal üzerinden tartılır ve çoğu geride bırakılır.</p>
+  </section>
+
+  <section class="say an-ust act" data-act="5">
+    <h2>Geriye bu kaldı.</h2>
+    <p class="axiom">Bazen en değerli keşif, aramadığınız şeydir.</p>
+  </section>
+
+  <section class="say an-sag act" data-act="6">
+    <h2>EstateMatch burada durur.</h2>
+    <p class="sub">Gerekçeyi kurar, kanıtı gösterir, neyin uymadığını saklamaz. Sonrasını bilen sizsiniz: sesteki tereddüdü, ailenin hikâyesini, pazarlığın sınırını.</p>
+    <div id="choice">
+      <button class="btn btn--go" id="goYes" type="button">Bu evi müşteriye götürürüm <i>→</i></button>
+      <button class="btn" id="goAgain" type="button">Başka bir iz sür <i>↺</i></button>
+    </div>
+    <p class="axiom">Yapay zekâ insan kararının yerine geçmez. Kararın görebildiği alanı genişletir.</p>
+  </section>
+
+  <section class="say an-alt act" data-act="7">
+    <h2>Kendi portföyünüzle görün.</h2>
+    <p class="sub">On saatlik araştırma, saniyeler içinde gerekçelendirilmiş bir eşleşmeye dönüşür. Kararı yine siz verirsiniz.</p>
+    <div id="choice2" style="display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.6rem">
+      <a class="btn btn--go" href="https://sryverse.com/estatematch" id="cta">Demo İste <i>→</i></a>
+    </div>
+    <p class="sign"><i>EstateMatch</i> · SRYVERSE</p>
+  </section>
+
+</div>
+
+<div id="reason" aria-hidden="false">
+  <div class="rgrid">
+    <div class="rcol rcol--var rcol--m"><h3>Karşılıyor</h3><ul id="rVar"></ul></div>
+    <div class="rcol rcol--bul rcol--m"><h3>Hiç aramadınız</h3><ul id="rBul"></ul></div>
+    <div class="rcol rcol--yok"><h3>Karşılamıyor</h3><ul id="rYok"></ul></div>
+  </div>
+</div>
+
+<div id="hint">Alanı yönlendirmek için imleci gezdirin</div>
+
+<main id="story"></main>
+<div id="still"></div>
+
+<!--THREE-->
+<!--APP-->
+</body>
+</html>
