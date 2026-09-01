@@ -12,7 +12,7 @@ const GROUPS = [
     k: 'Satış zekâsı',
     items: [
       { h: 'AI Eşleştirme', p: 'Müşteri talebi yüzlerce portföyle karşılaştırılır; her eşleşme puanlanır ve gerekçelendirilir.',
-        d: ['Kriter ağırlıklama (lokasyon, bütçe, oda, bina yaşı, yatırım tercihi)', 'Açıklanabilir skor — “neden eşleşti?”', 'Danışman onayı olmadan aksiyon alınmaz'] },
+        d: ['Kriter ağırlıklama (lokasyon, bütçe, oda, bina yaşı, yatırım tercihi)', 'Açıklanabilir skor: “neden eşleşti?”', 'Danışman onayı olmadan aksiyon alınmaz'] },
       { h: 'Müşteri Önceliklendirme', p: 'Niyet ve davranış sinyalleri her gün yeniden hesaplanır; arama listeniz sabah hazır olur.',
         d: ['Dönüşüm ihtimali skoru', 'Hareketsiz kalan müşteri uyarıları', 'Takip hatırlatmaları'] },
       { h: 'AI Asistan', p: 'Doğal dille sorun; asistan veriyi tarar, listeler ve sonraki aksiyonu önerir.',
@@ -76,12 +76,12 @@ export default function EstateFeaturesPage({ goBack, onDemo }) {
   const demo = useCallback(() => { onDemo ? onDemo() : goBack?.() }, [onDemo, goBack])
 
   return (
-    <main className="em em-feat">
-      <section className="em-feat__hero">
-        <div className="em-shell">
-          <button className="em-back" onClick={goBack}>← EstateMatch</button>
-          <h1 className="em-feat__h1">Tüm özellikler.</h1>
-          <p className="em-lede">
+    <main className="ev ev-feat">
+      <section className="ev-feat__hero">
+        <div className="ev-kap">
+          <button type="button" className="ev-geri" onClick={goBack}>EstateMatch</button>
+          <h1 className="ev-feat__h1">Tüm özellikler.</h1>
+          <p className="ev-feat__lede">
             EstateMatch yalnızca eşleştirme yapmaz; müşteri, portföy, satış süreci,
             performans ve raporlamayı tek platformda birleştirir.
           </p>
@@ -89,12 +89,12 @@ export default function EstateFeaturesPage({ goBack, onDemo }) {
       </section>
 
       {GROUPS.map(g => (
-        <section className="em-feat__group" key={g.k}>
-          <div className="em-shell">
-            <h2 className="em-kicker em-feat__gh">{g.k}</h2>
-            <div className="em-feat__list">
+        <section className="ev-feat__grup" key={g.k}>
+          <div className="ev-kap">
+            <h2 className="ev-feat__gh">{g.k}</h2>
+            <div className="ev-feat__liste">
               {g.items.map(it => (
-                <article className="em-feat__item" key={it.h}>
+                <article className="ev-feat__oge" key={it.h}>
                   <h3>{it.h}</h3>
                   <p>{it.p}</p>
                   <ul>{it.d.map(d => <li key={d}>{d}</li>)}</ul>
@@ -105,10 +105,10 @@ export default function EstateFeaturesPage({ goBack, onDemo }) {
         </section>
       ))}
 
-      <section className="em-feat__group">
-        <div className="em-shell">
-          <h2 className="em-kicker em-feat__gh">Teknik ve güvenlik</h2>
-          <div className="em-feat__tech">
+      <section className="ev-feat__grup">
+        <div className="ev-kap">
+          <h2 className="ev-feat__gh">Teknik ve güvenlik</h2>
+          <div className="ev-feat__tek">
             {TECH.map(t => (
               <div key={t.h}><h3>{t.h}</h3><p>{t.p}</p></div>
             ))}
@@ -116,10 +116,10 @@ export default function EstateFeaturesPage({ goBack, onDemo }) {
         </div>
       </section>
 
-      <section className="em-feat__cta">
-        <div className="em-shell">
-          <h2 className="em-h2">EstateMatch’i kendi portföyünüzle görün.</h2>
-          <button className="em-btn em-btn--primary" onClick={demo}>Demo Talep Et →</button>
+      <section className="ev-feat__cta">
+        <div className="ev-kap">
+          <h2 className="ev-h2">EstateMatch’i kendi portföyünüzle görün.</h2>
+          <button type="button" className="ev-dugme ev-dugme--ana" onClick={demo}>Demo Talep Et</button>
         </div>
       </section>
     </main>

@@ -296,10 +296,10 @@ export default function App() {
   ]
 
   const estateNav = [
-    {label:'Nasıl çalışır',  target:'#chapters'},
-    {label:'Eşleştirme',     target:'#match'},
-    {label:'AI Intelligence',target:'#intelligence'},
-    {label:'Platform',       target:'#platform'},
+    {label:'Görüş alanı', target:'#alan'},
+    {label:'Gerekçe',     target:'#neden'},
+    {label:'Motor',       target:'#motor'},
+    {label:'Ürün',        target:'#urun'},
   ]
 
   const goDemo = useCallback(() => {
