@@ -3,6 +3,7 @@ import Background from './Background.jsx'
 import Terminal from './Terminal.jsx'
 import SkillMatchPage from './SkillMatchPage.jsx'
 import EstateMatchPage from './EstateMatchPage.jsx'
+import EstateFeaturesPage from './EstateFeaturesPage.jsx'
 import ProductShowcase from './ProductShowcase.jsx'
 import SiteAssistant from './SiteAssistant.jsx'
 import useRoute from './useRoute.js'
@@ -295,11 +296,11 @@ export default function App() {
   ]
 
   const estateNav = [
-    {label:'Nasıl çalışır?', target:'#how'},
-    {label:'Deneyin',        target:'#try'},
-    {label:'Çözümler',       target:'#explore'},
-    {label:'AI',             target:'#ask'},
-    {label:'Kimler için',    target:'#who'},
+    {label:'Nasıl çalışır?', target:'#problem'},
+    {label:'Eşleştirme',     target:'#match'},
+    {label:'Ürün',           target:'#product'},
+    {label:'AI Asistan',     target:'#assistant'},
+    {label:'Raporlar',       target:'#reports'},
   ]
 
   const goDemo = useCallback(() => {
@@ -339,7 +340,7 @@ export default function App() {
               : nav.map(n => <a key={n.label} href={n.target==='vision'?'/vizyon':n.target} className={`nlink${(n.target==='vision'&&page==='vision') ? ' nlink--cur' : ''}`} onClick={e=>{e.preventDefault(); go(n.target)}}>{n.label}</a>)}
           </nav>
           <div className="hdr__act">
-            {page === 'estatematch' ? (
+            {page === 'estatematch' || page === 'estatematchFeatures' ? (
               <a href="#contact" className="hbtn hbtn--s" onClick={e=>{e.preventDefault(); goDemo()}}>Demo Planla →</a>
             ) : (
               <>
@@ -366,6 +367,14 @@ export default function App() {
       ) : page === 'estatematch' ? (
         <EstateMatchPage
           goBack={() => setPage('home')}
+          onFeatures={() => setPage('estatematchFeatures')}
+          onDemo={() => { setPage('home'); requestAnimationFrame(() => requestAnimationFrame(() => {
+            document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })
+          })) }}
+        />
+      ) : page === 'estatematchFeatures' ? (
+        <EstateFeaturesPage
+          goBack={() => setPage('estatematch')}
           onDemo={() => { setPage('home'); requestAnimationFrame(() => requestAnimationFrame(() => {
             document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })
           })) }}

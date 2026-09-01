@@ -72,7 +72,7 @@ function ProductScene({ onOpenPage, pageKey }) {
             <span className="pshot__dot" /><span className="pshot__dot" /><span className="pshot__dot" />
             <span className="pshot__url">estate.sryverse.com — Panel</span>
           </div>
-          <img className="pshot__img" src="/screens/dashboard.png" alt="EstateMatch AI panel ekranı" loading="lazy" />
+          <img className="pshot__img" src="/screens/dashboard.webp" alt="EstateMatch AI panel ekranı" loading="lazy" />
         </div>
       </Fx>
       {onOpenPage && pageKey && (

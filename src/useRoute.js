@@ -17,6 +17,7 @@ const PATHS = {
   home: '/',
   skillmatch: '/skillmatch',
   estatematch: '/estatematch',
+  estatematchFeatures: '/estatematch/features',
   vision: '/vizyon',
 }
 
@@ -27,14 +28,16 @@ const ROUTES = {
   'skillmatch-ai': 'skillmatch',
   'estatematch': 'estatematch',
   'estatematch-ai': 'estatematch',
+  'estatematch/features': 'estatematchFeatures',
+  'estatematch/ozellikler': 'estatematchFeatures',
   'vizyon': 'vision',
   'vision': 'vision',
 }
 
+/* Kendi SEO'sunu usePageSeo ile yoneten sayfalar burada YOK; boylece
+   sayfa basligi cift kez yazilip birbirini ezmiyor. */
 const TITLES = {
   home: 'SRYVERSE — Operasyonel Karmaşıklıktan Akıllı Sistem Çözümlerine',
-  skillmatch: 'SkillMatch AI — Recruitment Intelligence | SRYVERSE',
-  estatematch: 'EstateMatch AI — Real Estate Intelligence | SRYVERSE',
   vision: 'Vizyon & Misyon | SRYVERSE',
 }
 
@@ -55,7 +58,8 @@ export default function useRoute() {
 
   // Sekme basligi
   useEffect(() => {
-    document.title = TITLES[page] || TITLES.home
+    const t = TITLES[page]
+    if (t) document.title = t
   }, [page])
 
   /**
