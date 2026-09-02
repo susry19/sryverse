@@ -274,6 +274,31 @@ export default function App() {
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
+  /* Mobil menü sözleşmesi: Escape kapatır, odak menü içinde döner,
+     gövde kaydırması kilitlenir ve kapanınca geri gelir. */
+  const navRef = useRef(null)
+  const burgerRef = useRef(null)
+  useEffect(() => {
+    if (!menuOpen) return
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const nav = navRef.current
+    const odaklanabilir = () => nav ? [...nav.querySelectorAll('a[href],button:not([disabled])')] : []
+    const ilk = odaklanabilir()[0]
+    if (ilk) ilk.focus()
+    const onKey = (e) => {
+      if (e.key === 'Escape') { setMenuOpen(false); burgerRef.current?.focus(); return }
+      if (e.key !== 'Tab') return
+      const list = [...odaklanabilir(), burgerRef.current].filter(Boolean)
+      if (!list.length) return
+      const i = list.indexOf(document.activeElement)
+      if (e.shiftKey && (i <= 0)) { e.preventDefault(); list[list.length - 1].focus() }
+      else if (!e.shiftKey && i === list.length - 1) { e.preventDefault(); list[0].focus() }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow }
+  }, [menuOpen])
+
   const go = useCallback((target) => {
     setMenuOpen(false)
     if (target === 'vision') { setPage('vision'); return }
@@ -296,10 +321,10 @@ export default function App() {
   ]
 
   const estateNav = [
-    {label:'Görüş alanı', target:'#alan'},
-    {label:'Gerekçe',     target:'#neden'},
-    {label:'Motor',       target:'#motor'},
-    {label:'Ürün',        target:'#urun'},
+    {label:'Match',      target:'#match'},
+    {label:'Ürün',       target:'#urun'},
+    {label:'Özellikler', target:'#ozellikler'},
+    {label:'Yönetim',    target:'#yonetim'},
   ]
 
   const goDemo = useCallback(() => {
@@ -333,7 +358,7 @@ export default function App() {
               <span className="hdr__tag" lang="en">Digital Transformation &amp; AI</span>
             </span>
           </a>
-          <nav className={`hdr__nav${menuOpen?' hdr__nav--open':''}`}>
+          <nav ref={navRef} id="site-nav" className={`hdr__nav${menuOpen?' hdr__nav--open':''}`} aria-label="Site gezinmesi">
             {page === 'estatematch'
               ? estateNav.map(n => <a key={n.label} href={n.target} className="nlink" onClick={e=>{e.preventDefault(); goInPage(n.target)}}>{n.label}</a>)
               : nav.map(n => <a key={n.label} href={n.target==='vision'?'/vizyon':n.target} className={`nlink${(n.target==='vision'&&page==='vision') ? ' nlink--cur' : ''}`} onClick={e=>{e.preventDefault(); go(n.target)}}>{n.label}</a>)}
@@ -348,7 +373,7 @@ export default function App() {
               </>
             )}
           </div>
-          <button className={`burger${menuOpen?' burger--x':''}`} onClick={()=>setMenuOpen(!menuOpen)} aria-label="Menü">
+          <button ref={burgerRef} className={`burger${menuOpen?' burger--x':''}`} onClick={()=>setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Menüyü kapat' : 'Menü'} aria-expanded={menuOpen} aria-controls="site-nav">
             <span/><span/><span/>
           </button>
         </div>

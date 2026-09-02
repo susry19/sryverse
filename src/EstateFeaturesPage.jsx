@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useCallback } from 'react'
 import { usePageSeo, usePageSchema } from './pageParts.jsx'
-import './EstateMatch.css'
+import './EstateFeatures.css'
 
 /* ════════════════════════════════════════════════════════════
    /estatematch/features — detay isteyen kullanıcı için.
