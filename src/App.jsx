@@ -321,10 +321,10 @@ export default function App() {
   ]
 
   const estateNav = [
-    {label:'Match',      target:'#match'},
-    {label:'Ürün',       target:'#urun'},
-    {label:'Özellikler', target:'#ozellikler'},
-    {label:'Yönetim',    target:'#yonetim'},
+    {label:'Hikâye',     target:'#hikaye'},
+    {label:'Eşleşme',    target:'#eslesme'},
+    {label:'Süreç',      target:'#surec'},
+    {label:'Özellikler', target:'features'},
   ]
 
   const goDemo = useCallback(() => {
@@ -337,6 +337,7 @@ export default function App() {
 
   const goInPage = useCallback((target) => {
     setMenuOpen(false)
+    if (target === 'features') { setPage('estatematchFeatures'); return }
     document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
@@ -360,7 +361,7 @@ export default function App() {
           </a>
           <nav ref={navRef} id="site-nav" className={`hdr__nav${menuOpen?' hdr__nav--open':''}`} aria-label="Site gezinmesi">
             {page === 'estatematch'
-              ? estateNav.map(n => <a key={n.label} href={n.target} className="nlink" onClick={e=>{e.preventDefault(); goInPage(n.target)}}>{n.label}</a>)
+              ? estateNav.map(n => <a key={n.label} href={n.target === 'features' ? '/estatematch/features' : n.target} className="nlink" onClick={e=>{e.preventDefault(); goInPage(n.target)}}>{n.label}</a>)
               : nav.map(n => <a key={n.label} href={n.target==='vision'?'/vizyon':n.target} className={`nlink${(n.target==='vision'&&page==='vision') ? ' nlink--cur' : ''}`} onClick={e=>{e.preventDefault(); go(n.target)}}>{n.label}</a>)}
           </nav>
           <div className="hdr__act">

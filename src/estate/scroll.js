@@ -78,3 +78,11 @@ export function useTablet() {
   useEffect(() => { const m = window.matchMedia('(max-width: 1279px)'); const f = () => setV(oku()); m.addEventListener('change', f); return () => m.removeEventListener('change', f) }, [])
   return v
 }
+
+/* Genel medya sorgusu */
+export function useMedia(q) {
+  const oku = () => typeof window !== 'undefined' && window.matchMedia(q).matches
+  const [v, setV] = useState(oku)
+  useEffect(() => { const m = window.matchMedia(q); const f = () => setV(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f) }, [q])
+  return v
+}
