@@ -72,7 +72,7 @@
 .st-cust__lbl span{font-size:13px;color:var(--c-ink-3)}
 
 /* sinyaller */
-.st-sig{position:absolute;display:flex;align-items:center;gap:.65rem;z-index:3;white-space:nowrap}
+.st-sig{position:absolute;display:flex;align-items:center;gap:.65rem;z-index:7;white-space:nowrap}
 .st-sig__ico{width:44px;height:44px;border-radius:50%;background:var(--c-white);border:1px solid var(--c-forest-line);color:var(--c-forest);display:grid;place-items:center;box-shadow:var(--sh-1);transition:background 300ms var(--e),color 300ms var(--e)}
 .st-sig.is-hot .st-sig__ico{background:var(--c-forest);color:#fff}
 .st-sig__t{font-size:14px;font-weight:500}
@@ -233,7 +233,7 @@
 @keyframes stCue{0%{transform:translateY(-6px);opacity:0}25%{opacity:1}80%{opacity:1}100%{transform:translateY(40px);opacity:0}}
 .st-field{fill:none;stroke:var(--c-forest-line);stroke-width:1;stroke-dasharray:3 4}
 /* talep bloğu: söylenen kriter · danışman notu · sistem yorumu ayrımı */
-.st-sent{position:absolute;margin:0;z-index:3;display:grid;gap:.55rem;transition:none}
+.st-sent{position:absolute;margin:0;z-index:7;display:grid;gap:.55rem;transition:none}
 .st-sent blockquote{margin:0;font-family:var(--fd);font-size:clamp(17px,1.3vw,20px);line-height:1.35;color:var(--c-ink)}
 .st-sent blockquote p{margin:0}
 .st-tag{display:inline-block;font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--c-ink-3);margin-right:.4rem}
@@ -241,7 +241,7 @@
 .st-kriter > span:not(.st-tag){font-size:13px;font-weight:500;padding:.2rem .5rem;border:1px solid var(--c-line);border-radius:6px;background:var(--c-white);color:var(--c-ink)}
 .st-not{margin:0;font-size:14px;line-height:1.45;color:var(--c-ink-2)}
 .st-not .st-tag{display:block;margin:0 0 .1rem}
-.st-tag--sig{position:absolute;z-index:2;white-space:nowrap}
+.st-tag--sig{position:absolute;z-index:7;white-space:nowrap}
 .mp-oz{margin:.2rem 0 0;font-size:14px;color:var(--c-ink-2)}
 .mp-oz b{color:var(--c-ink);font-weight:500}
 .mp-row__t > span{display:grid;line-height:1.2;min-width:0}
