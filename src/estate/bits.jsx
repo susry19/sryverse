@@ -36,6 +36,11 @@ const ICON = {
   flag: 'M6 21V4h11l-2 4 2 4H6',
   pie: 'M12 3a9 9 0 1 0 9 9h-9z M12 3v9h9',
   note: 'M6 3h9l4 4v14H6zM9 12h6M9 16h4',
+  shield: 'M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z M9 12l2 2 4-4',
+  road: 'M5 21L9 3h6l4 18M12 6v3M12 12v3M12 18v3M7 21h10',
+  mail: 'M3 6h18v12H3zM3 7l9 6 9-6',
+  phone: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2',
+  plus: 'M12 5v14M5 12h14',
 }
 export function Ico({ n, size = 20 }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={ICON[n]} /></svg>

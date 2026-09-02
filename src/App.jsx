@@ -321,10 +321,11 @@ export default function App() {
   ]
 
   const estateNav = [
-    {label:'Hikâye',     target:'#hikaye'},
-    {label:'Eşleşme',    target:'#eslesme'},
-    {label:'Süreç',      target:'#surec'},
-    {label:'Özellikler', target:'features'},
+    {label:'Hikâye',          target:'#hikaye'},
+    {label:'Nasıl Çalışır?',  target:'#nasil-calisir'},
+    {label:'Kimler İçin?',    target:'#kimler-icin'},
+    {label:'Merak Edilenler', target:'#sss'},
+    {label:'İletişim',        target:'#iletisim'},
   ]
 
   const goDemo = useCallback(() => {
@@ -338,7 +339,15 @@ export default function App() {
   const goInPage = useCallback((target) => {
     setMenuOpen(false)
     if (target === 'features') { setPage('estatematchFeatures'); return }
-    document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' })
+    const el = document.querySelector(target); if (!el) return
+    const hdrH = document.querySelector('.hdr')?.offsetHeight || 78
+    const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const top = el.getBoundingClientRect().top + window.scrollY - (el.classList.contains('st-anchor') ? 0 : hdrH)
+    window.scrollTo({ top, behavior: rm ? 'auto' : 'smooth' })
+    /* gezinme sonrası odak: başlık yüksekliği hesaba katılmış hedefe */
+    const odak = el.querySelector('h1,h2,[tabindex="-1"]') || el
+    if (!odak.hasAttribute('tabindex')) odak.setAttribute('tabindex', '-1')
+    window.setTimeout(() => odak.focus({ preventScroll: true }), rm ? 50 : 650)
   }, [])
 
   return (
