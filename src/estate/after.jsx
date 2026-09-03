@@ -22,10 +22,27 @@ function Sec({ id, cls = '', labelledBy, children }) { const ref = useEnter(); r
 export function Bridge() {
   return (
     <Sec id="devam" cls="af-bridge" labelledBy="af-bridge-h">
-      <div className="af-wrap">
+      <div className="af-wrap af-bridge__in">
         <span className="af-dot" aria-hidden="true" />
-        <h2 id="af-bridge-h" className="af-h2">Bir eşleşmeden daha fazlası.</h2>
-        <p className="af-lead">Bu ilişkinin etrafında dönen bütün süreci dört adımda görelim.</p>
+        <h2 id="af-bridge-h" className="af-h3">Bir eşleşmeden daha fazlası.</h2>
+      </div>
+    </Sec>)
+}
+
+const GUVEN = [
+  ['Açıklanabilir eşleşme', 'Her öneri, dayandığı müşteri önceliklerini ve değerlendirilmesi gereken farkı birlikte gösterir.'],
+  ['Rol bazlı görünürlük', 'Danışman, yönetici ve ofis kapsamları ayrı yönetilir; herkes yetkisi kadarını görür.'],
+  ['Danışman kontrolü', 'Öncelikleri düzenleme, alternatifleri karşılaştırma ve nihai öneri danışmanda kalır.'],
+]
+export function Trust() {
+  return (
+    <Sec id="guven" cls="af-trust" labelledBy="af-trust-h">
+      <div className="af-wrap">
+        <p className="af-kicker"><span className="af-dot" aria-hidden="true" />İnsan kontrolü</p>
+        <h2 id="af-trust-h" className="af-h2 af-trust__h">Teknoloji ihtimalleri genişletir.<br />Kararın kontrolü insanda kalır.</h2>
+        <ol className="af-trust__list">
+          {GUVEN.map(([t, d], i) => <li key={t}><span className="af-num">0{i + 1}</span><h3>{t}</h3><p>{d}</p></li>)}
+        </ol>
       </div>
     </Sec>)
 }
@@ -39,8 +56,14 @@ export function Audience() {
   return (
     <Sec id="kimler-icin" cls="af-aud" labelledBy="af-aud-h">
       <div className="af-wrap">
-        <p className="af-kicker">Kimler için</p>
+        <p className="af-kicker"><span className="af-dot" aria-hidden="true" />Kimler için</p>
         <h2 id="af-aud-h" className="af-h2">Gayrimenkul işini yalnızca portföylerle değil, müşteri ilişkileriyle yöneten ekipler için.</h2>
+        <svg className="af-branch" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M150 0 V12" />
+          <path d="M150 12 C150 28, 50 24, 50 40" />
+          <path d="M150 12 V40" />
+          <path d="M150 12 C150 28, 250 24, 250 40" />
+        </svg>
         <div className="af-cols af-cols--3">
           {KITLE.map(([t, d]) => <div key={t} className="af-col"><h3>{t}</h3><p>{d}</p></div>)}
         </div>
@@ -66,6 +89,7 @@ export function Faq() {
     <Sec id="sss" cls="af-faq" labelledBy="af-faq-h">
       <div className="af-wrap">
         <div className="af-faq__head">
+          <p className="af-kicker"><span className="af-dot" aria-hidden="true" />Merak edilenler</p>
           <h2 id="af-faq-h" className="af-h2">EstateMatch hakkında merak edilenler</h2>
           <p className="af-lead">Ürünün çalışma şekli, kullanım alanları ve danışman kontrolü hakkında kısa yanıtlar.</p>
         </div>
@@ -135,7 +159,7 @@ export function Contact() {
     <Sec id="iletisim" cls="af-contact" labelledBy="af-contact-h">
       <div className="af-wrap af-contact__in">
         <div className="af-contact__l">
-          <p className="af-kicker">Demo ve iletişim</p>
+          <p className="af-kicker"><span className="af-dot" aria-hidden="true" />Demo ve iletişim</p>
           <h2 id="af-contact-h" className="af-h2">EstateMatch’i kendi iş akışınız üzerinde görün.</h2>
           <p className="af-lead">Müşteri, portföy ve takip sürecinizi dinleyelim; EstateMatch’in ekibinizde nasıl çalışacağını gerçek bir senaryo üzerinden gösterelim.</p>
           <ol className="af-steps">

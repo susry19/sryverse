@@ -2,7 +2,7 @@ import { useEffect, useMemo, useCallback } from 'react'
 import { usePageSeo, usePageSchema } from './pageParts.jsx'
 import './EstateMatch.css'
 import Story from './estate/story.jsx'
-import { Bridge, Audience, Faq, Contact } from './estate/after.jsx'
+import { Bridge, Audience, Trust, Faq, Contact } from './estate/after.jsx'
 import HowItWorks from './estate/howitworks.jsx'
 
 /* EstateMatch by SRYVERSE — tek sahneli hikâye, ardından sıradan akış.
@@ -29,6 +29,7 @@ export default function EstateMatchPage({ goBack, onDemo, onFeatures }) {
         <Bridge />
         <HowItWorks onFeatures={onFeatures} />
         <Audience />
+        <Trust />
         <Faq />
         <Contact />
       </div>
