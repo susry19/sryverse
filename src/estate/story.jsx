@@ -12,7 +12,9 @@ import { Villa } from './villa.jsx'
 const sm = (p, a, b) => yumusa(kapi(p, a, b))
 const mix = (a, b, t) => a + (b - a) * t
 const rnd = s => { const x = Math.sin(s * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x) }
+const ALAN = (() => { const o = []; for (let y = -3; y <= 3; y++) for (let x = -3; x <= 3; x++) { const d = Math.hypot(x, y) / 3; if (d <= 1.02) o.push([x / 3.2, y / 3.2]) } return o })()
 const b8Pre = p => yumusa(kapi(p, .94, .97))
+const MARKA = .10 /* ilk %10: SRYVERSE marka açılışı; ürün hikâyesi bundan sonra başlar */
 let WF = .015
 const win = (p, a, b, f = WF) => f <= 0 ? (p >= a && p < b ? 1 : 0) : sm(p, a, a + f) * (1 - sm(p, b - f, b))
 
@@ -81,10 +83,11 @@ export default function Story({ onDemo, onFeatures }) {
   const L = mobile ? LAY.mob : tablet ? LAY.tab : LAY.desk
   WF = rm ? 0 : .015
   const REC = useMemo(() => buildRecords(mobile), [mobile])
-  const [p, setP] = useState(0)
+  const [p0, setP] = useState(0)
   const [size, setSize] = useState({ w: 1280, h: 720 })
   const [manual, setManual] = useState(null) /* danışmanın elle değiştirdiği öncelik */
-  useTrack(trackRef, v => { const q = rm ? Math.round(v * 48) / 48 : Math.round(v * 1000) / 1000; setP(x => x === q ? x : q) })
+  const p = kapi(p0, MARKA, 1) /* ürün hikâyesinin kendi ilerlemesi: mevcut zaman çizelgesi korunur */
+  useTrack(trackRef, v => { const q = rm ? Math.round(v * 96) / 96 : Math.round(v * 1000) / 1000; setP(x => x === q ? x : q) })
   useEffect(() => { const el = stRef.current; if (!el) return; const ro = new ResizeObserver(() => setSize({ w: el.clientWidth, h: el.clientHeight })); ro.observe(el); return () => ro.disconnect() }, [])
   const { w, h } = size
   const X = x => x / 100 * w, Y = y => y / 100 * h
@@ -101,8 +104,11 @@ export default function Story({ onDemo, onFeatures }) {
   const uPt = ({ u, v }) => [uni.x0 + u * (uni.x1 - uni.x0), uni.y0 + v * (uni.y1 - uni.y0)]
 
   /* ── vuruş değerleri ── */
-  const hero = 1 - sm(p, .04, .07) /* ilk kare: yalnızca kimlik, cümle, davet */
-  const custIn = sm(p, .05, .10) /* müşteri, başlangıç noktasından belirir */
+  const markaVis = 1 - sm(p0, .055, .095) /* marka ifadesi sahneden çekilir */
+  const markaAlan = 1 - sm(p0, .07, .115) /* iki bağımsız nokta ve eksik ilişki hattı */
+  const heroIn = sm(p0, .07, .115) /* hikâye başlığı marka cümlesinin yerini alır */
+  const hero = heroIn * (1 - sm(p, .10, .14))
+  const custIn = sm(p, .02, .075) /* marka noktası, hikâye başlarken Aylin Hanım'a dönüşür */
   const openUni = mix(.7, 1, sm(p, .44, .48))
   const uniFade = 1 - sm(p, .64, .70) * .85
   const countStage = p < .50 ? -1 : p < .535 ? 0 : p < .575 ? 1 : p < .62 ? 2 : 3
@@ -151,11 +157,11 @@ export default function Story({ onDemo, onFeatures }) {
     P.push({ d: curve(from, pts[0], .2), t: sm(p, .84, .87), o: sm(p, .84, .85), w: 1.2 })
     P.push({ d: `M${pts[0][0]} ${pts[0][1]} L${pts[1][0]} ${pts[1][1]}`, t: sm(p, .87, .905), o: sm(p, .86, .87), w: 1.2 })
     P.push({ d: `M${pts[1][0]} ${pts[1][1]} L${pts[2][0]} ${pts[2][1]}`, t: sm(p, .905, .94), o: sm(p, .9, .905), w: 1.2 }) }
-
-  const PAIR = [['İnsan', 'mekân'], ['İhtiyaç', 'ihtimal'], ['Bugün', 'gelecek']]
+const PAIR = [['İnsan', 'mekân'], ['İhtiyaç', 'ihtimal'], ['Bugün', 'gelecek']]
   const pairPts = [.28, .52, .76].map(t => onCurve(cust, uc, t, .35))
   const phase = p < .48 ? 0 : p < .76 ? 1 : 2
   const goTo = frac => { const el = trackRef.current; if (!el) return; const top = el.getBoundingClientRect().top + window.scrollY; window.scrollTo({ top: top + frac * (el.offsetHeight - window.innerHeight), behavior: rm ? 'auto' : 'smooth' }) }
+  const goStory = f => goTo(MARKA + f * (1 - MARKA))
   const fieldR = Math.min(w, h) * (mobile ? .12 : .1)
 
   /* danışman notu, paylaşım, randevu, görev, geçmiş, rapor */
@@ -171,27 +177,33 @@ export default function Story({ onDemo, onFeatures }) {
   const ADAY = [{ k: 'altinkale', row: 0, sel: true, pct: 92 }, { k: 'yenikoy', row: mix(1, 2, swap), pct: Math.round(mix(87, 85, swap)) }, { k: 'duzlercami', row: mix(2, 1, swap), pct: Math.round(mix(84, 88, swap)) }]
 
   return (
-    <div className={`st-track${rm ? ' is-rm' : ''}`} ref={trackRef} style={{ height: mobile ? '820svh' : '1000svh' }}>
-      {[['hikaye', 0], ['ihtiyac', .30], ['eslesme', .64], ['surec', .84]].map(([id, f]) => <div key={id} id={id} className="st-anchor" style={{ top: `calc(${f * 100}% - ${f} * 100svh)` }} aria-hidden="true" />)}
+    <div className={`st-track${rm ? ' is-rm' : ''}`} ref={trackRef} style={{ height: mobile ? '920svh' : '1120svh' }}>
+      {[['hikaye', 0], ['ihtiyac', .37], ['eslesme', .676], ['surec', .856]].map(([id, f]) => <div key={id} id={id} className="st-anchor" style={{ top: `calc(${f * 100}% - ${f} * 100svh)` }} aria-hidden="true" />)}
       <div className="st" data-phase={phase}><div className="st-in" ref={stRef}>
         {/* ── ifade alanı: her an tek büyük cümle ── */}
         <div className="st-txt" style={{ left: `${L.txt[0]}%`, top: `${L.txt[1]}%`, width: `${L.txt[2]}%` }}>
-          <Say on={hero} cls="st-say--hero">
+          <Say on={markaVis} cls="st-say--hero st-say--marka">
             <p className="st-eyebrow"><img src="/sryverse-icon.png" alt="" width="18" height="18" />EstateMatch <span>by SRYVERSE</span></p>
-            <h1 className="st-h">Sometimes people find<br />the right place.</h1>
-            <p className="st-sub">EstateMatch, müşteriler ve portföyler arasındaki görünmeyen ilişkileri keşfeder.</p>
-            <button type="button" className="st-cue" onClick={() => goTo(.31)}><span className="st-cue__line" aria-hidden="true"><i /></span>Nasıl çalıştığını keşfet</button>
+            <h1 className="st-h st-h--marka">Tesadüfü üretmiyoruz.<br /><em style={{ opacity: .58 + .42 * sm(p0, .02, .05) }}>Onu fark etme ihtimalini artırıyoruz.</em></h1>
+            <p className="st-sub">EstateMatch; müşteri ihtiyacını, danışman deneyimini ve portföy verisini aynı bağlamda değerlendirerek görünmeyen eşleşmeleri görünür kılar.</p>
+            <button type="button" className="st-cue" onClick={() => goStory(.31)}><span className="st-cue__line" aria-hidden="true"><i /></span>Bir eşleşmenin nasıl oluştuğunu görün</button>
           </Say>
-          <Say on={win(p, .06, .18)}><p className="st-h" lang="en">Sometimes the right place<br /><em>should find them.</em></p></Say>
-          <Say on={win(p, .18, .24)}><p className="st-h2">Match, <span className="st-eq">müşteri = ilan</span> değildir.</p></Say>
-          <Say on={win(p, .24, .31)}><p className="st-h2">Yan yana geldiklerinde daha fazla anlam kazanan iki şeydir.</p></Say>
-          <Say on={win(p, .31, .50)}><p className="st-lbl">İhtiyaç · {MUSTERI}</p><p className="st-sub">Söylenen kriter, danışman notu ve sistem yorumu ayrı tutulur. EstateMatch dört bağlam sinyali türetir.</p></Say>
-          <Say on={win(p, .50, .575)}><p className="st-h2">Tesadüfü üretmiyoruz.</p></Say>
-          <Say on={win(p, .575, .64)}><p className="st-h2">Onu fark etme ihtimalini artırıyoruz.</p></Say>
-          <Say on={win(p, .64, .76)}><p className="st-lbl">Eşleşme</p><p className="st-sub">Sonuç bir yüzde değil; nedenleri ve ödünleşimi görünen bir ilişki.</p></Say>
-          <Say on={win(p, .76, .805)}><p className="st-lbl">Karşılaştırma · danışman kararı</p><p className="st-sub">Bir önceliği değiştirin; sıralama cevap verir. Alternatifler listede kalır.</p></Say>
+          <Say on={hero} cls="st-say--hero">
+            <p className="st-lbl">EstateMatch · bir eşleşme</p>
+            <h2 className="st-h" lang="en">Sometimes people find<br />the right place.</h2>
+            <p className="st-sub">EstateMatch, müşteriler ve portföyler arasındaki görünmeyen ilişkileri keşfeder.</p>
+          </Say>
+          <Say on={win(p, .12, .22)}><p className="st-h" lang="en">Sometimes the right place<br /><em>should find them.</em></p></Say>
+          <Say on={win(p, .22, .27)}><p className="st-h2">Match, <span className="st-eq">müşteri = ilan</span> değildir.</p></Say>
+          <Say on={win(p, .27, .31)}><p className="st-h2">Yan yana geldiklerinde daha fazla anlam kazanan iki şeydir.</p></Say>
+          <Say on={win(p, .31, .50)}><p className="st-h3">Bir talep, kriterlerden daha fazlasını taşır.</p><p className="st-sub">EstateMatch; müşterinin söylediklerini, danışman notunu ve portföy verisini birbirine karıştırmadan aynı bağlamda değerlendirir.</p></Say>
+          <Say on={win(p, .50, .575)}><p className="st-h3">Binlerce portföy. Tek bir bağlam.</p><p className="st-sub">Konum, bütçe ve oda sayısının ötesinde; mahremiyet, erişim ve değer dengesi gibi ilişkileri birlikte değerlendirir.</p></Say>
+          <Say on={win(p, .575, .64)} cls="st-say--geri"><p className="st-lbl"><span className="st-geri" aria-hidden="true" />Baştaki cümle</p><p className="st-h3">Tesadüfü üretmiyoruz.<br /><em>Onu fark etme ihtimalini artırıyoruz.</em></p></Say>
+          <Say on={win(p, .64, .76)}><p className="st-h3">Bir sonuç değil, açıklanabilir bir eşleşme.</p><p className="st-sub">EstateMatch yalnızca hangi portföyün öne çıktığını değil, neden öne çıktığını ve hangi noktaların değerlendirilmesi gerektiğini gösterir.</p></Say>
+          <Say on={win(p, .76, .805)}><p className="st-h3">Öncelik değiştiğinde, değerlendirme de değişir.</p><p className="st-sub">Danışman müşteri önceliklerini düzenler, alternatifleri karşılaştırır ve kararın kontrolünü elinde tutar.</p></Say>
           <Say on={win(p, .805, .84)}><p className="st-h2">EstateMatch karar vermez.<br />Göremediğiniz ihtimalleri görünür kılar.</p></Say>
-          <Say on={win(p, .84, .94)}><p className="st-h2">Doğru eşleşme bulunduğunda bitmez.<br />İlişkiye dönüştüğünde değer kazanır.</p></Say>
+          <Say on={win(p, .84, .905)}><p className="st-h3">Eşleşme, sürecin yalnızca başlangıcıdır.</p><p className="st-sub">Paylaşım, randevu, görev, müşteri geçmişi ve takip adımları aynı ilişki üzerinde ilerler.</p></Say>
+          <Say on={win(p, .905, .94)}><p className="st-h3">İlişkiler sürece, süreç görünürlüğe dönüşür.</p><p className="st-sub">Yöneticiler müşteri aşamalarını, portföy hareketlerini, bekleyen takipleri ve danışman aktivitelerini tek yerden izler.</p></Say>
           <Say on={sm(p, .94, .965)} cls="st-say--hero">
             <h2 className="st-h" lang="en">Some places are searched for.<br />Others are discovered.</h2>
             <p className="st-sub">EstateMatch, müşteriyi anlamaktan doğru ihtimali keşfetmeye; paylaşmaktan takibe kadar bütün danışmanlık sürecini tek yerde birleştirir.</p>
@@ -201,16 +213,22 @@ export default function Story({ onDemo, onFeatures }) {
 
         {/* ── ilişki yolları ── */}
         <svg className="st-paths" width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden="true">
-          {/* ihtimal alanı: ilk karede soyut, evren oluştukça çekilir */}
-          <circle cx={uc[0]} cy={uc[1]} r={fieldR} className="st-field" style={{ opacity: .9 * (1 - sm(p, .12, .30)) }} />
-          <circle cx={uc[0]} cy={uc[1]} r={fieldR * .55} className="st-field" style={{ opacity: .5 * (1 - sm(p, .12, .30)) }} />
-          {P.map((q, i) => <path key={i} d={q.d} pathLength="1" strokeDasharray={q.dash ? '.02 .012' : '1'} strokeDashoffset={q.dash ? 0 : 1 - q.t} style={{ opacity: q.dash ? q.o * q.t : q.o }} className={q.strong ? 'is-strong' : ''} strokeWidth={q.w} />)}
-          {pairPts.map((pt, i) => <circle key={i} cx={pt[0]} cy={pt[1]} r="3" style={{ opacity: win(p, .24 + i * .012, .30, .012) }} className="is-strong" />)}
-          {/* başlangıç noktası: kişi */}
+          {/* ihtimal alanı: küçük kare birimlerden oluşan soluk bir alan; evren oluştukça çekilir */}
+          <g className="st-units" style={{ opacity: markaAlan * (1 - sm(p, .10, .26)) }}>
+            {ALAN.map(([ux, uy], i) => <rect key={i} x={uc[0] + ux * fieldR - 2} y={uc[1] + uy * fieldR - 2} width="4" height="4" style={{ opacity: .25 + .5 * (1 - Math.hypot(ux, uy)) }} />)}
+          </g>
+          <circle cx={uc[0]} cy={uc[1]} r={fieldR * 1.15} className="st-field" style={{ opacity: .55 * markaAlan * (1 - sm(p, .12, .30)) }} />
+          {P.map((q, i) => <path key={i} id={i === 0 ? 'st-ana' : undefined} d={q.d} pathLength="1" strokeDasharray={q.dash ? '.02 .012' : '1'} strokeDashoffset={q.dash ? 0 : 1 - q.t} style={{ opacity: q.dash ? q.o * q.t : q.o }} className={q.strong ? 'is-strong' : ''} strokeWidth={q.w} />)}
+          {pairPts.map((pt, i) => <circle key={i} cx={pt[0]} cy={pt[1]} r="3" style={{ opacity: win(p, .27 + i * .01, .305, .012) }} className="is-strong" />)}
+          {/* iki bağımsız nokta: biri kişi, diğeri ihtimal alanı */}
           <circle cx={cust[0]} cy={cust[1]} r="4" className="is-strong" style={{ opacity: 1 - custIn }} />
+          <circle cx={uc[0]} cy={uc[1]} r="4" className="is-strong" style={{ opacity: markaAlan * (1 - sm(p, .10, .26)) }} />
+          {!rm && <circle r="3.5" className="st-signal" style={{ opacity: markaAlan * .9 }}>
+            <animateMotion dur="5.2s" repeatCount="indefinite" keyPoints="0;0.62;0.62;0" keyTimes="0;0.45;0.55;1" calcMode="spline" keySplines=".4 0 .2 1;0 0 1 1;.4 0 .2 1"><mpath href="#st-ana" /></animateMotion>
+          </circle>}
           <circle cx={sentA[0]} cy={sentA[1]} r="3.5" className="is-strong" style={{ opacity: sm(p, .32, .34) * leftFade }} />
         </svg>
-        {PAIR.map((c, i) => <span key={c[0]} className="st-pair" style={{ left: pairPts[i][0], top: pairPts[i][1], opacity: win(p, .245 + i * .012, .30, .012) }} aria-hidden="true">{c[0]} <b>+</b> {c[1]}</span>)}
+        {PAIR.map((c, i) => <span key={c[0]} className="st-pair" style={{ left: pairPts[i][0], top: pairPts[i][1], opacity: win(p, .275 + i * .01, .305, .012) }} aria-hidden="true">{c[0]} <b>+</b> {c[1]}</span>)}
 
         {/* ── müşteri: başlangıç noktasından belirir ── */}
         <div className="st-cust" style={{ left: cust[0], top: cust[1], opacity: custIn * leftFade, transform: `translate(-50%,-50%) scale(${mix(.35, 1, custIn)})` }} aria-hidden={custIn < .5}>
@@ -219,12 +237,12 @@ export default function Story({ onDemo, onFeatures }) {
         </div>
         <div className="st-sent" style={{ left: `${L.sent[0]}%`, top: `${L.sent[1]}%`, width: `${L.sent[2]}%`, opacity: talep * (1 - b8Pre(p)) * (mobile ? 1 - sm(p, .64, .68) : 1) }} aria-hidden={p < .31 || p > .95}>
           <blockquote><p>“{IHTIYAC}”</p></blockquote>
-          <div className="st-kriter" aria-label="Müşterinin söylediği kriterler"><span className="st-tag">Söylenen kriter</span>{KRITER.map(k => <span key={k}>{k}</span>)}</div>
-          <p className="st-not"><span className="st-tag">Danışman notu</span>{NOT}</p>
+          <div className="st-kriter" aria-label="Müşterinin söylediği kriterler"><span className="st-tag">Müşterinin söylediği</span>{KRITER.map(k => <span key={k}>{k}</span>)}</div>
+          <p className="st-not"><span className="st-tag">Danışmanın eklediği</span>{NOT}</p>
         </div>
 
         {/* ── dört bağlam sinyali: sistem yorumu ── */}
-        <span className="st-tag st-tag--sig" style={{ left: sig[0][0] - icoR, top: sig[0][1] - icoR - 18, opacity: sm(p, .33, .36) * leftFade }} aria-hidden="true">Sistem yorumu</span>
+        <span className="st-tag st-tag--sig" style={{ left: sig[0][0] - icoR, top: sig[0][1] - icoR - 18, opacity: sm(p, .33, .36) * leftFade }} aria-hidden="true">EstateMatch’in yorumladığı</span>
         {SIGNAL.map(([t, ico], i) => { const on = sm(p, .34 + i * .025, .37 + i * .025); const hot = countStage >= 0
           return <div key={t} className={`st-sig${hot ? ' is-hot' : ''}`} style={{ left: sig[i][0], top: sig[i][1], opacity: on * leftFade, transform: `translate(${-icoR}px,-50%) translateX(${(1 - on) * -10}px)` }} aria-hidden={on < .5}><span className="st-sig__ico"><Ico n={ico} /></span><span className="st-sig__t">{t}</span></div> })}
 
@@ -286,7 +304,7 @@ export default function Story({ onDemo, onFeatures }) {
         {L.path && [['share', 'Paylaş', 'WhatsApp veya e-posta ile'], ['flag', 'Takip et', 'Randevu, görev, hatırlatma'], ['pie', 'Raporla', 'Süreç görünür olur']].map(([ico, t, d], i) => { const pt = px(L.path[i]); const on = sm(p, [.855, .895, .93][i], [.87, .91, .945][i])
           return <div key={t} className="st-stop" style={{ left: pt[0], top: pt[1], opacity: on }} aria-hidden={on < .5}><span className="st-stop__ico"><Ico n={ico} size={18} /></span><b>{t}</b><small>{d}</small></div> })}
 
-        <ol className="st-phase" aria-label="Hikâye aşaması" style={{ opacity: sm(p, .04, .08) }}>{['İhtiyaç', 'Eşleşme', 'Karar'].map((t, i) => <li key={t} className={i === phase ? 'is-on' : i < phase ? 'is-past' : ''}><button type="button" tabIndex={p < .06 ? -1 : 0} onClick={() => goTo([.31, .66, .86][i])}>{t}</button></li>)}</ol>
+        <ol className="st-phase" aria-label="Hikâye aşaması" style={{ opacity: sm(p0, .105, .14) }}>{['İhtiyaç', 'Eşleşme', 'Karar'].map((t, i) => <li key={t} className={i === phase ? 'is-on' : i < phase ? 'is-past' : ''}><button type="button" tabIndex={p0 < .12 ? -1 : 0} onClick={() => goStory([.31, .66, .86][i])}>{t}</button></li>)}</ol>
       </div></div>
     </div>)
 }

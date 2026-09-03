@@ -25,22 +25,22 @@ export function Bridge() {
       <div className="af-wrap">
         <span className="af-dot" aria-hidden="true" />
         <h2 id="af-bridge-h" className="af-h2">Bir eşleşmeden daha fazlası.</h2>
-        <p className="af-lead">Müşteriyi anlamaktan portföyü keşfetmeye; paylaşmaktan takibe kadar bütün danışmanlık süreci tek yerde.</p>
+        <p className="af-lead">Bu ilişkinin etrafında dönen bütün süreci dört adımda görelim.</p>
       </div>
     </Sec>)
 }
 
 const KITLE = [
-  ['Emlak danışmanları', 'Müşteri ihtiyacını daha doğru anlayın, anlamlı seçenekleri karşılaştırın ve takiplerinizi tek yerde yönetin.'],
-  ['Acenta yöneticileri', 'Portföy hareketlerini, müşteri süreçlerini ve danışman aktivitelerini görünür hâle getirin.'],
-  ['Büyüyen gayrimenkul ekipleri', 'Rol bazlı erişim, ortak portföy yapısı ve standart iş akışlarıyla operasyonunuzu kontrollü biçimde büyütün.'],
+  ['Emlak danışmanları', 'Müşteri ihtiyacını anlayın, güçlü seçenekleri açıklayın ve sonraki adımlarınızı kaybetmeden ilerleyin.'],
+  ['Acenta yöneticileri', 'Portföy hareketlerini, müşteri aşamalarını, danışman aktivitelerini ve bekleyen aksiyonları görün.'],
+  ['Büyüyen gayrimenkul ekipleri', 'Rol bazlı erişim, ortak veri yapısı ve standart iş akışlarıyla operasyonunuzu kontrollü biçimde büyütün.'],
 ]
 export function Audience() {
   return (
     <Sec id="kimler-icin" cls="af-aud" labelledBy="af-aud-h">
       <div className="af-wrap">
         <p className="af-kicker">Kimler için</p>
-        <h2 id="af-aud-h" className="af-h2">Gayrimenkul işini ilişki üzerinden yöneten ekipler için.</h2>
+        <h2 id="af-aud-h" className="af-h2">Gayrimenkul işini yalnızca portföylerle değil, müşteri ilişkileriyle yöneten ekipler için.</h2>
         <div className="af-cols af-cols--3">
           {KITLE.map(([t, d]) => <div key={t} className="af-col"><h3>{t}</h3><p>{d}</p></div>)}
         </div>
@@ -48,25 +48,6 @@ export function Audience() {
     </Sec>)
 }
 
-const OZET = [
-  ['Anlayın', 'Müşteri ihtiyacını, tercihleri ve danışman notlarını aynı bağlamda değerlendirin.'],
-  ['Keşfedin', 'Portföyler arasındaki anlamlı ilişkileri ve değerlendirilmesi gereken farkları görün.'],
-  ['Yönetin', 'Paylaşım, iletişim, randevu, görev ve takip süreçlerini tek yerde sürdürün.'],
-  ['Ölçün', 'Portföy hareketlerini, müşteri aşamalarını ve danışman aktivitelerini raporlayın.'],
-]
-export function Recap({ onFeatures }) {
-  return (
-    <Sec id="nasil-calisir" cls="af-recap" labelledBy="af-recap-h">
-      <div className="af-wrap">
-        <p className="af-kicker">Nasıl çalışır</p>
-        <h2 id="af-recap-h" className="af-h2">Tek bir eşleşmenin etrafında, bütün süreç.</h2>
-        <ol className="af-cols af-cols--4">
-          {OZET.map(([t, d], i) => <li key={t} className="af-col"><span className="af-num">0{i + 1}</span><h3>{t}</h3><p>{d}</p></li>)}
-        </ol>
-        <p className="af-more"><a href="/estatematch/features" className="em-link" onClick={e => { e.preventDefault(); onFeatures?.() }}>Bütün özellikleri inceleyin</a></p>
-      </div>
-    </Sec>)
-}
 
 const SSS = [
   ['EstateMatch kimler için tasarlandı?', 'EstateMatch; emlak danışmanları, acenta yöneticileri, portföy ekipleri ve büyüyen gayrimenkul organizasyonları için tasarlanmıştır. Müşteri, portföy, eşleşme ve takip süreçlerini ortak bir sistemde birleştirir.'],
@@ -85,9 +66,8 @@ export function Faq() {
     <Sec id="sss" cls="af-faq" labelledBy="af-faq-h">
       <div className="af-wrap">
         <div className="af-faq__head">
-          <p className="af-kicker">Merak edilenler</p>
-          <h2 id="af-faq-h" className="af-h2">Merak edilenler</h2>
-          <p className="af-lead">EstateMatch’in çalışma şekli, kullanımı ve güvenliği hakkında sık sorulan sorular.</p>
+          <h2 id="af-faq-h" className="af-h2">EstateMatch hakkında merak edilenler</h2>
+          <p className="af-lead">Ürünün çalışma şekli, kullanım alanları ve danışman kontrolü hakkında kısa yanıtlar.</p>
         </div>
         <div className="af-acc">
           {SSS.map(([q, a], i) => { const on = open === i; const bid = `${base}-b${i}`, pid = `${base}-p${i}`
@@ -156,10 +136,10 @@ export function Contact() {
       <div className="af-wrap af-contact__in">
         <div className="af-contact__l">
           <p className="af-kicker">Demo ve iletişim</p>
-          <h2 id="af-contact-h" className="af-h2">EstateMatch’i kendi süreciniz üzerinde görün.</h2>
-          <p className="af-lead">Kısa bir görüşmede ekibinizin müşteri, portföy ve takip yapısını dinleyelim; EstateMatch’in sürecinize nasıl uyarlanabileceğini birlikte değerlendirelim.</p>
+          <h2 id="af-contact-h" className="af-h2">EstateMatch’i kendi iş akışınız üzerinde görün.</h2>
+          <p className="af-lead">Müşteri, portföy ve takip sürecinizi dinleyelim; EstateMatch’in ekibinizde nasıl çalışacağını gerçek bir senaryo üzerinden gösterelim.</p>
           <ol className="af-steps">
-            {['İhtiyacınızı dinleyelim', 'Ürünü gerçek bir senaryo üzerinden gösterelim', 'Uygun kullanım yapısını birlikte değerlendirelim'].map((t, i) => <li key={t}><span>0{i + 1}</span>{t}</li>)}
+            {['İş akışınızı anlayalım', 'Ürünü gerçek bir senaryoda gösterelim', 'Ekibinize uygun kullanım yapısını değerlendirelim'].map((t, i) => <li key={t}><span>0{i + 1}</span>{t}</li>)}
           </ol>
           <div className="af-alt">
             <p className="af-kicker">Diğer iletişim yolları</p>
