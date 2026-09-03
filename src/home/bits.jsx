@@ -1,16 +1,13 @@
-/* Ana sayfa yapı taşları: görünürlükte giriş, ilerleme yardımcıları, ürün işareti. */
+/* Ana sayfa yapı taşları: görünürlükte giriş, ilerleme yardımcıları,
+   ürün işareti, gerçek ekran kesiti ve ürün çerçevesi. */
 import { useEffect, useRef } from 'react'
 import { kapi, yumusa } from '../estate/scroll.js'
 
 export const sm = (p, a, b) => yumusa(kapi(p, a, b))
-export const win = (p, a, b, f = .05) => sm(p, a, a + f) * (1 - sm(p, b - f, b))
 export const mix = (a, b, t) => a + (b - a) * t
-/* Deterministik sözde rastgele: her yenilemede aynı kompozisyon */
-export const rnd = s => { const x = Math.sin(s * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x) }
-export const ty = (o, d = 14) => `translate3d(0, ${((1 - o) * d).toFixed(1)}px, 0)`
 
 /* Görünürlükte bir kez `is-in` sınıfı; azaltılmış harekette anında. */
-export function useIn(margin = '0px 0px -10% 0px') {
+export function useIn(margin = '0px 0px -8% 0px') {
   const ref = useRef(null)
   useEffect(() => {
     const el = ref.current; if (!el) return
@@ -26,14 +23,32 @@ export function In({ as: Tag = 'div', className = '', delay = 0, children, ...re
 }
 
 /* Ürün işareti: "EstateMatch · by SRYVERSE" */
-export function Mark({ name, tag }) {
+export function Mark({ name }) {
   return (
     <p className="h-mark">
-      <img src="/sryverse-icon.png" alt="" width="18" height="18" />
+      <img src="/sryverse-icon.png" alt="" width="20" height="20" />
       <span className="h-mark__n">{name}</span>
       <span className="h-mark__by">by SRYVERSE</span>
-      {tag && <span className="h-mark__tag">{tag}</span>}
     </p>)
+}
+
+/* Gerçek ekran görüntüsünden seçilmiş bir bölge: (x, y, cw, ch) doğal
+   boyutu (w, h) olan görselin içinden kesilir; çerçeve oranı cw/ch. */
+export function Crop({ src, w, h, x, y, cw, ch, alt = '', priority = false, className = '' }) {
+  return (
+    <div className={`h-crop ${className}`} style={{ aspectRatio: `${cw} / ${ch}` }}>
+      <img src={src} alt={alt} width={w} height={h} loading={priority ? 'eager' : 'lazy'} decoding="async" draggable="false"
+        style={{ width: `${(w / cw * 100).toFixed(3)}%`, left: `${(-x / cw * 100).toFixed(3)}%`, top: `${(-y / ch * 100).toFixed(3)}%` }} />
+    </div>)
+}
+
+/* Ürün çerçevesi: ince üst çubuk (ürün · ekran adı) ve gövde */
+export function Frame({ title, className = '', children }) {
+  return (
+    <div className={`pf ${className}`}>
+      <div className="pf__bar"><i aria-hidden="true" /><span>{title}</span></div>
+      <div className="pf__body">{children}</div>
+    </div>)
 }
 
 export const WA = 'https://wa.me/905315178170?text=Merhaba%2C%20SRYVERSE%20%C3%BCr%C3%BCnleri%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum.'

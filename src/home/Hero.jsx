@@ -1,45 +1,61 @@
-/* Sahne 01 — Giriş.
-   Tek cümle, tek eylem, tek kaydırma ipucu. Sağda seyrek bir nokta alanı
-   ve içinde tek bir yeşil sinyal: markanın "fark etme" motifi burada
-   başlar, felsefe ve soru sahnelerinde geri döner. */
-import { useMemo, useCallback, useRef } from 'react'
-import { rnd } from './bits.jsx'
+/* 01 — Giriş. Sol: kim olduğumuz ve iki yol. Sağ: SRYVERSE'in gerçekten
+   ürettiği şeylerden üç kesit (EstateMatch eşleştirme, SkillMatch aday
+   havuzu, otomatik iş akışı) derinlikte katmanlanır ve SRYVERSE işaretine
+   bağlanır. Kaydırmayla çok hafif paralaks; başka hareket yok. */
+import { useRef, useState } from 'react'
+import { useReveal } from '../estate/scroll.js'
+import { Crop, Frame } from './bits.jsx'
 
-const SIG = 9, NEAR = 15 /* yeşil sinyal ve ona bağlanan komşu */
+const ADAY = [
+  ['DA', 'Deniz Aksoy', '5 yıl · Antalya', 92],
+  ['MK', 'Mert Kaya', '3 yıl · İstanbul', 84],
+  ['EŞ', 'Elif Şahin', '7 yıl · İzmir', 79],
+]
+const AKIS = ['Talep', 'Eşleşme', 'Randevu', 'Teklif', 'Kapanış']
 
-export default function Hero({ onProducts, onNext }) {
+export default function Hero({ go }) {
   const ref = useRef(null)
-  const pts = useMemo(() => Array.from({ length: 28 }, (_, i) => ({
-    x: 50 + rnd(i) * 48, y: 10 + rnd(i + 40) * 80, r: .11 + rnd(i + 80) * .2, o: .22 + rnd(i + 120) * .34,
-  })), [])
-  const a = pts[SIG], b = pts[NEAR]
-
-  /* masaüstünde alan imleci çok hafif takip eder */
-  const onMove = useCallback(e => {
-    const el = ref.current; if (!el || window.matchMedia('(max-width: 1023px), (prefers-reduced-motion: reduce)').matches) return
-    const r = el.getBoundingClientRect()
-    el.style.setProperty('--px', ((e.clientX - r.left) / r.width - .5).toFixed(3))
-    el.style.setProperty('--py', ((e.clientY - r.top) / r.height - .5).toFixed(3))
-  }, [])
+  const [v, setV] = useState(.5)
+  useReveal(ref, q => { const r = Math.round(q * 100) / 100; setV(x => x === r ? x : r) })
+  const par = (k) => ({ transform: `translate3d(0, ${((v - .5) * k).toFixed(1)}px, 0)` })
 
   return (
-    <section id="baslangic" ref={ref} className="hh" data-theme="dark" aria-labelledby="hh-h" onMouseMove={onMove}>
-      <svg className="hh__field" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        {pts.map((q, i) => i !== SIG && <circle key={i} cx={q.x} cy={q.y} r={q.r} style={{ opacity: q.o }} />)}
-        <path className="hh__link" d={`M${a.x} ${a.y} C${(a.x + b.x) / 2} ${a.y}, ${(a.x + b.x) / 2} ${b.y}, ${b.x} ${b.y}`} pathLength="1" />
-        <circle className="hh__halo" cx={a.x} cy={a.y} r="1.4" />
-        <circle className="hh__sig" cx={a.x} cy={a.y} r=".34" />
-      </svg>
+    <section id="baslangic" ref={ref} className="hh" aria-labelledby="hh-h">
+      <div className="h-wrap hh__in">
+        <div className="hh__txt">
+          <p className="hh__eye" lang="en">AI · Data · Digital Transformation</p>
+          <h1 id="hh-h" className="hh__h">Teknolojiyi işinize eklemiyoruz.<br /><em>İşiniz için anlamlı hâle getiriyoruz.</em></h1>
+          <p className="hh__lead">Yapay zekâ, veri ve otomasyonu gerçek iş problemlerine dönüştüren ürünler ve dijital sistemler geliştiriyoruz.</p>
+          <div className="hh__act">
+            <a href="/#urunler" className="h-cta h-cta--solid" onClick={e => { e.preventDefault(); go('#urunler') }}>Ürünleri keşfet<span aria-hidden="true">→</span></a>
+            <a href="/#yaklasim" className="h-cta" onClick={e => { e.preventDefault(); go('#yaklasim') }}>SRYVERSE ile geliştirin<span aria-hidden="true">→</span></a>
+          </div>
+        </div>
 
-      <div className="hh__in">
-        <p className="hh__eye"><span>SRYVERSE</span><i aria-hidden="true" /><span>Yapay zekâ · Veri · Karar sistemleri</span></p>
-        <h1 id="hh-h" className="hh__h">Fark edilmeyeni <em>fark eden</em><br className="br-d" /> sistemler kuruyoruz.</h1>
-        <p className="hh__lead">Sinyalleri gören, ilişkileri anlayan ve kararı kolaylaştıran ürünler tasarlıyoruz.</p>
-        <a href="#urunler" className="h-cta" onClick={e => { e.preventDefault(); onProducts() }}>Ürünleri keşfedin<span aria-hidden="true">→</span></a>
+        <div className="hh__stage" role="img" aria-label="SRYVERSE ürünlerinden kesitler: EstateMatch yapay zekâ eşleştirme ekranı, SkillMatch aday havuzu ve otomatik iş akışı">
+          <div className="hh__frag hh__frag--em" style={par(-16)}>
+            <Frame title="EstateMatch AI · AI Mülk Eşleştirme">
+              <Crop src="/screens/ai-matches.webp" w={1600} h={1000} x={596} y={290} cw={720} ch={268} priority />
+            </Frame>
+          </div>
+          <div className="hh__frag hh__frag--sm" style={par(10)}>
+            <Frame title="SkillMatch · Aday havuzu">
+              <ul className="ui-cands ui-cands--mini">
+                {ADAY.map(([i, n, m, s]) => (
+                  <li key={n}><span className="ui-av">{i}</span><span className="ui-cands__t"><b>{n}</b><small>{m}</small></span><span className="ui-score"><b>%{s}</b><i style={{ '--w': s / 100 }} /></span></li>))}
+              </ul>
+            </Frame>
+          </div>
+          <div className="hh__frag hh__frag--wf" style={par(-6)}>
+            <Frame title="Otomasyon · İş akışı">
+              <ol className="ui-flow">
+                {AKIS.map((a, i) => <li key={a} className={i < 3 ? 'is-done' : i === 3 ? 'is-on' : ''}>{a}</li>)}
+              </ol>
+              <p className="ui-flow__note"><i aria-hidden="true" />Takip hatırlatması otomatik oluşturuldu</p>
+            </Frame>
+          </div>
+          <div className="hh__node"><img src="/sryverse-icon.png" alt="" width="22" height="22" /><span>SRYVERSE</span></div>
+        </div>
       </div>
-
-      <a href="#sorun" className="hh__cue" onClick={e => { e.preventDefault(); onNext() }}>
-        <span className="hh__cue-line" aria-hidden="true"><i /></span>Kaydırın
-      </a>
     </section>)
 }

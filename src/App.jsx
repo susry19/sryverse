@@ -68,7 +68,7 @@ export default function App() {
   const [scrollY, setScrollY] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
   const [page, setPage] = useRoute()
-  const [homeTheme, setHomeTheme] = useState('dark')
+  const [homeTheme, setHomeTheme] = useState('light')
 
   useEffect(() => {
     const fn = () => setScrollY(window.scrollY)
@@ -182,7 +182,7 @@ export default function App() {
             {isEstate ? (
               <a href="/#contact" className="hbtn hbtn--s" onClick={e=>{e.preventDefault(); goDemo()}}>Demo Planla →</a>
             ) : (
-              <a href="/#contact" className="hbtn hbtn--s" onClick={e=>{e.preventDefault(); go('#contact')}}>Demo Al →</a>
+              <a href="/#contact" className="hbtn hbtn--s" onClick={e=>{e.preventDefault(); go('#contact')}}>Demo planlayın →</a>
             )}
           </div>
           <button ref={burgerRef} className={`burger${menuOpen?' burger--x':''}`} onClick={()=>setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Menüyü kapat' : 'Menü'} aria-expanded={menuOpen} aria-controls="site-nav">
@@ -224,10 +224,10 @@ export default function App() {
             <div className="fcol"><h5>Ürünler</h5>
               <a href="/estatematch" onClick={e=>{e.preventDefault(); openPage('estatematch')}}>EstateMatch AI</a>
               <a href="/skillmatch" onClick={e=>{e.preventDefault(); openPage('skillmatch')}}>SkillMatch AI</a>
-              <a href="/#metraj-sahne" onClick={e=>{e.preventDefault(); go('#metraj-sahne')}}>Metraj AI <span style={{opacity:.5,fontSize:'.78em'}}>· özel beta</span></a>
+              <a href="/#next" onClick={e=>{e.preventDefault(); go('#next')}}>Sıradaki <span style={{opacity:.5,fontSize:'.78em'}}>· yakında</span></a>
             </div>
             <div className="fcol"><h5>Şirket</h5>
-              <a href="/#yaklasim" onClick={e=>{e.preventDefault(); go('#yaklasim')}}>Yaklaşım</a>
+              <a href="/#yaklasim" onClick={e=>{e.preventDefault(); go('#yaklasim')}}>Özel sistemler</a>
               <a href="/#methodology" onClick={e=>{e.preventDefault(); go('#methodology')}}>Metodoloji</a>
               <a href="/vizyon" onClick={e=>{e.preventDefault(); go('vision')}}>Vizyon & Misyon</a>
             </div>
@@ -239,7 +239,7 @@ export default function App() {
         </div>
         <div className="wrap footer__bot">
           <span>© 2026 SRYVERSE. Tüm hakları saklıdır.</span>
-          <span className="footer__mono">Fark edilmeyeni fark eden sistemler.</span>
+          <span className="footer__mono">Teknolojiyi işiniz için anlamlı hâle getiriyoruz.</span>
           <div className="footer__social">
             <a href="https://www.linkedin.com/company/sryverse" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.2 8h4.6v14.8H.2V8zm7.6 0h4.4v2h.06c.62-1.16 2.12-2.4 4.36-2.4 4.66 0 5.52 3.06 5.52 7.04v8.16h-4.6v-7.24c0-1.72-.04-3.94-2.4-3.94-2.4 0-2.78 1.88-2.78 3.82v7.36H7.8V8z"/></svg>

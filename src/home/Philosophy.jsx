@@ -1,111 +1,85 @@
-/* Sahne 03 — SRYVERSE fikri: GÖR → BAĞLA → KARAR VER.
-   Aynı nokta alanı üç aşamadan geçer: noktalar belirir ve birkaçı sinyal
-   olarak öne çıkar; yakın noktalar arasında ilişkiler çizilir; tek bir
-   anlamlı yol yeşile döner, düzleşir ve sahneden çıkan çizgi olarak
-   ürünler bölümüne devam eder. Görsel, metin olmadan da fikri anlatır. */
-import { useMemo, useRef, useState } from 'react'
+/* 11 — Tek felsefe anı; sayfanın tek koyu sahnesi.
+   Gerçek parçalar (müşteri notu, portföy, aday, pozisyon, veri, karar)
+   dağınık başlar; "Eksik olan bağlantıdır." ile çiftler hâlinde birleşir
+   ve her çift bunu gerçekten yapan SRYVERSE sistemine bağlanır. Metinler
+   aynı hücrede çapraz geçer; görünmeyen metin gizlenir, üst üste binmez. */
+import { useRef, useState } from 'react'
 import { useTrack, useStack } from '../estate/scroll.js'
-import { sm, rnd, mix, In } from './bits.jsx'
+import { In, sm, mix } from './bits.jsx'
 
-const ADIM = [
-  { n: '01', t: 'Gör', d: 'Sinyalleri fark et. Veri, not, davranış: her şey bir işaret taşır.' },
-  { n: '02', t: 'Bağla', d: 'İlişkileri anla. Tek başına anlamsız görünen kayıtlar birlikte okununca konuşur.' },
-  { n: '03', t: 'Karar ver', d: 'Bilgiyi anlamlı eyleme dönüştür. Sistem gerekçeyi gösterir; karar insanda kalır.' },
+const FRAG = [
+  { t: 'Müşteri notu', d: '“Boğaz manzaralı, kapalı otoparklı, sakin bir yalı.”', s: [22, 16], e: [24, 20] },
+  { t: 'Portföy', d: 'Çengelköy · Yalı · Kapalı otopark', s: [72, 30], e: [76, 20] },
+  { t: 'Aday', d: 'Deniz Aksoy · Opera PMS · 5 yıl', s: [30, 56], e: [24, 52] },
+  { t: 'Pozisyon', d: 'Resepsiyon Sorumlusu · İstanbul', s: [84, 66], e: [76, 52] },
+  { t: 'Veri', d: '11 aktif süreç · ₺173.5M potansiyel', s: [48, 84], e: [24, 84] },
+  { t: 'Karar', d: 'Bu hafta 3 yer gösterimi önceliklendirildi', s: [62, 44], e: [76, 84] },
 ]
-const ZINCIR = [5, 14, 22, 31] /* anlamlı yol */
-const HEDEF = [[20, 30], [40, 30], [60, 30], [80, 30]]
-const ETIKET = ['sinyal', 'bağlam', 'ilişki', 'karar']
+const CIFT = [[0, 1, 'EstateMatch', 20], [2, 3, 'SkillMatch', 52], [4, 5, 'Karar sistemi', 84]]
 
-function useField() {
-  return useMemo(() => {
-    const P = Array.from({ length: 36 }, (_, i) => ({ x: 6 + rnd(i + 3) * 88, y: 5 + rnd(i + 51) * 50, r: .38 + rnd(i + 99) * .4, t: rnd(i + 130) * .12 }))
-    ZINCIR.forEach((k, i) => { P[k].x = 18 + i * 20 + rnd(k) * 10; P[k].y = 14 + rnd(k + 7) * 32 })
-    const E = []
-    for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) {
-      const d = Math.hypot(P[i].x - P[j].x, P[i].y - P[j].y)
-      if (d < 16) E.push({ a: i, b: j, d })
-    }
-    E.sort((u, v) => u.d - v.d)
-    const edges = E.slice(0, 44)
-    for (let i = 0; i < ZINCIR.length - 1; i++) {
-      const a = ZINCIR[i], b = ZINCIR[i + 1]
-      if (!edges.some(e => (e.a === a && e.b === b) || (e.a === b && e.b === a))) edges.push({ a, b, d: 0 })
-    }
-    edges.forEach((e, i) => { e.chain = ZINCIR.includes(e.a) && ZINCIR.includes(e.b) && Math.abs(ZINCIR.indexOf(e.a) - ZINCIR.indexOf(e.b)) === 1; e.t = .30 + (i / edges.length) * .2 })
-    return { P, edges }
-  }, [])
+/* Mobil / azaltılmış hareket: çiftler alt alta, okunur satırlar */
+function StagePairs() {
+  return (
+    <ol className="hf__pairs" aria-label="Birleşen parçalar">
+      {CIFT.map(([a, b, name]) => (
+        <li key={name}>
+          <span className="hf__pair hf__pair--row">{name}</span>
+          <div className="hf__row">
+            <div className="hf__frag hf__frag--row"><span>{FRAG[a].t}</span><b>{FRAG[a].d}</b></div>
+            <i className="hf__link" aria-hidden="true" />
+            <div className="hf__frag hf__frag--row"><span>{FRAG[b].t}</span><b>{FRAG[b].d}</b></div>
+          </div>
+        </li>))}
+    </ol>)
 }
 
-/* p: 0..1 — aynı alan, tek sayıdan okunur */
-function Field({ p, P, edges, cls = '' }) {
-  const sinyal = sm(p, .16, .28)
-  const dim = sm(p, .64, .72)
-  const duz = sm(p, .74, .86)
-  const lbl = sm(p, .86, .94)
-  const ext = sm(p, .90, 1)
-  const pos = i => { const k = ZINCIR.indexOf(i); const q = P[i]; return k < 0 ? [q.x, q.y] : [mix(q.x, HEDEF[k][0], duz), mix(q.y, HEDEF[k][1], duz)] }
+function Stage({ k, link, lbl }) {
   return (
-    <svg className={`hf-field ${cls}`} viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-      {edges.map((e, i) => {
-        const [x1, y1] = pos(e.a), [x2, y2] = pos(e.b)
-        const draw = sm(p, e.t, e.t + .06)
-        const o = e.chain ? draw : draw * (1 - dim)
-        return <line key={i} className={e.chain ? 'is-chain' : ''} x1={x1} y1={y1} x2={x2} y2={y2} pathLength="1" style={{ strokeDashoffset: 1 - draw, opacity: o, stroke: e.chain && dim > 0 ? undefined : undefined }} data-hot={e.chain && dim > .5 ? '1' : undefined} />
-      })}
-      {P.map((q, i) => {
-        const [x, y] = pos(i); const inChain = ZINCIR.includes(i)
-        const base = sm(p, q.t, q.t + .06)
-        const o = inChain ? base : base * (1 - dim * .9)
-        return <circle key={i} cx={x} cy={y} r={inChain ? q.r * (1 + .4 * sinyal) : q.r} className={inChain ? 'is-sig' : ''} style={{ opacity: o, '--hot': dim }} />
-      })}
-      <line className="is-ext" x1="80" y1="30" x2="100" y2="30" pathLength="1" style={{ strokeDashoffset: 1 - ext, opacity: ext > 0 ? 1 : 0 }} />
-      <line className="is-ext" x1="20" y1="30" x2="0" y2="30" pathLength="1" style={{ strokeDashoffset: 1 - ext, opacity: ext > 0 ? 1 : 0 }} />
-      {HEDEF.map(([x, y], i) => <text key={i} x={x} y={y + 6.5} textAnchor="middle" style={{ opacity: lbl }}>{ETIKET[i]}</text>)}
-    </svg>)
-}
-
-function Stacked({ P, edges }) {
-  return (
-    <section id="felsefe" className="hf hf--stack" data-theme="dark" aria-labelledby="hf-h">
-      <div className="h-wrap">
-        <In><p className="h-kicker h-kicker--dark">SRYVERSE fikri</p></In>
-        <In delay={60}><h2 id="hf-h" className="hf__h">Karmaşığı basit hissettiren<br />bir düşünme biçimi.</h2></In>
-        {ADIM.map((a, i) => (
-          <In key={a.n} className="hf__blk">
-            <Field p={[.27, .58, 1][i]} P={P} edges={edges} />
-            <div className="hf__item is-on"><span className="hf__n">{a.n}</span><h3 className="hf__t">{a.t}</h3><p className="hf__d">{a.d}</p></div>
-          </In>))}
-      </div>
-    </section>)
+    <div className="hf__stage" aria-hidden="true">
+      <svg className="hf__svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        {CIFT.map(([a, b, , y]) => <path key={y} d={`M${mix(FRAG[a].s[0], FRAG[a].e[0], k)} ${mix(FRAG[a].s[1], FRAG[a].e[1], k)} L${mix(FRAG[b].s[0], FRAG[b].e[0], k)} ${mix(FRAG[b].s[1], FRAG[b].e[1], k)}`} pathLength="1" style={{ strokeDashoffset: 1 - link, opacity: link > 0 ? 1 : 0 }} />)}
+      </svg>
+      {FRAG.map((f, i) => (
+        <div key={f.t} className="hf__frag" style={{ left: `${mix(f.s[0], f.e[0], k)}%`, top: `${mix(f.s[1], f.e[1], k)}%`, '--on': link }}>
+          <span>{f.t}</span><b>{f.d}</b>
+        </div>))}
+      {CIFT.map(([, , name, y]) => <span key={name} className="hf__pair" style={{ top: `${y}%`, opacity: lbl }}>{name}</span>)}
+    </div>)
 }
 
 export default function Philosophy() {
   const stack = useStack()
   const ref = useRef(null)
   const [p, setP] = useState(0)
-  const { P, edges } = useField()
-  useTrack(ref, v => { const q = Math.round(v * 1000) / 1000; setP(x => x === q ? x : q) })
-  if (stack) return <Stacked P={P} edges={edges} />
-  const aktif = p < .30 ? 0 : p < .62 ? 1 : 2
-  const head = sm(p, 0, .08)
+  useTrack(ref, v => { const q = Math.round(v * 200) / 200; setP(x => x === q ? x : q) })
+
+  if (stack) return (
+    <section id="felsefe" className="hf hf--stack" data-theme="dark" aria-label="SRYVERSE yaklaşımı">
+      <div className="h-wrap">
+        <In><p className="h-kicker h-kicker--dark">Yaklaşım</p></In>
+        <In delay={60}><p className="hf__l">Bazen cevap zaten vardır.</p></In>
+        <In delay={120}><StagePairs /></In>
+        <In delay={160}><p className="hf__l hf__l--em">Eksik olan bağlantıdır.</p></In>
+        <In delay={200}><p className="hf__sub">EstateMatch’te, SkillMatch’te ve sizin için kurduğumuz sistemlerde aynı iş yapılır: dağınık parçalar, bir karar etrafında birleşir.</p></In>
+      </div>
+    </section>)
+
+  const a = 1 - sm(p, .40, .52), b = sm(p, .52, .64), sub = sm(p, .70, .84)
+  const k = sm(p, .38, .66), link = sm(p, .58, .78), lbl = sm(p, .74, .88)
   return (
-    <section id="felsefe" className="hf" data-theme="dark" aria-labelledby="hf-h">
-      <div className="hs-track" ref={ref} style={{ height: '400svh' }}>
+    <section id="felsefe" className="hf" data-theme="dark" aria-label="SRYVERSE yaklaşımı">
+      <div className="hs-track" ref={ref} style={{ height: '200svh' }}>
         <div className="hs-stage">
           <div className="h-wrap hf__in">
-            <div className="hf__side">
-              <p className="h-kicker h-kicker--dark" style={{ opacity: head }}>SRYVERSE fikri</p>
-              <h2 id="hf-h" className="hf__h" style={{ opacity: head }}>Karmaşığı basit hissettiren<br />bir düşünme biçimi.</h2>
-              <ol className="hf__list">
-                {ADIM.map((a, i) => (
-                  <li key={a.n} className={`hf__item${i === aktif ? ' is-on' : i < aktif ? ' is-past' : ''}`}>
-                    <span className="hf__n">{a.n}</span>
-                    <h3 className="hf__t">{a.t}</h3>
-                    <p className="hf__d">{a.d}</p>
-                  </li>))}
-              </ol>
+            <div className="hf__txt">
+              <p className="h-kicker h-kicker--dark">Yaklaşım</p>
+              <div className="hf__x">
+                <p className="hf__l" style={{ opacity: a, visibility: a < .02 ? 'hidden' : 'visible' }}>Bazen cevap zaten vardır.</p>
+                <p className="hf__l hf__l--em" style={{ opacity: b, visibility: b < .02 ? 'hidden' : 'visible' }}>Eksik olan bağlantıdır.</p>
+              </div>
+              <p className="hf__sub" style={{ opacity: sub, visibility: sub < .02 ? 'hidden' : 'visible' }}>EstateMatch’te, SkillMatch’te ve sizin için kurduğumuz sistemlerde aynı iş yapılır: dağınık parçalar, bir karar etrafında birleşir.</p>
             </div>
-            <div className="hf__stage"><Field p={p} P={P} edges={edges} /></div>
+            <Stage k={k} link={link} lbl={lbl} />
           </div>
         </div>
       </div>

@@ -1,24 +1,21 @@
-/* SRYVERSE ana sayfası — tek sürekli anlatı.
-   Giriş → sorun → felsefe → ürünler → soru → ne kuruyoruz → nasıl
-   düşünüyoruz → kimler için → manifesto → kapanış ve iletişim.
-   Başlık ve alt bilgi App kabuğundan gelir; bu bileşen yalnızca sahnenin
-   arka plan temasını (koyu/açık) kabuğa bildirir. */
+/* SRYVERSE ana sayfası — hikâye anlatan bir iş sitesi.
+   01 giriş → 02 ne yapıyoruz → 03 ürünler → 04 EstateMatch → 05 SkillMatch
+   → 06 sıradaki → 07 özel sistemler → 08 önce/sonra → 09 sorunlar
+   → 10 sizin sektörünüz → 11 tek felsefe anı (tek koyu sahne)
+   → 12 nasıl çalışıyoruz → 13 iletişim.
+   Başlık ve alt bilgi App kabuğundan gelir; bu bileşen yalnızca koyu
+   sahnenin başlığa yansımasını bildirir. */
 import { useEffect } from 'react'
 import { useActiveSection } from '../estate/scroll.js'
 import Hero from './Hero.jsx'
-import Problem from './Problem.jsx'
+import WhatWeDo from './WhatWeDo.jsx'
+import { Intro, EstateScene, SkillScene, Next } from './Products.jsx'
+import { NotEvery, BeforeAfter, Problems, Industry } from './Custom.jsx'
 import Philosophy from './Philosophy.jsx'
-import { Bridge, EstateScene, SkillScene, MetrajScene } from './Products.jsx'
-import Question from './Question.jsx'
-import { Capabilities, Thinking, Audience, Manifesto, Closing } from './After.jsx'
-import HomeNav from './HomeNav.jsx'
+import { Thinking, Contact } from './After.jsx'
 import './Home.css'
 
-const TEMA = [
-  ['baslangic', 'dark'], ['sorun', 'dark'], ['felsefe', 'dark'],
-  ['urunler', 'light'], ['skillmatch-sahne', 'dark'], ['metraj-sahne', 'light'],
-  ['soru', 'dark'], ['yaklasim', 'light'], ['manifesto', 'dark'], ['son', 'dark'],
-]
+const TEMA = [['baslangic', 'light'], ['felsefe', 'dark'], ['methodology', 'light']]
 const TEMA_IDS = TEMA.map(t => t[0])
 
 export default function Home({ go, openPage, onTheme }) {
@@ -29,19 +26,18 @@ export default function Home({ go, openPage, onTheme }) {
 
   return (
     <main className="home">
-      <Hero onProducts={() => go('#urunler')} onNext={() => go('#sorun')} />
-      <Problem />
-      <Philosophy />
-      <Bridge />
+      <Hero go={go} />
+      <WhatWeDo />
+      <Intro />
       <EstateScene openPage={openPage} />
       <SkillScene openPage={openPage} />
-      <MetrajScene go={go} />
-      <Question />
-      <Capabilities />
+      <Next />
+      <NotEvery />
+      <BeforeAfter />
+      <Problems />
+      <Industry go={go} />
+      <Philosophy />
       <Thinking />
-      <Audience openPage={openPage} />
-      <Manifesto />
-      <Closing go={go} />
-      <HomeNav theme={theme} go={go} />
+      <Contact />
     </main>)
 }

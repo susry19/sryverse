@@ -37,7 +37,7 @@ const ROUTES = {
 /* Kendi SEO'sunu usePageSeo ile yoneten sayfalar burada YOK; boylece
    sayfa basligi cift kez yazilip birbirini ezmiyor. */
 const TITLES = {
-  home: 'SRYVERSE — Fark edilmeyeni fark eden sistemler',
+  home: 'SRYVERSE — AI, veri ve dijital dönüşüm ürünleri',
   vision: 'Vizyon & Misyon | SRYVERSE',
 }
 

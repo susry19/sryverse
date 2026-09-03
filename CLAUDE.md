@@ -68,18 +68,20 @@ Key utility classes:
 4. `page === 'estatematch'` → EstateMatch product page (lazy-loaded, `src/estate/*`)
 5. `page === 'estatematchFeatures'` → EstateMatch features page (lazy-loaded)
 
-**Header**: fixed; adapts to the active homepage scene (`hdr--dark` on ink scenes, warm off-white when solid over light scenes). Nav: Ürünler · Yaklaşım · Vizyon · İletişim + one CTA.
+**Header**: fixed; light on the homepage except over the single dark philosophy scene (`hdr--dark`). Nav: Ürünler · Yaklaşım · Vizyon · İletişim + one CTA ("Demo planlayın").
 **Footer**: brand lockup, product/company/contact links, socials.
 
-### Homepage narrative (`src/home/`)
+### Homepage (`src/home/`) — a story-driven business site
 
-Scenes, in order (ids used by nav/footer links):
-`#baslangic` hero → `#sorun` problem (sticky) → `#felsefe` GÖR / BAĞLA / KARAR VER (sticky) → `#urunler` bridge → `#estatematch-sahne` → `#skillmatch-sahne` → `#metraj-sahne` → `#soru` central question (sticky) → `#yaklasim` capabilities → `#methodology` how we think (5-step method preserved inside step 02) → `#usecases` audiences + real product proof → `#manifesto` → `#son` closing + `#contact` form.
+Sections, in order (ids used by nav/footer links):
+`#baslangic` hero (real product fragments in depth) → `#ne-yapiyoruz` what we do (term → outcome rail) → `#urunler` products intro → `#estatematch` real workflow with real screenshots (sticky, ~230svh) → `#skillmatch` workflow with UI fragments recreated from the product's modules (sticky, mirrored) → `#next` unnamed "next system" teaser → `#yaklasim` custom systems (three connected areas) → `#donusum` before → SRYVERSE → after diagram → `#sorunlar` business-problem entry points → `#sektor` "your industry" CTA → `#felsefe` the single dark philosophy moment (~200svh) → `#methodology` how we work (5-step method inside "Kur") → `#contact` form.
 
-- Scroll-driven scenes read a single 0..1 progress from the shared engine in `src/estate/scroll.js` (`useTrack`, `useReveal`, `useActiveSection`, `useStack`). On ≤767px or `prefers-reduced-motion` the sticky scenes render as stacked, reveal-on-view variants.
-- `Home.css` scopes the homepage design system (`.home{--k-*}`): ink `#0B0F0E`, warm canvas `#F5F3EE`, forest `#0B6B57`, light green `#5FD3A8` (dark backgrounds only), amber `#9A6B2D` (Metraj). Green is punctuation, not a fill.
+- Palette = repo tokens (`App.css`): warm off-white `#FAF9F6` base, sage `--soft #EAF6F0` bands, `--primary/--accent` greens, dark green text. One dark scene only (`--ink`). EstateMatch scene subtly adopts its canvas/forest; SkillMatch uses the sage band.
+- Serif (Cormorant) only for hero H1, product idea lines, big statements; Inter for business/product/UI copy.
+- Scroll-driven scenes read a single 0..1 progress from `src/estate/scroll.js` (`useTrack`, `useReveal`, `useActiveSection`, `useStack`). On ≤767px or `prefers-reduced-motion` every scrubbed scene renders stacked.
+- Real screens live in `public/screens/*.webp`; `Crop` in `bits.jsx` shows a region of a real screenshot at a fixed frame ratio. SkillMatch has no screenshots in the repo, so its frames are HTML fragments.
 - The contact form is honest: without `VITE_DEMO_ENDPOINT` it does not fake a submission; it offers the same content via WhatsApp.
-- `HomeNav.jsx`: discreet right-edge section dots (desktop) / return-to-top pill (mobile).
+- The V1 dark editorial direction is kept as git tag `homepage-v1-experiment` (not approved).
 
 ### Core Components
 
