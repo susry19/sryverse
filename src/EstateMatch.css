@@ -151,6 +151,7 @@
 .st-sent{position:absolute;margin:0;z-index:4;display:grid;gap:.5rem}
 .st-sent blockquote{margin:0;font-family:var(--fd);font-size:clamp(17px,1.25vw,19px);line-height:1.35;color:var(--c-ink)}
 .st-sent blockquote p{margin:0}
+.st-sent__who{display:none}
 .st-tag{display:inline-block;font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--c-ink-3);margin-right:.4rem}
 .st-kriter{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
 .st-kriter > span:not(.st-tag){font-size:13px;font-weight:500;padding:.18rem .48rem;border:1px solid var(--c-line);border-radius:6px;background:var(--c-white);color:var(--c-ink)}
@@ -543,9 +544,13 @@
   .st-sub,.st-kat{font-size:15px;max-width:none}
   .st-eyebrow{font-size:19px;margin-bottom:.8rem}
   .st-cue{margin-top:1rem}
-  .st-cust__node{width:48px;height:48px;font-size:18px}
-  .st-cust__lbl b,.st-cust__lbl span{font-size:14px}
-  .st-sent{gap:.32rem;background:rgba(245,243,238,.94);padding:.45rem .55rem;border-radius:8px}
+  /* müşteri düğümü mobilde ayrı kartla çakışırdı: alıntı kartının başlığına taşındı */
+  .st-cust{display:none}
+  .st-sent{gap:.32rem;background:rgba(245,243,238,.94);padding:.6rem .65rem;border-radius:10px}
+  .st-sent__who{display:flex;align-items:center;gap:.5rem;margin:0 0 .1rem}
+  .st-sent__av{width:26px;height:26px;border-radius:50%;background:var(--c-white);border:1px solid var(--c-line);display:grid;place-items:center;font-family:var(--fd);font-size:14px;color:var(--c-forest-deep);flex:none}
+  .st-sent__who b{font-size:14px;font-weight:500}
+  .st-sent__who span{font-size:12.5px;color:var(--c-ink-3)}
   .st-sent blockquote{font-size:15px;line-height:1.3}
   .st-kriter{gap:.25rem}
   .st-kriter > span:not(.st-tag){font-size:14px;padding:.12rem .4rem}

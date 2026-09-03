@@ -35,7 +35,7 @@ const LAY = {
   desk: { txt: [4.5, 12, 27], cust: [7.5, 43], sent: [12.5, 33, 18], sigX: 33, sigY: [28, 39, 50, 61], hub: [47, 44.5], card: [51.5, 21, 45.5], uni: [52, 8, 99, 94], durak: [[62, 78], [76, 78], [90, 78]] },
   lap: { txt: [4, 11, 24], cust: [6.5, 41], sent: [10, 31, 19], sigX: 31, sigY: [28, 39, 50, 61], hub: [47.5, 44.5], card: [54, 21, 44], uni: [54, 8, 99, 94], durak: [[63, 79], [77, 79], [91, 79]] },
   tab: { txt: [4, 10, 23], cust: [9, 42], sent: [7.5, 32, 20], sigX: 30, sigY: [28, 39, 50, 61], hub: [47, 44.5], card: [53, 21, 45], uni: [53, 8, 99, 94], durak: [[62, 79], [76, 79], [90, 79]] },
-  mob: { txt: [5, 7, 90], cust: [30, 26], sent: [4, 32, 92], sigX: 14, sigY: [70, 76, 82, 88], hub: [76, 79], card: [4, 24, 92], uni: [4, 46, 96, 96], durak: null },
+  mob: { txt: [5, 7, 90], cust: [30, 26], sent: [4, 23, 92], sigX: 14, sigY: [70, 76, 82, 88], hub: [76, 79], card: [4, 24, 92], uni: [4, 46, 96, 96], durak: null },
 }
 const MUSTERI = 'Aylin Hanım'
 const IHTIYAC = 'Döşemealtı’nda, müstakil havuzlu, en az 4+1 ve 25 milyon TL bütçeye uygun bir villa arıyorum.'
@@ -143,7 +143,7 @@ export default function Story({ onDemo, onFeatures }) {
   const sig = L.sigY.map(y => [X(L.sigX), Y(y)])
   const hub = px(L.hub)
   const cardX = X(L.card[0]), cardW = X(L.card[2])
-  const cardY = Y(L.card[1] + (mobile ? 6 * sm(p, .90, .945) : 0))
+  const cardY = Y(L.card[1] + (mobile ? 15.5 * sm(p, .82, .86) + 6 * sm(p, .90, .945) : 0)) /* mobilde özet çipi belirince kart aşağı kayar */
   const gorselW = mobile ? Math.round(cardW * .62) : Math.round(cardW * .575)
   const gorselH = Math.round(gorselW * IMG_H / IMG_W)
   const uni = { x0: X(L.uni[0]), y0: Y(L.uni[1]), x1: X(L.uni[2]), y1: Y(L.uni[3]) }
@@ -251,13 +251,14 @@ export default function Story({ onDemo, onFeatures }) {
           <div className="st-cust__lbl"><b>{MUSTERI}</b><span>Müşteri · 12 Ağu</span></div>
         </div>
         <div className="st-sent" style={{ left: `${L.sent[0]}%`, top: `${L.sent[1]}%`, width: `${L.sent[2]}%`, opacity: talep * leftFade }} aria-hidden={talep < .5 || leftFade < .5}>
+          <p className="st-sent__who" aria-hidden="true"><span className="st-sent__av">A</span><b>{MUSTERI}</b><span>Müşteri · 12 Ağu</span></p>
           <blockquote><p>“{IHTIYAC}”</p></blockquote>
           <div className="st-kriter"><span className="st-tag">Müşterinin söylediği</span>{KRITER.map(k => <span key={k}>{k}</span>)}</div>
           <p className="st-not" style={{ opacity: notVis }}><span className="st-tag">Danışmanın eklediği</span>{NOT}</p>
         </div>
 
         {/* ── kompakt müşteri özeti: süreç aşamasından itibaren ── */}
-        <div className="st-ozet" style={{ left: `${L.sent[0]}%`, top: `${mobile ? 15 : L.sent[1]}%`, opacity: ozet }} aria-hidden={ozet < .5}>
+        <div className="st-ozet" style={{ left: `${L.sent[0]}%`, top: `${mobile ? 32 : L.sent[1]}%`, opacity: ozet }} aria-hidden={ozet < .5}>
           <span className="st-ozet__n" aria-hidden="true">A</span>
           <span className="st-ozet__t"><b>{MUSTERI}</b><small>Döşemealtı · Villa · Öncelik: Mahremiyet</small></span>
         </div>
