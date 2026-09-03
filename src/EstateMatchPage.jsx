@@ -4,6 +4,7 @@ import './EstateMatch.css'
 import Story from './estate/story.jsx'
 import { Bridge, Audience, Trust, Faq, Contact } from './estate/after.jsx'
 import HowItWorks from './estate/howitworks.jsx'
+import PageNav from './estate/pagenav.jsx'
 
 /* EstateMatch by SRYVERSE — tek sahneli hikâye, ardından sıradan akış.
    Başlık, alt bilgi ve yüzen asistan App kabuğundan gelir. */
@@ -33,6 +34,7 @@ export default function EstateMatchPage({ goBack, onDemo, onFeatures }) {
         <Faq />
         <Contact />
       </div>
+      <PageNav />
     </main>
   )
 }

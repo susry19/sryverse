@@ -86,3 +86,25 @@ export function useMedia(q) {
   useEffect(() => { const m = window.matchMedia(q); const f = () => setV(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f) }, [q])
   return v
 }
+
+/* Sayfa düzeyinde etkin bölüm: id listesindeki hangi bölümün başlangıcı
+   referans çizgisini geçtiyse onu döndürür. Aynı merkezi kaydırma
+   döngüsüne (subs/rAF) abone olur; ikinci bir dinleyici açmaz. */
+export function useActiveSection(ids, refFrac = 0.32) {
+  const [active, setActive] = useState(0)
+  const idsRef = useRef(ids); idsRef.current = ids
+  useEffect(() => {
+    const hesap = () => {
+      const refY = window.innerHeight * refFrac
+      let best = 0
+      idsRef.current.forEach((id, i) => {
+        const el = document.getElementById(id); if (!el) return
+        if (el.getBoundingClientRect().top <= refY) best = i
+      })
+      setActive(best)
+    }
+    subs.add(hesap); baslat(); hesap()
+    return () => { subs.delete(hesap); durdur() }
+  }, [refFrac])
+  return active
+}

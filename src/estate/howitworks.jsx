@@ -9,7 +9,7 @@ import { Ico } from './bits.jsx'
 const ADIM = [
   {
     n: '01', t: 'Anlayın',
-    c: 'Müşterinin talebini, tercihlerini ve danışman notlarını tek bir müşteri görünümünde bir araya getirin.',
+    c: 'Müşteri talebini, tercihleri ve danışman notlarını tek bir görünümde toplayın.',
     s: 'Dağınık bilgi, anlaşılır bir ihtiyaca dönüşür.',
     kaynak: { tip: 'cumle', metin: '“Döşemealtı’nda, müstakil havuzlu, en az 4+1 bir villa arıyorum.”' },
     cikti: [
@@ -20,8 +20,8 @@ const ADIM = [
   },
   {
     n: '02', t: 'Keşfedin',
-    c: 'EstateMatch portföylerinizi yalnızca filtrelerle değil, müşteri bağlamıyla birlikte değerlendirir.',
-    s: 'Güçlü seçenekler, nedenleri ve farklarıyla görünür.',
+    c: 'Portföyleri yalnızca filtrelerle değil, müşterinin öncelikleriyle birlikte değerlendirin.',
+    s: 'Güçlü seçenekleri ve değerlendirilmesi gereken farkları görün.',
     kaynak: { tip: 'alan', metin: '12.480 portföy' },
     cikti: [
       { b: 'Kısa liste', d: '4 güçlü ihtimal' },
@@ -31,7 +31,7 @@ const ADIM = [
   },
   {
     n: '03', t: 'Yönetin',
-    c: 'Karşılaştırma, paylaşım, randevu, görev ve takip adımlarını aynı müşteri yolculuğunda sürdürün.',
+    c: 'Paylaşım, randevu, görev ve takip sürecini aynı müşteri ilişkisi üzerinde sürdürün.',
     s: 'Eşleşme, kaybolmayan bir satış sürecine dönüşür.',
     kaynak: { tip: 'secim', metin: 'Altınkale · 4+1' },
     cikti: [
@@ -42,8 +42,8 @@ const ADIM = [
   },
   {
     n: '04', t: 'Ölçün',
-    c: 'Müşteri aşamalarını, portföy hareketlerini, danışman aktivitelerini ve bekleyen aksiyonları izleyin.',
-    s: 'Süreç görünür, operasyon yönetilebilir hâle gelir.',
+    c: 'Müşteri aşamalarını, portföy hareketlerini ve danışman aktivitelerini izleyin.',
+    s: 'Süreç görünür ve yönetilebilir hâle gelir.',
     kaynak: { tip: 'yolculuk', metin: 'Aylin Hanım · müşteri yolculuğu' },
     cikti: [
       { b: 'Müşteri aşaması', d: 'Gösterim planlandı', bar: .62 },
@@ -115,7 +115,7 @@ export default function HowItWorks({ onFeatures }) {
               <Gorsel i={i} />
             </div>
 
-            <p className="af-more"><a href="/estatematch/features" className="em-link" onClick={e => { e.preventDefault(); onFeatures?.() }}>Bütün özellikleri inceleyin</a></p>
+            <p className="af-more"><a href="/estatematch/features" className="em-link" onClick={e => { e.preventDefault(); onFeatures?.() }}>Tüm özellikleri inceleyin</a></p>
           </div>
         </div>
       </div>

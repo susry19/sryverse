@@ -48,9 +48,9 @@ export function Trust() {
 }
 
 const KITLE = [
-  ['Emlak danışmanları', 'Müşteri ihtiyacını anlayın, güçlü seçenekleri açıklayın ve sonraki adımlarınızı kaybetmeden ilerleyin.'],
-  ['Acenta yöneticileri', 'Portföy hareketlerini, müşteri aşamalarını, danışman aktivitelerini ve bekleyen aksiyonları görün.'],
-  ['Büyüyen gayrimenkul ekipleri', 'Rol bazlı erişim, ortak veri yapısı ve standart iş akışlarıyla operasyonunuzu kontrollü biçimde büyütün.'],
+  ['Emlak danışmanları', 'Müşteri ihtiyacını daha doğru anlayın, güçlü portföyleri nedenleriyle paylaşın ve hiçbir geri dönüşü kaybetmeyin.'],
+  ['Acenta yöneticileri', 'Müşteri aşamalarını, portföy hareketlerini, danışman aktivitelerini ve bekleyen aksiyonları aynı görünümden takip edin.'],
+  ['Büyüyen gayrimenkul ekipleri', 'Rolleri, ortak veri yapısını ve standart iş akışlarını kontrollü biçimde yönetin.'],
 ]
 export function Audience() {
   return (
@@ -72,6 +72,13 @@ export function Audience() {
 }
 
 
+const HAZIR = [
+  ['Mevcut portföyleriniz', 'Portföy yapınız ve veri formatınız demo görüşmesinde değerlendirilir; aktarım yönteminiz sisteminize göre planlanır.'],
+  ['Ekip büyüklüğünüz', 'Küçük bir danışman ekibinden büyüyen bir organizasyona kadar, kullanım yapısı ekibinize göre kurulur.'],
+  ['Veri ve gizlilik', 'Müşteri ve portföy verileri yalnızca yetkili kullanıcılar tarafından görüntülenir.'],
+  ['Mevcut iş akışınız', 'Paylaşım, randevu ve takip adımları mevcut çalışma biçiminize uyacak şekilde ayarlanır.'],
+]
+
 const SSS = [
   ['EstateMatch kimler için tasarlandı?', 'EstateMatch; emlak danışmanları, acenta yöneticileri, portföy ekipleri ve büyüyen gayrimenkul organizasyonları için tasarlanmıştır. Müşteri, portföy, eşleşme ve takip süreçlerini ortak bir sistemde birleştirir.'],
   ['EstateMatch yalnızca ilan eşleştirmesi mi yapar?', 'Hayır. Akıllı eşleştirmenin yanında müşteri ve portföy yönetimi, karşılaştırma, danışman notları, WhatsApp ve e-posta paylaşımı, randevu, görev, takip ve raporlama süreçlerini de destekler.'],
@@ -92,6 +99,12 @@ export function Faq() {
           <p className="af-kicker"><span className="af-dot" aria-hidden="true" />Merak edilenler</p>
           <h2 id="af-faq-h" className="af-h2">EstateMatch hakkında merak edilenler</h2>
           <p className="af-lead">Ürünün çalışma şekli, kullanım alanları ve danışman kontrolü hakkında kısa yanıtlar.</p>
+        </div>
+        <div className="af-hazir">
+          <p className="af-hazir__h">Ekibinize uygun kullanım yapısını birlikte planlarız.</p>
+          <ul className="af-cols af-cols--4">
+            {HAZIR.map(([t, d]) => <li key={t} className="af-col"><h3>{t}</h3><p>{d}</p></li>)}
+          </ul>
         </div>
         <div className="af-acc">
           {SSS.map(([q, a], i) => { const on = open === i; const bid = `${base}-b${i}`, pid = `${base}-p${i}`

@@ -59,7 +59,7 @@ const Mosaic = forwardRef(function Mosaic({ mobil, priority }, ref) {
 
   const yaz = () => {
     const k = payRef.current * list.length
-    const g = gridRef.current; if (g) g.style.setProperty('--k', k.toFixed(2))
+    const g = gridRef.current; if (g) { g.style.setProperty('--k', k.toFixed(2)); const n = g.parentElement; if (n) n.style.setProperty('--tam', Math.min(1, payRef.current * 1.15).toFixed(3)) }
     const im = imgRef.current
     if (im) im.style.opacity = String(Math.min(1, Math.max(0, (k - (list.length - 5)) / 5))) /* dikişsiz kapanış */
   }

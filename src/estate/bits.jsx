@@ -41,6 +41,7 @@ const ICON = {
   mail: 'M3 6h18v12H3zM3 7l9 6 9-6',
   phone: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2',
   plus: 'M12 5v14M5 12h14',
+  chevronUp: 'M5 15l7-7 7 7',
 }
 export function Ico({ n, size = 20 }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={ICON[n]} /></svg>
