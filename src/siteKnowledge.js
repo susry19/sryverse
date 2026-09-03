@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════
-   SITE BİLGİ TABANI — Terminal ve SiteAssistant tarafından paylaşılır.
+   SITE BİLGİ TABANI — SiteAssistant tarafından kullanılır.
    Not: burada yapay zekâ / harici API çağrısı YOK. Sadece anahtar kelime
    eşleşmesiyle bu sabit içerikten yanıt seçilir.
    ══════════════════════════════════════════════════════ */

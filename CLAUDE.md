@@ -61,115 +61,32 @@ Key utility classes:
 
 ### Main App Flow (`App.jsx`)
 
-**Page States**:
-1. `page === 'home'` → Homepage with hero, products, methodology, use cases
-2. `page === 'vision'` → Vision & Mission page (separate dark theme)
-3. `page === 'skillmatch'` → SkillMatch 3D interactive page
-4. `page === 'estatematch'` → EstateMatch 3D interactive page
+**Page States** (History API routing in `useRoute.js`):
+1. `page === 'home'` → `src/home/Home.jsx` — one continuous scroll narrative (see below)
+2. `page === 'vision'` → Vision & Mission page (dark theme, particle `Background`)
+3. `page === 'skillmatch'` → SkillMatch product page (lazy-loaded, three.js)
+4. `page === 'estatematch'` → EstateMatch product page (lazy-loaded, `src/estate/*`)
+5. `page === 'estatematchFeatures'` → EstateMatch features page (lazy-loaded)
 
-**Header**: Fixed, sticky navigation with logo, menu (responsive burger), CTAs
-**Footer**: Brand info, links, copyright
+**Header**: fixed; adapts to the active homepage scene (`hdr--dark` on ink scenes, warm off-white when solid over light scenes). Nav: Ürünler · Yaklaşım · Vizyon · İletişim + one CTA.
+**Footer**: brand lockup, product/company/contact links, socials.
+
+### Homepage narrative (`src/home/`)
+
+Scenes, in order (ids used by nav/footer links):
+`#baslangic` hero → `#sorun` problem (sticky) → `#felsefe` GÖR / BAĞLA / KARAR VER (sticky) → `#urunler` bridge → `#estatematch-sahne` → `#skillmatch-sahne` → `#metraj-sahne` → `#soru` central question (sticky) → `#yaklasim` capabilities → `#methodology` how we think (5-step method preserved inside step 02) → `#usecases` audiences + real product proof → `#manifesto` → `#son` closing + `#contact` form.
+
+- Scroll-driven scenes read a single 0..1 progress from the shared engine in `src/estate/scroll.js` (`useTrack`, `useReveal`, `useActiveSection`, `useStack`). On ≤767px or `prefers-reduced-motion` the sticky scenes render as stacked, reveal-on-view variants.
+- `Home.css` scopes the homepage design system (`.home{--k-*}`): ink `#0B0F0E`, warm canvas `#F5F3EE`, forest `#0B6B57`, light green `#5FD3A8` (dark backgrounds only), amber `#9A6B2D` (Metraj). Green is punctuation, not a fill.
+- The contact form is honest: without `VITE_DEMO_ENDPOINT` it does not fake a submission; it offers the same content via WhatsApp.
+- `HomeNav.jsx`: discreet right-edge section dots (desktop) / return-to-top pill (mobile).
 
 ### Core Components
 
-#### 1. **Background.jsx** (Animated Canvas)
-Dynamic 2D canvas background with:
-- **Grid**: Animated background grid (parametric lines)
-- **Waves**: 7 sine-wave layers with mouse interaction
-- **Particles**: 230 floating particles (configurable density) with:
-  - Gravity toward mouse
-  - Particle-to-particle connections (lines)
-  - Pulsing opacity animations
-- **Glow Effect**: Radial gradient following cursor
-
-**Parameters**:
-- `density`: Particle count multiplier (default 1)
-- `color`: RGB string (e.g., "11,61,46")
-- `boost`: Global opacity/visibility multiplier
-
-#### 2. **Terminal.jsx** (Interactive Terminal UI)
-Simulates a system boot terminal with:
-- **Layers**: 5 system layers (Veri Alımı, AI Çekirdeği, Karar Katmanı, Yürütme, Analitik)
-- **Tabs**: Layer switching
-- **Boot Sequence**: Animated text lines with color coding
-- **Q&A**: Quick questions with AI-like answers
-- **Compact Mode**: Responsive layout option
-
-#### 3. **CardCanvas.jsx** (Three.js Product Cards)
-3D canvas renders within product cards (referenced by variant key):
-- Used in ProductCard component for visual polish
-- Renders inside `.pcard` elements
-
-#### 4. **SkillMatchPage.jsx** (3D Interactive Page)
-Full-page Three.js scene for SkillMatch product:
-- **3D Network**: 16 floating nodes with connecting lines
-- **Mouse Interaction**: Rotation based on mouse movement
-- **Lighting**: Ambient + directional + point lights (green glow)
-- **Dark Theme**: Custom background
-
-#### 5. **EstateMatchPage.jsx** (3D Interactive Page)
-Parallel implementation to SkillMatchPage for EstateMatch product
-
----
-
-## 📐 Key Sections (Homepage)
-
-### Hero Section (`.hero`)
-- Large intro with mission statement
-- Left content area: Headline + sub + CTAs + Intel Flow component
-- Right side: Terminal component (compact)
-- Scroll hint at bottom
-- Hero content animates in on intersection
-
-### Intel Flow (`.iflow`)
-Animated 5-step process visualization:
-1. **Gözlemle** (Observe)
-2. **Modelle** (Model)
-3. **Optimize Et** (Optimize)
-4. **Otomatize** (Automate)
-5. **Ölçeklendir** (Scale)
-
-Active step cycles every 2.2s with:
-- Pulsing ring animation (`.ringPulse`)
-- Progress line fill
-- Visual state transitions (done → active → pending)
-
-### Live Ticker (`.lticker`)
-Real-time data display grid:
-- 4 animated metric boxes with pulsing dots
-- Simulated live numbers (incrementing counters)
-- Bar fills with running animation
-- Color-coded per metric (green, blue, purple, amber)
-
-### Product Cards (`.pgrid`)
-3x grid layout:
-- Dark background cards with emerald borders
-- Floating animation (`.cardFloat`)
-- Sweep animation (light pass)
-- Status badges: CANLI (live), PRIVATE BETA, YAKINDA (soon), GELECEKTE (future)
-- Hover effects with 3D perspective tilt
-
-### Methodology (`.method`)
-Auto-cycling 5-step process:
-- Large center display with step details
-- Left sidebar with clickable buttons
-- Progress tracking per step
-- Pauses on hover
-
-### Use Cases (`.cgrid`)
-6-card grid showcasing target audiences:
-- Recruitment Teams, Real Estate Agencies, HR Departments, Operations Teams, Business Analysts, Transformation Leaders
-- Spotlight effect (rotating highlight)
-- SVG icons with stroke animations
-- Interactive hover (spotlight follows mouse)
-
-### Contact Section
-- Demo request form (name, company, email, product select, message)
-- WhatsApp button integration
-- Success state: Checkmark + confirmation message
-- Live validation on submit
-
----
+- **Background.jsx** — animated 2D particle canvas, now used only by the Vision page.
+- **SiteAssistant.jsx** — floating keyword-matched assistant (no external AI), shares `siteKnowledge.js`.
+- **SkillMatchPage.jsx / SkillMatch3D.jsx** — SkillMatch product page with three.js hero.
+- **EstateMatchPage.jsx + `src/estate/*`** — EstateMatch story page; its visual DNA (warm canvas, hairlines, relationship lines) is the parent of the homepage system.
 
 ## 🎬 Animations & Effects
 
@@ -340,7 +257,8 @@ npm run preview  # Preview production build locally
 
 - `vite.config.js` - Build config
 - `src/main.jsx` - React entry point
-- `src/App.jsx` - Main app component (2000+ lines, all sections)
+- `src/App.jsx` - App shell: header, routing, vision page, footer
+- `src/home/` - Homepage narrative scenes + `Home.css`
 - `src/index.css` - Global tokens & resets
 - `src/App.css` - All component styles (600+ lines)
 - `public/` - Static assets (images, badges)
@@ -355,5 +273,5 @@ npm run preview  # Preview production build locally
 
 ---
 ------
-*Last Updated: 2026-08-06*
+*Last Updated: 2026-09-03*
 *Maintained by: beyzaacetin*
