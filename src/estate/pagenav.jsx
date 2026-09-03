@@ -76,6 +76,7 @@ export default function PageNav() {
   if (mobile) {
     return (
       <div className="pnm">
+        {active > 0 && <button type="button" className="pnm-quicktop" onClick={basaDon} aria-label="Başa dön"><Ico n="chevronUp" size={17} /></button>}
         <button type="button" ref={triggerRef} className="pnm-now" onClick={() => setOpen(v => !v)} aria-expanded={open} aria-controls="pnm-sheet" aria-haspopup="true">
           <span className="pnm-now__dot" aria-hidden="true" />{BOLUM[active][1]}
           <Ico n="plus" size={13} />
