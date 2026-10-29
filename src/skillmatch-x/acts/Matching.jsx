@@ -250,7 +250,7 @@ export default function Matching() {
   }
 
   return (
-    <section className="sx-act sx-dark mt" id="eslesme" data-act="eslesme" data-tone="dark" aria-labelledby="mt-title">
+    <section className="sx-act sx-dark mt" id="eslesme" data-act="eslesme" aria-labelledby="mt-title">
       <div className="sx-wrap mt__head">
         <span className="sx-eyebrow sx-eyebrow--on">AI aday eşleştirme</span>
         <h2 id="mt-title" className="sx-h2">Skor bir sonuçtur. <em>Asıl değer gerekçededir.</em></h2>
@@ -318,7 +318,7 @@ export default function Matching() {
             {CATALOG.map((c) => (
               <label key={c.key} className={`mt-w__item${(weights[c.key] || 0) > 0 ? ' is-on' : ''}`}>
                 <span className="mt-w__l">{c.label}<b>{weights[c.key] || 0}</b></span>
-                <input type="range" min="0" max="100" step="5" value={weights[c.key] || 0} onChange={(e) => setW(c.key, +e.target.value)} aria-describedby={`h-${c.key}`} />
+                <input type="range" min="0" max="100" step="5" value={weights[c.key] || 0} style={{ '--fill': `${weights[c.key] || 0}%` }} onChange={(e) => setW(c.key, +e.target.value)} aria-describedby={`h-${c.key}`} />
                 <span id={`h-${c.key}`} className="mt-w__h">{c.hint}</span>
               </label>
             ))}

@@ -11,6 +11,9 @@ import { asset } from '../lib/asset.js'
    parçacıklar havuz → aile → kapı → gerekçeli eşleşme olarak eşleştirme
    mantığını sırayla gösterir. */
 
+// Ürünün kendi sabitleri (rol aileleri, eşik, ön görüşme şablonu) ve bu sayfanın veri ilkesi
+const META = [['15', 'rol ailesi'], ['%50', 'uygunluk eşiği'], ['12', 'soruluk ön görüşme'], ['0', 'gerçek kişi verisi']]
+
 const STEPS = [
   { at: [0, 0.15], eyebrow: 'Engineered Serendipity', h: 'Değer, keşfedilmeyi bekler.', big: true,
     p: 'SkillMatch, otel zincirlerinde işe alımı kadro planından işe girişe kadar tek akışta yöneten yapay zekâ destekli işe alım platformudur. Bu sayfada ürünü anlatmıyoruz; onu kullanıyorsunuz.' },
@@ -100,6 +103,11 @@ export default function Hero({ onEnter }) {
                 ? <h1 className="sx-hero__h1"><Kinetic text={s.h} delay={120} /></h1>
                 : <h2 className="sx-hero__h2"><Kinetic text={s.h} delay={80} /></h2>}
               <p className="sx-hero__p"><Kinetic text={s.p} delay={260} step={14} /></p>
+              {s.big && (
+                <dl className="sx-hero__meta">
+                  {META.map(([v, l]) => <div key={l}><dt>{l}</dt><dd>{v}</dd></div>)}
+                </dl>
+              )}
               {s.cta && (
                 <button className="sx-btn sx-btn--on sx-magnet" onClick={onEnter}>
                   Süreci başlat <span aria-hidden="true">↓</span>

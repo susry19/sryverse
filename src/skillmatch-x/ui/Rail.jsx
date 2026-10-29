@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
 
 /* Süreç rayı: ziyaretçi hikâyenin neresinde, ürünün akışında hangi adımda. */
-export default function Rail({ acts, go }) {
+export default function Rail({ acts, go, onChange }) {
   const [cur, setCur] = useState(acts[0].id)
+  useEffect(() => { onChange?.(cur) }, [cur, onChange])
   useEffect(() => {
-    const els = acts.map((a) => document.querySelector(`[data-act="${a.id}"]`))
+    // Bir adımı birden çok öğe taşıyabilir (bölüm açılışı + sahne): en görünür olan sayılır
     const seen = new Map()
     const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => seen.set(e.target.dataset.act, e.isIntersecting ? e.intersectionRatio : 0))
+      entries.forEach((e) => seen.set(e.target, e.isIntersecting ? e.intersectionRatio : 0))
+      const by = {}
+      seen.forEach((v, el) => { if (el.isConnected) by[el.dataset.act] = Math.max(by[el.dataset.act] || 0, v) })
       let best = null, r = 0
-      acts.forEach((a) => { const v = seen.get(a.id) || 0; if (v > r) { r = v; best = a.id } })
+      acts.forEach((a) => { const v = by[a.id] || 0; if (v > r) { r = v; best = a.id } })
       if (best) setCur(best)
     }, { threshold: [0, 0.15, 0.3, 0.5, 0.7], rootMargin: '-35% 0px -35% 0px' })
     const watch = () => document.querySelectorAll('[data-act]').forEach((el) => io.observe(el))

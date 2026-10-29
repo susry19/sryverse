@@ -384,9 +384,9 @@ export default function Insight() {
   const rbRef = useRef(null)
   const toReport = (c) => { setCfg({ ...c }); rbRef.current && window.scrollTo({ top: rbRef.current.getBoundingClientRect().top + scrollY - 70, behavior: 'smooth' }) }
   return (
-    <section className="sx-act in" id="karar" data-act="karar" data-tone="light" aria-labelledby="in-title">
+    <section className="sx-act in" id="karar" data-act="karar" aria-labelledby="in-title">
       <div className="sx-wrap in__head">
-        <span className="sx-eyebrow">Dinamik raporlar · AI asistan</span>
+        <span className="sx-eyebrow sx-eyebrow--on">Dinamik raporlar · AI asistan</span>
         <h2 id="in-title" className="sx-h2">Soruyu siz sorun, <em>veri cevaplasın.</em></h2>
         <p className="sx-lead">Rapor Oluşturucu'da boyutu, ölçüyü, hesaplamayı ve grafik türünü değiştirin; bir çubuğa tıklayıp aşağı inin. Aynı veriye asistana sorarak da ulaşın. Sayılar sentetik bir sezondan gelir ve her seçimde aynı kayıtlardan yeniden hesaplanır.</p>
       </div>

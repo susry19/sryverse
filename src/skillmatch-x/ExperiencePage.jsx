@@ -15,11 +15,25 @@ const Voice = lazy(() => import('./acts/Voice.jsx'))
 const Insight = lazy(() => import('./acts/Insight.jsx'))
 
 // Yerel SkillMatch kurulumundan, sentetik veriyle alınan ekranlar (arkadan öne)
+// Ön ekrandaki işaretler: o ekranda görünen ürün kuralı (x/y: görsele göre %)
 const SHOTS = {
-  need: [{ name: 'dashboard', path: '/', alt: 'SkillMatch Genel Bakış ekranı' }, { name: 'headcount', path: '/headcount', alt: 'SkillMatch Kadro İhtiyaçları ekranı' }, { name: 'approvals', path: '/approvals', alt: 'SkillMatch Onay Merkezi ekranı' }],
-  match: [{ name: 'pool-matches', path: '/positions', alt: 'SkillMatch önerilen adaylar ekranı' }, { name: 'match-analysis', path: '/candidates', alt: 'SkillMatch eşleşme analizi penceresi' }],
-  voice: [{ name: 'voice-screening-list', path: '/voice-screening', alt: 'SkillMatch AI Ön Görüşme listesi' }, { name: 'voice-screening-detail', path: '/voice-screening', alt: 'SkillMatch AI Ön Görüşme İK özeti' }, { name: 'voice-candidate', path: '/portal/screening', alt: 'SkillMatch aday ön görüşme ekranı' }],
-  insight: [{ name: 'reports-dashboard', path: '/analytics', alt: 'SkillMatch Raporlar ekranı' }, { name: 'report-builder', path: '/analytics', alt: 'SkillMatch Özel Rapor oluşturucu' }, { name: 'assistant', path: '/', alt: 'SkillMatch AI Asistan' }],
+  need: [{ name: 'dashboard', path: '/', alt: 'SkillMatch Genel Bakış ekranı' }, { name: 'headcount', path: '/headcount', alt: 'SkillMatch Kadro İhtiyaçları ekranı' },
+    { name: 'approvals', path: '/approvals', alt: 'SkillMatch Onay Merkezi ekranı', pins: [
+      { x: 41.8, y: 52.6, side: 'l', t: 'Bütçe sınıfı plan ve mevcuttan hesaplanır' },
+      { x: 55.7, y: 76.2, t: 'Bütçe dışı: Talep → DM → FC → GM → İK' }] }],
+  match: [{ name: 'pool-matches', path: '/positions', alt: 'SkillMatch önerilen adaylar ekranı' },
+    { name: 'match-analysis', path: '/candidates', alt: 'SkillMatch eşleşme analizi penceresi', pins: [
+      { x: 64.6, y: 26, t: 'Skorun kırılımı: her sinyal ayrı' },
+      { x: 34.4, y: 55.4, side: 'l', t: 'Eksik kanıt gizlenmez' }] }],
+  voice: [{ name: 'voice-screening-list', path: '/voice-screening', alt: 'SkillMatch AI Ön Görüşme listesi' }, { name: 'voice-screening-detail', path: '/voice-screening', alt: 'SkillMatch AI Ön Görüşme İK özeti' },
+    { name: 'voice-candidate', path: '/portal/screening', alt: 'SkillMatch aday ön görüşme ekranı', pins: [
+      { x: 29.2, y: 23.4, side: 'l', t: 'AI olduğu baştan söylenir' },
+      { x: 29.6, y: 46.8, side: 'l', t: 'Tekrar, ara, insanla görüş' },
+      { x: 57, y: 63.5, t: 'Katılım isteğe bağlı' }] }],
+  insight: [{ name: 'reports-dashboard', path: '/analytics', alt: 'SkillMatch Raporlar ekranı' }, { name: 'report-builder', path: '/analytics', alt: 'SkillMatch Özel Rapor oluşturucu' },
+    { name: 'assistant', path: '/', alt: 'SkillMatch AI Asistan', pins: [
+      { x: 33.6, y: 29.2, side: 'l', t: 'Cevap sistemin kendi kayıtlarından' },
+      { x: 67, y: 59.2, t: 'Pozisyon pozisyon pipeline' }] }],
 }
 
 const ACTS = [
@@ -58,6 +72,43 @@ function Lazy({ id, children, minHeight = '100vh' }) {
   )
 }
 
+/* Üst çubuk + süreç rayı: bulunulan bölümü ve kaydırma ilerlemesini taşır.
+   Kendi durumunu tutar; sahneler bölüm değişiminde yeniden çizilmez. */
+function Chrome({ onHome, onClassic, go }) {
+  const top = useRef(null)
+  const [cur, setCur] = useState(ACTS[0].id)
+  useEffect(() => {
+    let raf = 0
+    const f = () => {
+      raf = 0
+      const el = top.current; if (!el) return
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      el.style.setProperty('--sp', max > 0 ? (window.scrollY / max).toFixed(4) : '0')
+      el.classList.toggle('is-scrolled', window.scrollY > window.innerHeight * 0.6)
+    }
+    const on = () => { if (!raf) raf = requestAnimationFrame(f) }
+    window.addEventListener('scroll', on, { passive: true }); window.addEventListener('resize', on); f()
+    return () => { window.removeEventListener('scroll', on); window.removeEventListener('resize', on); cancelAnimationFrame(raf) }
+  }, [])
+  return (
+    <>
+      <header ref={top} className="sx-top">
+        <a href={onHome ? '/' : 'https://sryverse.com'} target={onHome ? undefined : '_blank'} rel={onHome ? undefined : 'noopener noreferrer'} className="sx-top__brand" onClick={(e) => { if (onHome) { e.preventDefault(); onHome() } }} aria-label="SRYVERSE ana sayfa">
+          <img src={asset('skillmatch-x/skillmatch-logo-light.webp')} alt="SkillMatch" width="119" height="20" className="sx-top__logo" />
+          <span className="sx-top__by">by SRYVERSE</span>
+        </a>
+        <span className="sx-top__ch" aria-hidden="true"><b />{ACTS.find((a) => a.id === cur)?.label}</span>
+        <nav className="sx-top__nav" aria-label="Sayfa">
+          <a href={onClassic ? '/skillmatch' : 'https://sryverse.com/skillmatch'} target={onClassic ? undefined : '_blank'} rel={onClassic ? undefined : 'noopener noreferrer'} onClick={(e) => { if (onClassic) { e.preventDefault(); onClassic() } }}>Ürün sayfası</a>
+          <a className="sx-top__cta" href="https://wa.me/905315178170?text=Merhaba%2C%20SkillMatch%20demosu%20talep%20etmek%20istiyorum." target="_blank" rel="noopener noreferrer">Demo talep et</a>
+        </nav>
+        <i className="sx-top__prog" aria-hidden="true" />
+      </header>
+      <Rail acts={ACTS} go={go} onChange={setCur} />
+    </>
+  )
+}
+
 function ExperiencePage({ onHome, onClassic }) {
   usePageSeo({
     title: 'SkillMatch — Engineered Serendipity | SRYVERSE',
@@ -68,10 +119,17 @@ function ExperiencePage({ onHome, onClassic }) {
   useEffect(() => {
     const m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex'
     document.head.appendChild(m)
+    // Başlık yazısı (site kabuğunda yüklü değil; önizleme HTML'i kendisi yükler)
+    let font = null
+    if (!document.querySelector('link[href*="family=Newsreader"]')) {
+      font = document.createElement('link'); font.rel = 'stylesheet'
+      font.href = 'https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..500;1,6..72,300..400&display=swap'
+      document.head.appendChild(font)
+    }
     document.documentElement.classList.add('sx-root')
     const nav = performance.getEntriesByType('navigation')[0]
     if (!nav || nav.type !== 'reload') window.scrollTo(0, 0)
-    return () => { m.remove(); document.documentElement.classList.remove('sx-root') }
+    return () => { m.remove(); font?.remove(); document.documentElement.classList.remove('sx-root') }
   }, [])
 
   const [positionId, setPositionId] = useState(101)
@@ -79,20 +137,6 @@ function ExperiencePage({ onHome, onClassic }) {
   const [opened, setOpened] = useState(null)
   const journey = useMemo(() => ({ positionId, setPositionId, candidateId, setCandidateId, opened, setOpened }),
     [positionId, candidateId, opened])
-
-  // Üst çubuk altındaki sahnenin tonuna uyar (koyu sahnede açık, açık sahnede koyu)
-  const [light, setLight] = useState(false)
-  useEffect(() => {
-    let raf = 0
-    const f = () => {
-      raf = 0
-      const el = document.elementFromPoint(window.innerWidth / 2, 40)
-      setLight(!!el?.closest('[data-tone="light"]'))
-    }
-    const on = () => { if (!raf) raf = requestAnimationFrame(f) }
-    window.addEventListener('scroll', on, { passive: true }); f()
-    return () => window.removeEventListener('scroll', on)
-  }, [])
 
   // Mıknatıslı düğmeler: yalnız ince işaretçide ve hareket azaltılmamışken
   useEffect(() => {
@@ -120,42 +164,52 @@ function ExperiencePage({ onHome, onClassic }) {
     <Journey.Provider value={journey}>
       <div className="sx">
         <a className="sx-skip" href="#ihtiyac">İçeriğe geç</a>
-        <header className={`sx-top${light ? ' sx-top--light' : ''}`}>
-          <a href={onHome ? '/' : 'https://sryverse.com'} target={onHome ? undefined : '_blank'} rel={onHome ? undefined : 'noopener noreferrer'} className="sx-top__brand" onClick={(e) => { if (onHome) { e.preventDefault(); onHome() } }} aria-label="SRYVERSE ana sayfa">
-            <img src={asset('skillmatch-x/skillmatch-logo-light.webp')} alt="SkillMatch" width="119" height="20" className="sx-top__logo" />
-            <span className="sx-top__by">by SRYVERSE</span>
-          </a>
-          <nav className="sx-top__nav" aria-label="Sayfa">
-            <a href={onClassic ? '/skillmatch' : 'https://sryverse.com/skillmatch'} target={onClassic ? undefined : '_blank'} rel={onClassic ? undefined : 'noopener noreferrer'} onClick={(e) => { if (onClassic) { e.preventDefault(); onClassic() } }}>Ürün sayfası</a>
-            <a className="sx-top__cta" href="https://wa.me/905315178170?text=Merhaba%2C%20SkillMatch%20demosu%20talep%20etmek%20istiyorum." target="_blank" rel="noopener noreferrer">Demo talep et</a>
-          </nav>
-        </header>
-        <Rail acts={ACTS} go={go} />
+        <Chrome onHome={onHome} onClassic={onClassic} go={go} />
         <main>
           <Hero onEnter={() => go('ihtiyac')} />
-          <Bridge kicker="Her şey bir ihtiyaçla başlar" line="Sezon yaklaşıyor. Belek'teki restoranda iki garson eksik."
+          <Bridge n="01" act="ihtiyac" kicker="Her şey bir ihtiyaçla başlar" line="Sezon yaklaşıyor. Belek'teki restoranda iki garson eksik."
             shots={SHOTS.need} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · Genel Bakış, Kadro İhtiyaçları, Onay Merkezi. Aşağıda aynı kurallar sizin kararlarınızla çalışıyor." />
           <Guard><Operations /></Guard>
-          <Bridge kicker="İlan yayında, başvurular geliyor" line="Şimdi soru şu: bu adaylardan hangisi, neden?" dark
+          <Bridge n="02" act="eslesme" kicker="İlan yayında, başvurular geliyor" line="Şimdi soru şu: bu adaylardan hangisi, neden?"
             shots={SHOTS.match} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · Önerilen adaylar ve “Neden %92?” analizi." />
           <Guard><Matching /></Guard>
-          <Bridge kicker="Bir sonraki adım" line="Kâğıt üzerindeki aday, sesiyle de aynı aday mı?" dark deep
+          <Bridge n="03" act="on-gorusme" kicker="Bir sonraki adım" line="Kâğıt üzerindeki aday, sesiyle de aynı aday mı?"
             shots={SHOTS.voice} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · AI Ön Görüşme listesi, İK özeti ve aday ekranı." />
           <Lazy id="on-gorusme"><Voice /></Lazy>
-          <Bridge kicker="Görüşme bitti, karar insanda" line="Karar verilerle verilir. Veriyi siz şekillendirin."
+          <Bridge n="04" act="karar" kicker="Görüşme bitti, karar insanda" line="Karar verilerle verilir. Veriyi siz şekillendirin."
             shots={SHOTS.insight} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · Raporlar, Özel Rapor ve AI Asistan." />
           <Lazy id="karar"><Insight /></Lazy>
-          <footer className="sx-coda" data-tone="dark">
+          <footer className="sx-coda">
             <img className="sx-coda__ribbon" src={asset('skillmatch-x/login-ribbons.webp')} alt="" aria-hidden="true" loading="lazy" width="1400" height="770" />
             <div className="sx-wrap">
               <span className="sx-eyebrow sx-eyebrow--on" lang="en">Engineered Serendipity</span>
-              <h2 className="sx-coda__h">Doğru kişi, doğru otel,<br />doğru zamanda.</h2>
+              <h2 className="sx-coda__h">Doğru kişi, doğru otel,<br /><em>doğru zamanda.</em></h2>
               <p className="sx-coda__p">Bu sayfadaki tüm veriler sentetiktir; kurallar, akışlar ve hesaplar SkillMatch'in kendisidir. Kendi kadro planınızla görelim.</p>
               <div className="sx-coda__row">
                 <a className="sx-btn sx-btn--on sx-magnet" href="https://wa.me/905315178170?text=Merhaba%2C%20SkillMatch%20pilot%20program%C4%B1%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer">Pilot programa katıl <span aria-hidden="true">→</span></a>
                 <a className="sx-btn sx-btn--ghost-on" href="https://skillmatch.sryverse.com" target="_blank" rel="noopener noreferrer">Platforma giriş</a>
               </div>
-              <p className="sx-coda__fine">© 2026 SkillMatch · by SRYVERSE · Önizleme sürümü</p>
+              <div className="sx-ledger">
+                <div>
+                  <h3>Üründen, olduğu gibi</h3>
+                  <ul>
+                    <li>Kadro, bütçe, onay zinciri ve aday kilidi kuralları</li>
+                    <li>Eşleştirme sinyalleri ve skor hesabı</li>
+                    <li>Ön görüşme motoru, soru akışı ve cevap kuralları</li>
+                    <li>Asistanın niyet tablosu, rehberleri ve arama sözlüğü</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3>Sentetik</h3>
+                  <ul>
+                    <li>Adaylar, tesisler ve pozisyonlar</li>
+                    <li>Rapor sezonu ve tüm sayılar</li>
+                    <li>Ekran görüntülerindeki kayıtlar</li>
+                    <li>Cevaplarınız hiçbir yerde saklanmaz</li>
+                  </ul>
+                </div>
+              </div>
+              <p className="sx-coda__fine"><span>© 2026 SkillMatch · by SRYVERSE</span><span>Önizleme sürümü</span></p>
             </div>
           </footer>
         </main>

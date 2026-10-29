@@ -287,9 +287,9 @@ export default function Operations() {
   const views = [<Headcount key="a" s={s} dispatch={dispatch} />, <Approvals key="b" s={s} dispatch={dispatch} />, <Listing key="c" s={s} dispatch={dispatch} />]
 
   return (
-    <section className="sx-act op" data-tone="light" aria-labelledby="op-title">
+    <section className="sx-act op" aria-labelledby="op-title">
       <div className="sx-wrap op__head">
-        <span className="sx-eyebrow">İhtiyaç · Onay · İlan</span>
+        <span className="sx-eyebrow sx-eyebrow--on">İhtiyaç · Onay · İlan</span>
         <h2 id="op-title" className="sx-h2">Bir kadro açığı, <em>kuralları olan</em> bir yolculuktur.</h2>
         <p className="sx-lead">Bu konsol SkillMatch'in kadro, bütçe, onay ve kilit kurallarını birebir uygular. Kararları siz verin; sonuç kurallardan çıksın.</p>
       </div>
@@ -298,7 +298,7 @@ export default function Operations() {
           {CHAPTERS.map((c, i) => (
             <article key={c.id} id={c.id} data-act={c.id} data-ch={i} ref={refs[i]} className={`op-ch${ch === i ? ' is-on' : ''}`}>
               <span className="op-ch__n">{c.n}</span>
-              <span className="sx-eyebrow">{c.kicker}</span>
+              <span className="sx-eyebrow sx-eyebrow--on">{c.kicker}</span>
               <h3 className="op-ch__h">{c.h}</h3>
               <p className="op-ch__p">{c.p}</p>
               <p className="op-ch__tip"><span aria-hidden="true">→</span> {c.tip}</p>

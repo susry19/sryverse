@@ -344,7 +344,7 @@ export default function Voice() {
   const stt = canRecognize(), micOk = canListen()
 
   return (
-    <section className="sx-act sx-deep vs" id="on-gorusme" data-act="on-gorusme" data-tone="dark" aria-labelledby="vs-title">
+    <section className="sx-act sx-deep vs" id="on-gorusme" data-act="on-gorusme" aria-labelledby="vs-title">
       <div className="sx-wrap vs__head">
         <span className="sx-eyebrow sx-eyebrow--on">AI Ön Görüşme · canlı demo</span>
         <h2 id="vs-title" className="sx-h2">Ön görüşmeyi siz yapın. <em>Aday sizsiniz.</em></h2>
