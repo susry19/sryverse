@@ -1,10 +1,11 @@
 import { useRef } from 'react'
 import { useInView } from '../lib/scroll.js'
 import Kinetic from './Kinetic.jsx'
+import ScreenStage from './ScreenStage.jsx'
 
 /* Sahneler arası geçiş: bir önceki sahnenin sonucunu bir sonrakinin
    sorusuna bağlayan tek cümle. */
-export default function Bridge({ kicker, line, dark, deep }) {
+export default function Bridge({ kicker, line, dark, deep, shots, caption }) {
   const ref = useRef(null)
   const v = useInView(ref, { margin: '0px 0px -30% 0px' })
   return (
@@ -12,6 +13,7 @@ export default function Bridge({ kicker, line, dark, deep }) {
       <div className="sx-wrap">
         <span className={`sx-eyebrow${dark ? ' sx-eyebrow--on' : ''}`}>{kicker}</span>
         <p className="sx-bridge__line"><Kinetic text={line} play={v} step={46} /></p>
+        {shots && <ScreenStage shots={shots} caption={caption} />}
       </div>
     </div>
   )

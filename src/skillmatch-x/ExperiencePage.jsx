@@ -13,6 +13,14 @@ import './x.css'
 const Voice = lazy(() => import('./acts/Voice.jsx'))
 const Insight = lazy(() => import('./acts/Insight.jsx'))
 
+// Yerel SkillMatch kurulumundan, sentetik veriyle alınan ekranlar (arkadan öne)
+const SHOTS = {
+  need: [{ name: 'dashboard', path: '/', alt: 'SkillMatch Genel Bakış ekranı' }, { name: 'headcount', path: '/headcount', alt: 'SkillMatch Kadro İhtiyaçları ekranı' }, { name: 'approvals', path: '/approvals', alt: 'SkillMatch Onay Merkezi ekranı' }],
+  match: [{ name: 'pool-matches', path: '/positions', alt: 'SkillMatch önerilen adaylar ekranı' }, { name: 'match-analysis', path: '/candidates', alt: 'SkillMatch eşleşme analizi penceresi' }],
+  voice: [{ name: 'voice-screening-list', path: '/voice-screening', alt: 'SkillMatch AI Ön Görüşme listesi' }, { name: 'voice-screening-detail', path: '/voice-screening', alt: 'SkillMatch AI Ön Görüşme İK özeti' }, { name: 'voice-candidate', path: '/portal/screening', alt: 'SkillMatch aday ön görüşme ekranı' }],
+  insight: [{ name: 'reports-dashboard', path: '/analytics', alt: 'SkillMatch Raporlar ekranı' }, { name: 'report-builder', path: '/analytics', alt: 'SkillMatch Özel Rapor oluşturucu' }, { name: 'assistant', path: '/', alt: 'SkillMatch AI Asistan' }],
+}
+
 const ACTS = [
   { id: 'acilis', label: 'Açılış' },
   { id: 'ihtiyac', label: 'İhtiyaç' },
@@ -124,13 +132,17 @@ function ExperiencePage({ onHome, onClassic }) {
         <Rail acts={ACTS} go={go} />
         <main>
           <Hero onEnter={() => go('ihtiyac')} />
-          <Bridge kicker="Her şey bir ihtiyaçla başlar" line="Sezon yaklaşıyor. Belek'teki restoranda iki garson eksik." />
+          <Bridge kicker="Her şey bir ihtiyaçla başlar" line="Sezon yaklaşıyor. Belek'teki restoranda iki garson eksik."
+            shots={SHOTS.need} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · Genel Bakış, Kadro İhtiyaçları, Onay Merkezi. Aşağıda aynı kurallar sizin kararlarınızla çalışıyor." />
           <Guard><Operations /></Guard>
-          <Bridge kicker="İlan yayında, başvurular geliyor" line="Şimdi soru şu: bu adaylardan hangisi, neden?" dark />
+          <Bridge kicker="İlan yayında, başvurular geliyor" line="Şimdi soru şu: bu adaylardan hangisi, neden?" dark
+            shots={SHOTS.match} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · Önerilen adaylar ve “Neden %92?” analizi." />
           <Guard><Matching /></Guard>
-          <Bridge kicker="Bir sonraki adım" line="Kâğıt üzerindeki aday, sesiyle de aynı aday mı?" dark deep />
+          <Bridge kicker="Bir sonraki adım" line="Kâğıt üzerindeki aday, sesiyle de aynı aday mı?" dark deep
+            shots={SHOTS.voice} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · AI Ön Görüşme listesi, İK özeti ve aday ekranı." />
           <Lazy id="on-gorusme"><Voice /></Lazy>
-          <Bridge kicker="Görüşme bitti, karar insanda" line="Karar verilerle verilir. Veriyi siz şekillendirin." />
+          <Bridge kicker="Görüşme bitti, karar insanda" line="Karar verilerle verilir. Veriyi siz şekillendirin."
+            shots={SHOTS.insight} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · Raporlar, Özel Rapor ve AI Asistan." />
           <Lazy id="karar"><Insight /></Lazy>
           <footer className="sx-coda" data-tone="dark">
             <img className="sx-coda__ribbon" src="/skillmatch-x/login-ribbons.webp" alt="" aria-hidden="true" loading="lazy" width="1400" height="770" />

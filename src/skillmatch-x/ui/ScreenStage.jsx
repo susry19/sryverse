@@ -26,9 +26,10 @@ export default function ScreenStage({ shots, caption }) {
     <figure ref={ref} className={`ss${reduced ? ' ss--still' : ''}`} style={{ '--n': shots.length }}>
       <div className="ss__stage">
         {shots.map((s, i) => (
-          <div key={s.src} className="ss__layer" style={{ '--i': i }}>
+          <div key={s.name} className="ss__layer" style={{ '--i': i }}>
             <div className="ss__chrome" aria-hidden="true"><i /><i /><i /><span>skillmatch.sryverse.com{s.path || ''}</span></div>
-            <img src={s.src} alt={s.alt} loading="lazy" decoding="async" width="1440" height="900" />
+            <img src={`/skillmatch-x/screens/${s.name}-1600.webp`} srcSet={`/skillmatch-x/screens/${s.name}-960.webp 960w, /skillmatch-x/screens/${s.name}-1600.webp 1600w`}
+              sizes="(max-width: 760px) 92vw, min(82vw, 1040px)" alt={s.alt} loading="lazy" decoding="async" width="1600" height="1000" />
           </div>
         ))}
       </div>

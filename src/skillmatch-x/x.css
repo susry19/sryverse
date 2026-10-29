@@ -726,25 +726,28 @@ html.sx-root { scroll-behavior: auto; background: var(--deep, #08150F); }
   .rb-charts { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* ══ Ürün ekranları: katmanlı derinlik ═════════════════════════════════ */
+/* ══ Ürün ekranları: katmanlı derinlik ═════════════════════════════════
+   Arka katmanlar küçük, solda/sağda ve eğik; kaydırdıkça yelpaze açılır,
+   ekranlar düzleşir. Katmanlar opaktır (yarı saydam üst üste binme yok). */
 .ss { --p: 0; margin: clamp(30px, 6vh, 70px) 0 0; }
-.ss__stage { position: relative; height: clamp(260px, 48vw, 620px); perspective: 1600px; perspective-origin: 50% 20%; }
-.ss__layer { position: absolute; top: 0; left: 50%; width: min(82%, 1040px); border-radius: 14px; overflow: hidden; background: #fff;
-  box-shadow: 0 50px 90px -40px rgba(1, 6, 4, .55), 0 0 0 1px rgba(23, 43, 23, .08);
-  transform-origin: 50% 100%;
-  /* arka katman (i=0) en eğik ve uzak; kaydırdıkça düzleşir ve ayrılır */
+.ss__stage { position: relative; aspect-ratio: 1.62; perspective: 1800px; perspective-origin: 50% 30%; }
+.ss__layer { --d: calc(var(--n) - 1 - var(--i)); --off: calc(var(--i) - (var(--n) - 1) / 2);
+  position: absolute; top: 4%; left: 50%; width: 66%; border-radius: 12px; overflow: hidden; background: #fff; z-index: var(--i);
+  box-shadow: 0 40px 70px -30px rgba(1, 6, 4, .5), 0 0 0 1px rgba(23, 43, 23, .08);
+  transform-origin: 50% 80%;
   transform:
-    translateX(calc(-50% + (var(--i) - (var(--n) - 1) / 2) * (12% * var(--p))))
-    translateY(calc((1 - var(--p)) * 90px + var(--i) * 28px * var(--p)))
-    translateZ(calc((var(--i) - var(--n) + 1) * 60px * (1 - var(--p) * .5)))
-    rotateX(calc((1 - var(--p)) * 24deg));
-  opacity: calc(.35 + var(--p) * .65);
+    translateX(calc(-50% + var(--off) * (14% + 12% * var(--p))))
+    translateY(calc(var(--d) * -3% + (1 - var(--p)) * 70px))
+    scale(calc(1 - var(--d) * .07))
+    rotateX(calc((1 - var(--p)) * 16deg))
+    rotateY(calc(var(--off) * -7deg * (1 - var(--p) * .7)));
+  filter: brightness(calc(1 - var(--d) * .05));
   will-change: transform; }
-.ss__chrome { height: 26px; display: flex; align-items: center; gap: 6px; padding: 0 12px; background: #F6F7F6; border-bottom: 1px solid #DFE5E1; }
-.ss__chrome i { width: 8px; height: 8px; border-radius: 50%; background: #DFE3E1; }
-.ss__chrome span { margin-left: 10px; font: 10.5px var(--mono); color: #8B968F; }
+.ss__chrome { height: 24px; display: flex; align-items: center; gap: 6px; padding: 0 12px; background: #F6F7F6; border-bottom: 1px solid #DFE5E1; }
+.ss__chrome i { width: 7px; height: 7px; border-radius: 50%; background: #DFE3E1; }
+.ss__chrome span { margin-left: 10px; font: 10px var(--mono); color: #8B968F; }
 .ss__layer img { display: block; width: 100%; height: auto; }
-.ss__cap { margin-top: 18px; font-size: 12px; color: var(--ink-3); text-align: center; }
+.ss__cap { margin-top: 10px; font-size: 12px; color: var(--ink-3); text-align: center; }
 .sx-bridge--dark .ss__cap { color: var(--on-3); }
-.ss--still .ss__layer { transform: translateX(calc(-50% + (var(--i) - (var(--n) - 1) / 2) * 12%)) translateY(calc(var(--i) * 28px)); opacity: 1; }
-@media (max-width: 760px) { .ss__layer { width: 92%; } .ss__stage { height: 72vw; } }
+.ss--still .ss__layer { --p: 1; }
+@media (max-width: 760px) { .ss__layer { width: 84%; } .ss__stage { aspect-ratio: 1.25; } }
