@@ -132,9 +132,10 @@ function ExperiencePage({ onHome, onClassic }) {
           <Lazy id="on-gorusme"><Voice /></Lazy>
           <Bridge kicker="Görüşme bitti, karar insanda" line="Karar verilerle verilir. Veriyi siz şekillendirin." />
           <Lazy id="karar"><Insight /></Lazy>
-          <footer className="sx-coda">
+          <footer className="sx-coda" data-tone="dark">
+            <img className="sx-coda__ribbon" src="/skillmatch-x/login-ribbons.webp" alt="" aria-hidden="true" loading="lazy" width="1400" height="770" />
             <div className="sx-wrap">
-              <span className="sx-eyebrow sx-eyebrow--on">Engineered Serendipity</span>
+              <span className="sx-eyebrow sx-eyebrow--on" lang="en">Engineered Serendipity</span>
               <h2 className="sx-coda__h">Doğru kişi, doğru otel,<br />doğru zamanda.</h2>
               <p className="sx-coda__p">Bu sayfadaki tüm veriler sentetiktir; kurallar, akışlar ve hesaplar SkillMatch'in kendisidir. Kendi kadro planınızla görelim.</p>
               <div className="sx-coda__row">

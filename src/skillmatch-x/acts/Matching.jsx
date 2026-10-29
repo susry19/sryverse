@@ -136,6 +136,15 @@ function Graph({ mode, focusId, rows, selected, onSelect, hover, setHover }) {
           )
         })}
       </svg>
+      {hover != null && nodes.current.get(hover) && (() => {
+        const n = nodes.current.get(hover), r = n.r
+        const label = mode === 'position' ? r.c.name : r.p.title
+        return (
+          <div className="mt-tip" style={{ left: Math.min(w - 250, Math.max(8, n.x + 14)), top: Math.max(8, n.y - 12) }} aria-hidden="true">
+            <b>{label} · %{r.score}</b><span>{band(r.score).label}</span><em>{r.elig.reason}</em>
+          </div>
+        )
+      })()}
       <div className="mt-legend" aria-hidden="true">
         <span><i className="l-skill" />Yetkinlik listesinde</span>
         <span><i className="l-cv" />Yalnız CV metninde</span>

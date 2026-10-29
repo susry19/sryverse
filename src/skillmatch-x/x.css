@@ -217,7 +217,10 @@ html.sx-root { scroll-behavior: auto; background: var(--deep, #08150F); }
 .sx-dark .sx-badge--demo, .sx-deep .sx-badge--demo { border-color: var(--on-line); color: var(--on-2); }
 
 /* ── kapanış ───────────────────────────────────────────────── */
-.sx-coda { background: var(--deep); color: var(--on); padding: clamp(110px, 18vh, 200px) 0 60px; }
+.sx-coda { position: relative; overflow: hidden; background: var(--deep); color: var(--on); padding: clamp(110px, 18vh, 200px) 0 60px; }
+.sx-coda .sx-wrap { position: relative; z-index: 1; }
+.sx-coda__ribbon { position: absolute; right: -8vw; top: 50%; width: min(64vw, 980px); height: auto; transform: translateY(-55%); opacity: .55; pointer-events: none; }
+@media (max-width: 760px) { .sx-coda__ribbon { width: 120vw; right: -30vw; top: 22%; opacity: .3; } }
 .sx-coda__h { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 5.4vw, 80px); line-height: 1.02; letter-spacing: -.02em; margin: 18px 0 0; }
 .sx-coda__p { color: var(--on-2); max-width: 34em; margin-top: 20px; }
 .sx-coda__row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
@@ -380,6 +383,9 @@ html.sx-root { scroll-behavior: auto; background: var(--deep, #08150F); }
 .mt-node__halo { fill: none !important; stroke: var(--rose-400); stroke-width: 1.5; animation: sxPulseR 1.8s ease-out infinite; }
 @keyframes sxPulseR { 0% { opacity: 1; } 100% { opacity: .2; } }
 .mt-node:focus-visible .mt-node__dot { stroke: var(--rose-400); stroke-width: 3; }
+.mt-tip { position: absolute; z-index: 2; width: 240px; pointer-events: none; background: var(--paper); color: var(--ink); border-radius: 12px; padding: 10px 12px; box-shadow: 0 18px 40px -18px rgba(1, 6, 4, .7); display: grid; gap: 2px; font-size: 12px; animation: sxPop .25s var(--ease) both; }
+.mt-tip span { color: var(--ink-2); font-size: 11.5px; }
+.mt-tip em { font-style: normal; color: var(--ink-2); font-size: 11.5px; line-height: 1.45; }
 .mt-legend { position: absolute; left: 14px; bottom: 12px; display: flex; flex-wrap: wrap; gap: 14px; font-size: 11px; color: var(--on-3); }
 .mt-legend i { display: inline-block; width: 18px; height: 0; border-top: 1.5px solid; margin-right: 6px; vertical-align: middle; }
 .mt-legend .l-skill { border-color: rgba(236, 241, 230, .7); }
