@@ -37,13 +37,15 @@ function quotaTake() {
   try { localStorage.setItem('sx-vs', JSON.stringify({ d: new Date().toDateString(), n: quotaUsed() + 1 })) } catch { /* özel sekme */ }
 }
 
-/* Küre: gerçek ses seviyesi (dinlerken mikrofon, konuşurken söz sınırları) +
-   dairesel dalga formu + VAD eşiği halkası. */
+/* Ses halkası: gerçek ses seviyesi (dinlerken mikrofon dalga formu,
+   konuşurken söz sınırları) ince ışınlar olarak; dinlerken VAD eşiği
+   kesikli halka, düşünürken halkada dolaşan bir yay. */
 function Orb({ talk, levelRef, micRef, vadRef, reduced }) {
   const cv = useRef(null)
   useEffect(() => {
     const c = cv.current; if (!c) return
     const ctx = c.getContext('2d')
+    const N = 120, amp = new Float32Array(N)
     let raf = 0, sm = 0, t = 0
     const draw = () => {
       raf = requestAnimationFrame(draw)
@@ -53,47 +55,50 @@ function Orb({ talk, levelRef, micRef, vadRef, reduced }) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       ctx.clearRect(0, 0, W, H)
       const L = levelRef.current || 0
-      sm += (L - sm) * 0.25
+      sm += (L - sm) * 0.2
       t += reduced ? 0 : 0.016
-      const cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.27
-      const tone = talk === 'speaking' ? [236, 241, 230] : talk === 'listening' ? [171, 191, 172] : talk === 'thinking' ? [201, 160, 160] : [120, 140, 125]
-      // dış hale
-      const g = ctx.createRadialGradient(cx, cy, R * 0.4, cx, cy, R * 2.1)
-      g.addColorStop(0, `rgba(${tone},${0.18 + sm * 0.25})`); g.addColorStop(1, 'rgba(8,21,15,0)')
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R * 2.1, 0, Math.PI * 2); ctx.fill()
-      // VAD eşiği halkası (dinlerken)
+      const cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.25
+      const tone = talk === 'speaking' ? '236,241,230' : talk === 'listening' ? '171,191,172' : talk === 'thinking' ? '201,160,160' : '171,191,172'
+      // hafif hale
+      const g = ctx.createRadialGradient(cx, cy, R * 0.6, cx, cy, R * 2)
+      g.addColorStop(0, `rgba(${tone},${0.08 + sm * 0.2})`); g.addColorStop(1, 'rgba(8,21,15,0)')
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R * 2, 0, Math.PI * 2); ctx.fill()
+      // ışın boyları: dinlerken dalga formundan, diğer durumlarda yumuşak dalgalanma
+      const wave = talk === 'listening' ? micRef.current?.waveform() : null
+      for (let i = 0; i < N; i++) {
+        const a = (i / N) * Math.PI * 2
+        let target
+        if (wave) {
+          const j = Math.floor((i / N) * (wave.length - 1))
+          target = Math.min(1, Math.abs(wave[j]) * 6)
+        } else if (talk === 'speaking') {
+          target = (0.35 + 0.65 * sm) * (0.5 + 0.5 * Math.sin(a * 3 + t * 2.4) * Math.sin(a * 5 - t * 1.7)) + sm * 0.25
+        } else if (talk === 'thinking') {
+          const d = Math.abs(((a - t * 2.2) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI)
+          target = 0.06 + 0.5 * Math.pow(d / Math.PI, 6)
+        } else {
+          target = 0.05 + 0.04 * (1 + Math.sin(a * 4 + t * 0.9))
+        }
+        amp[i] += (Math.max(0, target) - amp[i]) * (wave ? 0.45 : 0.15)
+      }
+      ctx.lineCap = 'round'; ctx.lineWidth = 1.5
+      for (let i = 0; i < N; i++) {
+        const a = (i / N) * Math.PI * 2 - Math.PI / 2
+        const r0 = R * 1.02, r1 = r0 + 4 + amp[i] * R * 0.75
+        ctx.strokeStyle = `rgba(${tone},${0.35 + amp[i] * 0.65})`
+        ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); ctx.stroke()
+      }
+      // iç halka ve çekirdek
+      ctx.strokeStyle = `rgba(${tone},.5)`; ctx.lineWidth = 1
+      ctx.beginPath(); ctx.arc(cx, cy, R * 0.9, 0, Math.PI * 2); ctx.stroke()
+      ctx.fillStyle = `rgba(${tone},${0.85})`
+      ctx.beginPath(); ctx.arc(cx, cy, 3 + sm * 10, 0, Math.PI * 2); ctx.fill()
+      // VAD eşiği (dinlerken): ışın boyu bu halkayı geçerse konuşma sayılır
       const v = vadRef.current
       if (talk === 'listening' && v) {
-        const k = (x) => R * (1.05 + Math.min(1, x / 0.12) * 0.9)
-        ctx.strokeStyle = 'rgba(243,245,241,.18)'; ctx.setLineDash([2, 5]); ctx.lineWidth = 1
-        ctx.beginPath(); ctx.arc(cx, cy, k(v.threshold), 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([])
-      }
-      // dairesel dalga formu
-      const wave = talk === 'listening' ? micRef.current?.waveform() : null
-      ctx.lineWidth = 1.4
-      for (let ring = 0; ring < 3; ring++) {
-        ctx.strokeStyle = `rgba(${tone},${0.75 - ring * 0.22})`
-        ctx.beginPath()
-        const N = 160
-        for (let i = 0; i <= N; i++) {
-          const a = (i / N) * Math.PI * 2
-          let d
-          if (wave) d = wave[Math.floor((i / N) * (wave.length - 1))] * R * 1.6
-          else d = Math.sin(a * (3 + ring) + t * (1.2 + ring * 0.4)) * R * (0.03 + sm * 0.16) + Math.sin(a * 7 - t * 2) * R * sm * 0.05
-          const r = R * (1 + ring * 0.06) + d * (1 - ring * 0.25)
-          const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r
-          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)
-        }
-        ctx.closePath(); ctx.stroke()
-      }
-      // çekirdek
-      const core = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.35, R * 0.1, cx, cy, R * 0.95)
-      core.addColorStop(0, `rgba(${tone},${0.55 + sm * 0.4})`); core.addColorStop(1, 'rgba(16,38,27,.9)')
-      ctx.fillStyle = core
-      ctx.beginPath(); ctx.arc(cx, cy, R * (0.9 + sm * 0.08), 0, Math.PI * 2); ctx.fill()
-      if (talk === 'thinking') {
-        ctx.strokeStyle = `rgba(${tone},.9)`; ctx.lineWidth = 2
-        ctx.beginPath(); ctx.arc(cx, cy, R * 1.22, t * 3, t * 3 + 1.2); ctx.stroke()
+        const rr = R * 1.02 + 4 + Math.min(1, (v.threshold / 0.12)) * R * 0.75
+        ctx.strokeStyle = 'rgba(201,160,160,.55)'; ctx.setLineDash([2, 5]); ctx.lineWidth = 1
+        ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([])
       }
     }
     draw()

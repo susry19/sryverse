@@ -42,7 +42,7 @@ function Graph({ mode, focusId, rows, selected, onSelect, hover, setHover }) {
   const Rmax = Math.max(120, Math.min(w, h) / 2 - 30), Rmin = Rmax * 0.36
   const R1 = Rmin * 1.32
   const rOf = (s) => R1 + (1 - s / 100) * (Rmax - R1)
-  const sx = w > h ? Math.min(1.35, w / h) : 1
+  const sx = 1
   const center = mode === 'position' ? posOf(focusId) : candOf(focusId)
   const skills = mode === 'position' ? center.required_skills : []
 
@@ -84,18 +84,20 @@ function Graph({ mode, focusId, rows, selected, onSelect, hover, setHover }) {
   return (
     <div ref={box} className="mt-graph">
       <svg width={w} height={h} role="group" aria-label={mode === 'position' ? `${center.title} ilanı için aday ağı` : `${center.name} için pozisyon ağı`}>
-        <defs>
-          <radialGradient id="mtGlow"><stop offset="0" stopColor="rgba(236,241,230,.18)" /><stop offset="1" stopColor="rgba(236,241,230,0)" /></radialGradient>
-        </defs>
-        <circle cx={cx} cy={cy} r={Rmax * 1.05} fill="url(#mtGlow)" />
-        <ellipse cx={cx} cy={cy} rx={thr * sx} ry={thr} className="mt-thr" />
-        <text x={cx} y={cy - thr - 8} className="mt-thr-l" textAnchor="middle">%{CONST.min_score} öneri eşiği</text>
+        {/* skor hedefi: merkeze yakınlık = skor. Güçlü bölge (%80+) hafif dolgulu */}
+        <circle cx={cx} cy={cy} r={rOf(80)} className="mt-zone" />
+        {[100, 75, 25, 0].map((v) => <circle key={v} cx={cx} cy={cy} r={rOf(v)} className={`mt-ring${v === 0 ? ' mt-ring--out' : ''}`} />)}
+        <circle cx={cx} cy={cy} r={thr} className="mt-thr" />
+        {[75, 25, 0].map((v) => <text key={v} x={cx} y={cy - rOf(v) - 6} className="mt-ring-l" textAnchor="middle">%{v}</text>)}
+        <text x={cx} y={cy - thr - 6} className="mt-thr-l" textAnchor="middle">%{CONST.min_score} · öneri eşiği</text>
         {/* kanıt kenarları */}
         {mode === 'position' && arr.map((n) => n.r.pair.required.map((q, i) => {
           if (!q.matched) return null
           const sp = skillPos[i]; if (!sp) return null
           const on = active == null || active === n.id
-          return <line key={`${n.id}-${i}`} x1={n.x} y1={n.y} x2={sp.x} y2={sp.y}
+          // kanıt ipi: merkeze doğru hafif kavisli
+          const mx = (n.x + sp.x) / 2 + (cx - (n.x + sp.x) / 2) * 0.22, my = (n.y + sp.y) / 2 + (cy - (n.y + sp.y) / 2) * 0.22
+          return <path key={`${n.id}-${i}`} d={`M${n.x},${n.y} Q${mx},${my} ${sp.x},${sp.y}`}
             className={`mt-edge mt-edge--${q.tier}${on ? '' : ' is-dim'}${active === n.id ? ' is-hot' : ''}`} />
         }))}
         {mode === 'candidate' && arr.map((n) => {
@@ -108,19 +110,23 @@ function Graph({ mode, focusId, rows, selected, onSelect, hover, setHover }) {
           <text x={cx} y={cy - 3} textAnchor="middle" className="mt-center__t">{mode === 'position' ? center.title : center.name}</text>
           <text x={cx} y={cy + 14} textAnchor="middle" className="mt-center__s">{mode === 'position' ? hotel(center.hotel_id).name : center.city}</text>
         </g>
-        {skillPos.map((sp) => (
-          <g key={sp.t} className="mt-skill">
-            <circle cx={sp.x} cy={sp.y} r="5" />
-            <text x={sp.x + Math.cos(sp.a) * 10} y={sp.y + Math.sin(sp.a) * 10 + 4} textAnchor={Math.abs(Math.cos(sp.a)) < 0.3 ? 'middle' : Math.cos(sp.a) > 0 ? 'start' : 'end'}>{sp.t}</text>
-          </g>
-        ))}
+        {skillPos.map((sp) => {
+          // zorunlu yetkinlik etiketi: kanıt iplerinin bağlandığı küçük hap
+          const tw = sp.t.length * 5.9 + 18
+          return (
+            <g key={sp.t} className="mt-skill" transform={`translate(${sp.x},${sp.y})`}>
+              <rect x={-tw / 2} y={-11} width={tw} height={22} rx={11} />
+              <text y={4} textAnchor="middle">{sp.t}</text>
+            </g>
+          )
+        })}
         {/* adaylar / pozisyonlar */}
         {arr.map((n) => {
           const ok = n.r.elig.ok, s = n.r.score
           const label = mode === 'position' ? n.r.c.name : n.r.p.title
           const sel = selected === n.id
           const dim = active != null && active !== n.id
-          const rad = ok ? 5 + s / 16 : 3.5
+          const rad = ok ? 4.5 + s / 20 : 3
           const showLabel = ok || sel || hover === n.id || (mode === 'candidate')
           return (
             <g key={n.id} transform={`translate(${n.x},${n.y})`} tabIndex={0} role="button"
@@ -131,7 +137,7 @@ function Graph({ mode, focusId, rows, selected, onSelect, hover, setHover }) {
               <circle r={rad + 12} className="mt-node__hit" />
               {sel && <circle r={rad + 7} className="mt-node__halo" />}
               <circle r={rad} className="mt-node__dot" />
-              {showLabel && <text x={n.x < cx ? -(rad + 6) : rad + 6} y="4" textAnchor={n.x < cx ? 'end' : 'start'}>{label} <tspan>%{s}</tspan></text>}
+              {showLabel && <text x={n.x < cx ? -(rad + 8) : rad + 8} y="4" textAnchor={n.x < cx ? 'end' : 'start'}>{label}<tspan dx="6">%{s}</tspan></text>}
             </g>
           )
         })}

@@ -27,9 +27,11 @@ const STEPS = [
     p: 'Skor tek başına karar değildir: hangi yetkinlik yetkinlik listesinde, hangisi yalnız CV metninde geçiyor, açıkça yazılır. Bu sayfadaki skorlar SkillMatch\'in kendi eşleştirme koduyla hesaplandı.', cta: true },
 ]
 
+// Ürün token'ları: --on, --sage-400, --rose-400, --ink, --ink-2
 const THEME = {
-  ink: '#DCE6D8', line: 'rgba(220,230,216,.32)', thread0: 'rgba(171,191,172,.08)', thread1: 'rgba(236,241,230,.95)',
-  node: '#ECF1E6', nodeInk: '#172B17', label: 'rgba(243,245,241,.82)',
+  ink: '#E6ECE2', ring: 'rgba(243,245,241,.55)', rose: '#C9A0A0', dim: 'rgba(243,245,241,.45)',
+  thread0: 'rgba(171,191,172,.15)', thread1: 'rgba(236,241,230,.9)',
+  node: '#F3F5F1', nodeInk: '#172B17', nodeSub: '#64746D', label: 'rgba(243,245,241,.88)',
 }
 
 export default function Hero({ onEnter }) {
