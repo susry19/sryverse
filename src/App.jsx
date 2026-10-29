@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react'
 import Background from './Background.jsx'
 import Terminal from './Terminal.jsx'
 import SkillMatchPage from './SkillMatchPage.jsx'
@@ -7,6 +7,10 @@ import EstateFeaturesPage from './EstateFeaturesPage.jsx'
 import ProductShowcase from './ProductShowcase.jsx'
 import SiteAssistant from './SiteAssistant.jsx'
 import useRoute from './useRoute.js'
+
+/* SkillMatch deneyim önizlemesi: ayrı yığın, yalnız kendi adresinde yüklenir;
+   sitenin başlık/alt bilgi kabuğunu kullanmaz (kendi sahnesini kurar). */
+const SkillMatchExperience = lazy(() => import('./skillmatch-x/ExperiencePage.jsx'))
 import './App.css'
 
 /* ── hooks ── */
@@ -349,6 +353,14 @@ export default function App() {
     if (!odak.hasAttribute('tabindex')) odak.setAttribute('tabindex', '-1')
     window.setTimeout(() => odak.focus({ preventScroll: true }), rm ? 50 : 650)
   }, [])
+
+  if (page === 'skillmatchX') {
+    return (
+      <Suspense fallback={<div className="sx-boot" aria-busy="true" />}>
+        <SkillMatchExperience onHome={() => setPage('home')} onClassic={() => setPage('skillmatch')} />
+      </Suspense>
+    )
+  }
 
   return (
     <div className="site">

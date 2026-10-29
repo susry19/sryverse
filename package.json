@@ -6,11 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "skillmatch-x:sync": "node scripts/skillmatch-x/sync-voice-engine.mjs ../skillmatch-ai && ${PYTHON:-python3} scripts/skillmatch-x/precompute_matches.py --skillmatch ../skillmatch-ai && ${PYTHON:-python3} scripts/skillmatch-x/export_assistant_data.py --skillmatch ../skillmatch-ai",
+    "skillmatch-x:verify": "node scripts/skillmatch-x/verify-scores.mjs && node scripts/skillmatch-x/verify-voice.mjs && node scripts/skillmatch-x/verify-assistant.mjs ../skillmatch-ai"
   },
   "dependencies": {
+    "d3-force": "^3.0.0",
     "gsap": "^3.12.2",
     "lenis": "^1.1.5",
+    "pyodide": "^0.27.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "^0.150.0"

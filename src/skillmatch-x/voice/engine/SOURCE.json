@@ -1,0 +1,12 @@
+{
+  "repo": "skillmatch-ai",
+  "path": "backend/services/voice_screening",
+  "commit": "fb2b080",
+  "files": {
+    "engine.py": "ed451727b6ff64df",
+    "extraction.py": "cd09df2121f7adea",
+    "qa.py": "06c4f150de35f7ae",
+    "seed.py": "93c5902b1edcc583"
+  },
+  "note": "Birebir kopya; düzenlemeyin. Güncellemek için sync-voice-engine.mjs çalıştırın."
+}

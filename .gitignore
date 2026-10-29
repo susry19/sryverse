@@ -24,3 +24,7 @@ Thumbs.db
 
 # Vite önbelleği
 .vite/
+
+# Python önbelleği (scripts/skillmatch-x)
+__pycache__/
+*.pyc

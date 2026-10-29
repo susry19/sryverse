@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from 'react'
  *
  * /            -> home
  * /skillmatch  -> skillmatch
+ * /skillmatch/deneyim -> skillmatchX (yeni deneyim önizlemesi)
  * /estatematch -> estatematch
  * /vizyon      -> vision
  */
@@ -16,6 +17,7 @@ import { useState, useEffect, useCallback } from 'react'
 const PATHS = {
   home: '/',
   skillmatch: '/skillmatch',
+  skillmatchX: '/skillmatch/deneyim',
   estatematch: '/estatematch',
   estatematchFeatures: '/estatematch/features',
   vision: '/vizyon',
@@ -26,6 +28,8 @@ const ROUTES = {
   '': 'home',
   'skillmatch': 'skillmatch',
   'skillmatch-ai': 'skillmatch',
+  'skillmatch/deneyim': 'skillmatchX',
+  'skillmatch/experience': 'skillmatchX',
   'estatematch': 'estatematch',
   'estatematch-ai': 'estatematch',
   'estatematch/features': 'estatematchFeatures',
