@@ -3,7 +3,9 @@ import { usePageSeo } from '../pageParts.jsx'
 import Hero from './acts/Hero.jsx'
 import Operations from './acts/Operations.jsx'
 import Matching from './acts/Matching.jsx'
-import Bridge from './ui/Bridge.jsx'
+import CineScene from './ui/CineScene.jsx'
+import Manifest from './ui/Manifest.jsx'
+import Proof from './ui/Proof.jsx'
 import Rail from './ui/Rail.jsx'
 import { Journey } from './lib/journey.js'
 import './x.css'
@@ -15,26 +17,40 @@ const Voice = lazy(() => import('./acts/Voice.jsx'))
 const Insight = lazy(() => import('./acts/Insight.jsx'))
 
 // Yerel SkillMatch kurulumundan, sentetik veriyle alınan ekranlar (arkadan öne)
-// Ön ekrandaki işaretler: o ekranda görünen ürün kuralı (x/y: görsele göre %)
+// Ön ekrandaki işaretler: kamera sırayla bu noktalara yaklaşır (x/y: görsele göre %).
+// Her işaret o ekranda görünen ürün kuralını adlandırır.
 const SHOTS = {
   need: [{ name: 'dashboard', path: '/', alt: 'SkillMatch Genel Bakış ekranı' }, { name: 'headcount', path: '/headcount', alt: 'SkillMatch Kadro İhtiyaçları ekranı' },
     { name: 'approvals', path: '/approvals', alt: 'SkillMatch Onay Merkezi ekranı', pins: [
-      { x: 41.8, y: 52.6, side: 'l', t: 'Bütçe sınıfı plan ve mevcuttan hesaplanır' },
-      { x: 55.7, y: 76.2, t: 'Bütçe dışı: Talep → DM → FC → GM → İK' }] }],
+      { x: 41.8, y: 52.6, t: 'Bütçe sınıfı satırda hesaplanır.', d: 'Plan, mevcut kadro ve onay yolundaki talepler aynı satırda. Talebin bütçe içi mi dışı mı olduğunu kural söyler, tahmin değil.' },
+      { x: 55.7, y: 76.2, t: 'Bütçe dışı talep, kendi yolunu çizer.', d: 'Garson talebi bütçeyi aşıyor: Departman Müdürü\'nden sonra Financial Controller ve Genel Müdür onayı gerekir, ardından İK.' },
+      { x: 67.2, y: 53.4, t: 'Zincir biter, pozisyon açılır.', d: 'Onayı tamamlanan talep tek adımda pozisyona dönüşür; ilan bağlantısı ve QR kod aynı anda üretilir.' }] }],
   match: [{ name: 'pool-matches', path: '/positions', alt: 'SkillMatch önerilen adaylar ekranı' },
     { name: 'match-analysis', path: '/candidates', alt: 'SkillMatch eşleşme analizi penceresi', pins: [
-      { x: 64.6, y: 26, t: 'Skorun kırılımı: her sinyal ayrı' },
-      { x: 34.4, y: 55.4, side: 'l', t: 'Eksik kanıt gizlenmez' }] }],
+      { x: 41.7, y: 16.2, t: 'Skor, bağlamıyla gelir.', d: '%92 hangi pozisyon ve hangi otel için hesaplandığıyla birlikte yazılır. Skor bir karar değil, gerekçenin özetidir.' },
+      { x: 64.6, y: 26, t: 'Her sinyal ayrı görünür.', d: 'Alan deneyimi ve zorunlu yetkinlik örtüşmesi ayrı satırlarda; hangi sinyalin skora ne kattığı açık.' },
+      { x: 34.4, y: 55.4, t: 'Eksik kanıt gizlenmez.', d: '“Neden %100 değil?” her analizde sorulur. Skorun verinin tamamına dayanıp dayanmadığı açıkça yazılır.' }] }],
   voice: [{ name: 'voice-screening-list', path: '/voice-screening', alt: 'SkillMatch AI Ön Görüşme listesi' }, { name: 'voice-screening-detail', path: '/voice-screening', alt: 'SkillMatch AI Ön Görüşme İK özeti' },
     { name: 'voice-candidate', path: '/portal/screening', alt: 'SkillMatch aday ön görüşme ekranı', pins: [
-      { x: 29.2, y: 23.4, side: 'l', t: 'AI olduğu baştan söylenir' },
-      { x: 29.6, y: 46.8, side: 'l', t: 'Tekrar, ara, insanla görüş' },
-      { x: 57, y: 63.5, t: 'Katılım isteğe bağlı' }] }],
+      { x: 29.2, y: 23.4, t: 'Önce şeffaflık.', d: 'Aday, bir yapay zekâ asistanıyla konuşacağını ve bunun bir mülakat olmadığını görüşmeden önce okur.' },
+      { x: 29.6, y: 46.8, t: 'Kontrol adayda.', d: '“Tekrar” der, soru yeniden okunur. “Ara verelim” der, görüşme durur. İstediği an bir insanla görüşmek isteyebilir.' },
+      { x: 57, y: 63.5, t: 'Katılım isteğe bağlı.', d: '“Katılmak istemiyorum” seçeneği her zaman ekranda. Sistem aday hakkında karar vermez; cevapları İK okur.' }] }],
   insight: [{ name: 'reports-dashboard', path: '/analytics', alt: 'SkillMatch Raporlar ekranı' }, { name: 'report-builder', path: '/analytics', alt: 'SkillMatch Özel Rapor oluşturucu' },
     { name: 'assistant', path: '/', alt: 'SkillMatch AI Asistan', pins: [
-      { x: 33.6, y: 29.2, side: 'l', t: 'Cevap sistemin kendi kayıtlarından' },
-      { x: 67, y: 59.2, t: 'Pozisyon pozisyon pipeline' }] }],
+      { x: 33.6, y: 29.2, t: 'Cevap, kayıtlardan.', d: '“Pipeline özeti” tüm organizasyondaki açık pozisyon ve aktif aday sayılarından hesaplanır.' },
+      { x: 67, y: 59.2, t: 'Pozisyon pozisyon.', d: 'Her açık ilan için yeni, ön eleme, mülakat ve teklif sayıları ayrı satırda.' },
+      { x: 58, y: 94.6, t: 'Kendi cümlenizle sorun.', d: 'Asistan niyeti tanır; işlem gerektiren her adımda önce onayınızı ister.' }] }],
 }
+
+const MANIFEST = 'Her sezon aynı soru: doğru kişi kim, hangi otelde, ne zaman? SkillMatch bu soruyu tahminle değil *kuralla,* sezgiyle değil *kanıtla* cevaplar. Kadro planı, onay zinciri, eşleştirme, ön görüşme ve rapor: tek akışta, aynı veriyle.'
+
+// Her rakam ürünün sabiti ya da bu sayfada doğrulanmış bir ölçüm (npm run skillmatch-x:verify)
+const PROOF = [
+  { value: 0, label: 'fark', note: 'Bu sayfadaki 160 eşleşme skoru, SkillMatch\'in eşleştirme koduyla birebir aynı.' },
+  { value: 15, label: 'rol ailesi', note: 'Unvanlar ailelere ayrılır; garsona resepsiyon ilanı önerilmez.' },
+  { value: 12, label: 'soruluk ön görüşme', note: 'Yaş, medeni durum, sağlık gibi korunan özellikler sorulmaz.' },
+  { value: 10, unit: 'gün', label: 'sahiplik kilidi', note: 'Aday iki otel arasında bölünmez; her mülakat ve teklif kilidi yeniler.' },
+]
 
 const ACTS = [
   { id: 'acilis', label: 'Açılış' },
@@ -167,18 +183,20 @@ function ExperiencePage({ onHome, onClassic }) {
         <Chrome onHome={onHome} onClassic={onClassic} go={go} />
         <main>
           <Hero onEnter={() => go('ihtiyac')} />
-          <Bridge n="01" act="ihtiyac" kicker="Her şey bir ihtiyaçla başlar" line="Sezon yaklaşıyor. Belek'teki restoranda iki garson eksik."
+          <Manifest eyebrow="Neden SkillMatch" text={MANIFEST} />
+          <CineScene n="01" act="ihtiyac" kicker="Her şey bir ihtiyaçla başlar" line="Sezon yaklaşıyor. Belek'teki restoranda iki garson eksik."
             shots={SHOTS.need} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · Genel Bakış, Kadro İhtiyaçları, Onay Merkezi. Aşağıda aynı kurallar sizin kararlarınızla çalışıyor." />
           <Guard><Operations /></Guard>
-          <Bridge n="02" act="eslesme" kicker="İlan yayında, başvurular geliyor" line="Şimdi soru şu: bu adaylardan hangisi, neden?"
+          <CineScene n="02" act="eslesme" kicker="İlan yayında, başvurular geliyor" line="Şimdi soru şu: bu adaylardan hangisi, neden?"
             shots={SHOTS.match} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · Önerilen adaylar ve “Neden %92?” analizi." />
           <Guard><Matching /></Guard>
-          <Bridge n="03" act="on-gorusme" kicker="Bir sonraki adım" line="Kâğıt üzerindeki aday, sesiyle de aynı aday mı?"
+          <CineScene n="03" act="on-gorusme" kicker="Bir sonraki adım" line="Kâğıt üzerindeki aday, sesiyle de aynı aday mı?"
             shots={SHOTS.voice} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · AI Ön Görüşme listesi, İK özeti ve aday ekranı." />
           <Lazy id="on-gorusme"><Voice /></Lazy>
-          <Bridge n="04" act="karar" kicker="Görüşme bitti, karar insanda" line="Karar verilerle verilir. Veriyi siz şekillendirin."
+          <CineScene n="04" act="karar" kicker="Görüşme bitti, karar insanda" line="Karar verilerle verilir. Veriyi siz şekillendirin."
             shots={SHOTS.insight} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · Raporlar, Özel Rapor ve AI Asistan." />
           <Lazy id="karar"><Insight /></Lazy>
+          <Proof eyebrow="Rakamlarla" title={<>İddia değil, <em>ölçü.</em></>} stats={PROOF} />
           <footer className="sx-coda">
             <img className="sx-coda__ribbon" src={asset('skillmatch-x/login-ribbons.webp')} alt="" aria-hidden="true" loading="lazy" width="1400" height="770" />
             <div className="sx-wrap">
