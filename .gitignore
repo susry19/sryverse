@@ -28,3 +28,6 @@ Thumbs.db
 # Python önbelleği (scripts/skillmatch-x)
 __pycache__/
 *.pyc
+
+# SkillMatch önizleme paketi
+dist-preview/

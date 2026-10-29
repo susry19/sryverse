@@ -10,10 +10,17 @@ import runtime from './runtime.py?raw'
 let rt = null
 let booting = null
 
-async function boot() {
-  const base = `${self.location.origin}/pyodide/`
+async function boot(base) {
   const { loadPyodide } = await import(/* @vite-ignore */ `${base}pyodide.mjs`)
-  const py = await loadPyodide({ indexURL: base })
+  // Önizleme paketi (Artifact) .zip sunamadığı için standart kütüphane base64 metin olarak gelir
+  let stdLibURL = `${base}python_stdlib.zip`
+  if (import.meta.env.VITE_PYODIDE_STDLIB_B64) {
+    const txt = await (await fetch(`${base}python_stdlib.b64.txt`)).text()
+    const bin = atob(txt.trim()), bytes = new Uint8Array(bin.length)
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
+    stdLibURL = URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }))
+  }
+  const py = await loadPyodide({ indexURL: base, stdLibURL, lockFileURL: `${base}pyodide-lock.json` })
   py.FS.mkdirTree('/app/services/voice_screening')
   py.FS.writeFile('/app/services/__init__.py', '')
   py.FS.writeFile('/app/services/voice_screening/__init__.py', '')
@@ -27,9 +34,9 @@ async function boot() {
 }
 
 self.onmessage = async ({ data }) => {
-  const { id, op, arg } = data
+  const { id, op, arg, base } = data
   try {
-    if (!rt) { booting = booting || boot(); await booting }
+    if (!rt) { booting = booting || boot(base); await booting }
     let out = null
     if (op === 'boot') out = true
     else if (op === 'complete') out = rt.complete(arg)

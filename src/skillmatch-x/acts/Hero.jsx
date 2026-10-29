@@ -4,6 +4,7 @@ import { createField } from '../world/field.js'
 import { useTrack, smooth, clamp01, useReducedMotion, useCompact } from '../lib/scroll.js'
 import { rankFor, DEFAULT_WEIGHTS } from '../lib/match.js'
 import Kinetic from '../ui/Kinetic.jsx'
+import { asset } from '../lib/asset.js'
 
 /* Açılış: ürünün giriş ekranındaki marka şeridi ("Değer, keşfedilmeyi
    bekler.") kaydırmayla çözülür; şeridin merkez çizgisinden doğan
@@ -88,7 +89,7 @@ export default function Hero({ onEnter }) {
       <div className="sx-hero__stage">
         <div className="sx-hero__light" aria-hidden="true" />
         <div ref={frameRef} className={`sx-hero__ribbon${live ? ' is-live' : ''}`} aria-hidden="true">
-          <img src="/skillmatch-x/login-ribbons.webp" alt="" width="1400" height="770" />
+          <img src={asset('skillmatch-x/login-ribbons.webp')} alt="" width="1400" height="770" />
         </div>
         <canvas ref={canvasRef} className="sx-hero__field" aria-hidden="true" />
         <div className="sx-hero__copy">

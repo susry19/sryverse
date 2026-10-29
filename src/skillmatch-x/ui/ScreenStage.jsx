@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useReducedMotion } from '../lib/scroll.js'
+import { asset } from '../lib/asset.js'
 
 /* Gerçek ürün ekranları, katmanlı derinlik kompozisyonu. Sahne görünür
    alana girerken arka katman uzakta ve eğik durur; kaydırdıkça ekranlar
@@ -28,7 +29,7 @@ export default function ScreenStage({ shots, caption }) {
         {shots.map((s, i) => (
           <div key={s.name} className="ss__layer" style={{ '--i': i }}>
             <div className="ss__chrome" aria-hidden="true"><i /><i /><i /><span>skillmatch.sryverse.com{s.path || ''}</span></div>
-            <img src={`/skillmatch-x/screens/${s.name}-1600.webp`} srcSet={`/skillmatch-x/screens/${s.name}-960.webp 960w, /skillmatch-x/screens/${s.name}-1600.webp 1600w`}
+            <img src={asset(`skillmatch-x/screens/${s.name}-1600.webp`)} srcSet={`${asset(`skillmatch-x/screens/${s.name}-960.webp`)} 960w, ${asset(`skillmatch-x/screens/${s.name}-1600.webp`)} 1600w`}
               sizes="(max-width: 760px) 92vw, min(82vw, 1040px)" alt={s.alt} loading="lazy" decoding="async" width="1600" height="1000" />
           </div>
         ))}

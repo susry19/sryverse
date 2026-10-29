@@ -1,4 +1,7 @@
 /* Ana iş parçacığından motora ince istemci (sözleşme: runtime.py). */
+// Pyodide çekirdeği sayfanın yanından verilir (sitede /pyodide/, önizleme paketinde göreli)
+const PYODIDE = new URL(import.meta.env.BASE_URL + 'pyodide/', document.baseURI).href
+
 export function createEngine() {
   const w = new Worker(new URL('./engine.worker.js', import.meta.url), { type: 'module' })
   let seq = 0
@@ -9,7 +12,7 @@ export function createEngine() {
     data.ok ? p.res(data.out) : p.rej(new Error(data.error))
   }
   w.onerror = (e) => { wait.forEach((p) => p.rej(new Error(e.message || 'Motor yüklenemedi'))); wait.clear() }
-  const call = (op, arg) => new Promise((res, rej) => { const id = ++seq; wait.set(id, { res, rej }); w.postMessage({ id, op, arg }) })
+  const call = (op, arg) => new Promise((res, rej) => { const id = ++seq; wait.set(id, { res, rej }); w.postMessage({ id, op, arg, base: PYODIDE }) })
   return {
     boot: () => call('boot'),
     start: (ctx) => call('start', ctx),

@@ -7,6 +7,7 @@ import Bridge from './ui/Bridge.jsx'
 import Rail from './ui/Rail.jsx'
 import { Journey } from './lib/journey.js'
 import './x.css'
+import { asset } from './lib/asset.js'
 
 // Ağır sahneler kendi yığınlarında: ön görüşme (Pyodide yalnız başlatınca),
 // rapor ve asistan görünür olmadan yüklenmez.
@@ -120,12 +121,12 @@ function ExperiencePage({ onHome, onClassic }) {
       <div className="sx">
         <a className="sx-skip" href="#ihtiyac">İçeriğe geç</a>
         <header className={`sx-top${light ? ' sx-top--light' : ''}`}>
-          <a href="/" className="sx-top__brand" onClick={(e) => { e.preventDefault(); onHome() }} aria-label="SRYVERSE ana sayfa">
-            <img src="/skillmatch-x/skillmatch-logo-light.webp" alt="SkillMatch" width="119" height="20" className="sx-top__logo" />
+          <a href={onHome ? '/' : 'https://sryverse.com'} target={onHome ? undefined : '_blank'} rel={onHome ? undefined : 'noopener noreferrer'} className="sx-top__brand" onClick={(e) => { if (onHome) { e.preventDefault(); onHome() } }} aria-label="SRYVERSE ana sayfa">
+            <img src={asset('skillmatch-x/skillmatch-logo-light.webp')} alt="SkillMatch" width="119" height="20" className="sx-top__logo" />
             <span className="sx-top__by">by SRYVERSE</span>
           </a>
           <nav className="sx-top__nav" aria-label="Sayfa">
-            <a href="/skillmatch" onClick={(e) => { e.preventDefault(); onClassic() }}>Ürün sayfası</a>
+            <a href={onClassic ? '/skillmatch' : 'https://sryverse.com/skillmatch'} target={onClassic ? undefined : '_blank'} rel={onClassic ? undefined : 'noopener noreferrer'} onClick={(e) => { if (onClassic) { e.preventDefault(); onClassic() } }}>Ürün sayfası</a>
             <a className="sx-top__cta" href="https://wa.me/905315178170?text=Merhaba%2C%20SkillMatch%20demosu%20talep%20etmek%20istiyorum." target="_blank" rel="noopener noreferrer">Demo talep et</a>
           </nav>
         </header>
@@ -145,7 +146,7 @@ function ExperiencePage({ onHome, onClassic }) {
             shots={SHOTS.insight} caption="Gerçek SkillMatch ekranları · yerel kurulum, sentetik veri · Raporlar, Özel Rapor ve AI Asistan." />
           <Lazy id="karar"><Insight /></Lazy>
           <footer className="sx-coda" data-tone="dark">
-            <img className="sx-coda__ribbon" src="/skillmatch-x/login-ribbons.webp" alt="" aria-hidden="true" loading="lazy" width="1400" height="770" />
+            <img className="sx-coda__ribbon" src={asset('skillmatch-x/login-ribbons.webp')} alt="" aria-hidden="true" loading="lazy" width="1400" height="770" />
             <div className="sx-wrap">
               <span className="sx-eyebrow sx-eyebrow--on" lang="en">Engineered Serendipity</span>
               <h2 className="sx-coda__h">Doğru kişi, doğru otel,<br />doğru zamanda.</h2>
